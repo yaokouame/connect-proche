@@ -15,6 +15,7 @@ export interface PatientProfile extends User {
   medicalHistory?: string[];
   medications?: string[];
   allergies?: string[];
+  prescriptions?: Prescription[];
   appointments?: Appointment[];
 }
 
@@ -35,6 +36,25 @@ export interface Appointment {
   time: string;
   status: "scheduled" | "completed" | "cancelled";
   notes?: string;
+}
+
+export interface Prescription {
+  id: string;
+  patientId: string;
+  professionalId: string;
+  professionalName: string;
+  date: string;
+  medications: PrescribedMedication[];
+  instructions: string;
+  expiryDate: string;
+  status: "active" | "expired" | "completed";
+}
+
+export interface PrescribedMedication {
+  name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
 }
 
 export interface Pharmacy {

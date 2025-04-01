@@ -10,6 +10,8 @@ import { useUser } from "@/contexts/UserContext";
 import Layout from "@/components/Layout";
 import { User, UserPlus, Clock, FileText, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
+import PrescriptionList from "@/components/prescriptions/PrescriptionList";
+import { Prescription, PrescribedMedication } from "@/types/user";
 
 const ProfilePage = () => {
   const { currentUser, updateUserProfile } = useUser();
@@ -20,10 +22,56 @@ const ProfilePage = () => {
   const [medicalHistory, setMedicalHistory] = useState<string[]>([]);
   const [medications, setMedications] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   
   const [newMedicalHistory, setNewMedicalHistory] = useState("");
   const [newMedication, setNewMedication] = useState("");
   const [newAllergy, setNewAllergy] = useState("");
+
+  const mockPrescriptions: Prescription[] = [
+    {
+      id: "presc-1",
+      patientId: "patient-456",
+      professionalId: "pro-123",
+      professionalName: "Jean Michel",
+      date: "15/09/2023",
+      expiryDate: "15/12/2023",
+      status: "active",
+      medications: [
+        {
+          name: "Amoxicilline",
+          dosage: "500mg",
+          frequency: "3 fois par jour",
+          duration: "7 jours"
+        },
+        {
+          name: "Doliprane",
+          dosage: "1000mg",
+          frequency: "Si douleur",
+          duration: "Au besoin"
+        }
+      ],
+      instructions: "Prendre avec de la nourriture. Terminer le traitement complet même si les symptômes s'améliorent."
+    },
+    {
+      id: "presc-2",
+      patientId: "patient-456",
+      professionalId: "pro-124",
+      professionalName: "Sophie Martin",
+      date: "25/07/2023",
+      expiryDate: "25/10/2023",
+      status: "expired",
+      medications: [
+        {
+          name: "Ventoline",
+          dosage: "100µg",
+          frequency: "2 inhalations",
+          duration: "En cas de crise"
+        }
+      ],
+      instructions: "Utiliser en cas de difficulté respiratoire."
+    }
+  ];
 
   useEffect(() => {
     if (currentUser && currentUser.role === "patient") {
@@ -31,6 +79,8 @@ const ProfilePage = () => {
       if (patientUser.medicalHistory) setMedicalHistory(patientUser.medicalHistory);
       if (patientUser.medications) setMedications(patientUser.medications);
       if (patientUser.allergies) setAllergies(patientUser.allergies);
+      
+      setPrescriptions(mockPrescriptions);
     }
   }, [currentUser]);
 
@@ -129,13 +179,13 @@ const ProfilePage = () => {
               <Avatar className="h-24 w-24 mb-4">
                 <AvatarImage src={currentUser?.profileImageUrl} alt={currentUser?.name} />
                 <AvatarFallback className="text-xl bg-health-blue text-white">
-                  {getInitials(currentUser.name)}
+                  {currentUser ? getInitials(currentUser.name) : ""}
                 </AvatarFallback>
               </Avatar>
-              <h2 className="text-xl font-semibold">{currentUser.name}</h2>
-              <p className="text-gray-500 mb-2">{currentUser.email}</p>
+              <h2 className="text-xl font-semibold">{currentUser?.name}</h2>
+              <p className="text-gray-500 mb-2">{currentUser?.email}</p>
               <p className="text-sm px-3 py-1 bg-health-teal/10 text-health-teal rounded-full">
-                {currentUser.role === "patient" ? "Patient" : "Professionnel de santé"}
+                {currentUser?.role === "patient" ? "Patient" : "Professionnel de santé"}
               </p>
             </div>
             
@@ -148,7 +198,7 @@ const ProfilePage = () => {
                 <Clock className="mr-2 h-5 w-5" />
                 <span>Mes rendez-vous</span>
               </Link>
-              {currentUser.role === "patient" && (
+              {currentUser?.role === "patient" && (
                 <Link to="/medical-records" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
                   <FileText className="mr-2 h-5 w-5" />
                   <span>Dossier médical</span>
@@ -163,8 +213,9 @@ const ProfilePage = () => {
 
           <div className="md:col-span-2">
             <Tabs defaultValue="personal" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="personal">Informations personnelles</TabsTrigger>
+                <TabsTrigger value="medical">Dossier médical</TabsTrigger>
                 <TabsTrigger value="preferences">Préférences</TabsTrigger>
               </TabsList>
               
@@ -194,7 +245,7 @@ const ProfilePage = () => {
                         />
                       </div>
                       
-                      {currentUser.role === "professional" && (
+                      {currentUser?.role === "professional" && (
                         <>
                           <div className="space-y-2">
                             <Label htmlFor="specialty">Spécialité</Label>
@@ -216,140 +267,158 @@ const ProfilePage = () => {
                         </>
                       )}
                       
-                      {currentUser.role === "patient" && (
-                        <>
-                          <div className="space-y-2 border-t pt-4">
-                            <Label className="text-lg font-medium">Antécédents médicaux</Label>
-                            <div className="space-y-2">
-                              {medicalHistory.length > 0 ? (
-                                <ul className="list-disc list-inside space-y-1">
-                                  {medicalHistory.map((item, index) => (
-                                    <li key={index} className="flex items-center justify-between">
-                                      <span>{item}</span>
-                                      <Button 
-                                        type="button" 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        onClick={() => removeMedicalHistory(index)} 
-                                        className="h-8 px-2 text-red-500 hover:text-red-700"
-                                      >
-                                        Supprimer
-                                      </Button>
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : (
-                                <p className="text-gray-500 italic">Aucun antécédent médical enregistré</p>
-                              )}
-                              
-                              <div className="flex mt-2">
-                                <Input
-                                  placeholder="Ajouter un antécédent médical"
-                                  value={newMedicalHistory}
-                                  onChange={(e) => setNewMedicalHistory(e.target.value)}
-                                  className="mr-2"
-                                />
-                                <Button 
-                                  type="button" 
-                                  onClick={addMedicalHistory}
-                                  variant="outline"
-                                >
-                                  Ajouter
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 border-t pt-4">
-                            <Label className="text-lg font-medium">Médicaments actuels</Label>
-                            <div className="space-y-2">
-                              {medications.length > 0 ? (
-                                <ul className="list-disc list-inside space-y-1">
-                                  {medications.map((med, index) => (
-                                    <li key={index} className="flex items-center justify-between">
-                                      <span>{med}</span>
-                                      <Button 
-                                        type="button" 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        onClick={() => removeMedication(index)} 
-                                        className="h-8 px-2 text-red-500 hover:text-red-700"
-                                      >
-                                        Supprimer
-                                      </Button>
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : (
-                                <p className="text-gray-500 italic">Aucun médicament enregistré</p>
-                              )}
-                              
-                              <div className="flex mt-2">
-                                <Input
-                                  placeholder="Ajouter un médicament"
-                                  value={newMedication}
-                                  onChange={(e) => setNewMedication(e.target.value)}
-                                  className="mr-2"
-                                />
-                                <Button 
-                                  type="button" 
-                                  onClick={addMedication}
-                                  variant="outline"
-                                >
-                                  Ajouter
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 border-t pt-4">
-                            <Label className="text-lg font-medium">Allergies connues</Label>
-                            <div className="space-y-2">
-                              {allergies.length > 0 ? (
-                                <ul className="list-disc list-inside space-y-1">
-                                  {allergies.map((allergy, index) => (
-                                    <li key={index} className="flex items-center justify-between">
-                                      <span>{allergy}</span>
-                                      <Button 
-                                        type="button" 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        onClick={() => removeAllergy(index)} 
-                                        className="h-8 px-2 text-red-500 hover:text-red-700"
-                                      >
-                                        Supprimer
-                                      </Button>
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : (
-                                <p className="text-gray-500 italic">Aucune allergie enregistrée</p>
-                              )}
-                              
-                              <div className="flex mt-2">
-                                <Input
-                                  placeholder="Ajouter une allergie"
-                                  value={newAllergy}
-                                  onChange={(e) => setNewAllergy(e.target.value)}
-                                  className="mr-2"
-                                />
-                                <Button 
-                                  type="button" 
-                                  onClick={addAllergy}
-                                  variant="outline"
-                                >
-                                  Ajouter
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      
                       <Button type="submit" className="mt-6" disabled={isSaving}>
                         {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
                       </Button>
                     </form>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="medical">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Dossier médical</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-8">
+                    {currentUser?.role === "patient" ? (
+                      <>
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-medium">Antécédents médicaux</h3>
+                          <div className="space-y-2">
+                            {medicalHistory.length > 0 ? (
+                              <ul className="list-disc list-inside space-y-1">
+                                {medicalHistory.map((item, index) => (
+                                  <li key={index} className="flex items-center justify-between">
+                                    <span>{item}</span>
+                                    <Button 
+                                      type="button" 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => removeMedicalHistory(index)} 
+                                      className="h-8 px-2 text-red-500 hover:text-red-700"
+                                    >
+                                      Supprimer
+                                    </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-gray-500 italic">Aucun antécédent médical enregistré</p>
+                            )}
+                            
+                            <div className="flex mt-2">
+                              <Input
+                                placeholder="Ajouter un antécédent médical"
+                                value={newMedicalHistory}
+                                onChange={(e) => setNewMedicalHistory(e.target.value)}
+                                className="mr-2"
+                              />
+                              <Button 
+                                type="button" 
+                                onClick={addMedicalHistory}
+                                variant="outline"
+                              >
+                                Ajouter
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 border-t pt-4">
+                          <h3 className="text-lg font-medium">Médicaments actuels</h3>
+                          <div className="space-y-2">
+                            {medications.length > 0 ? (
+                              <ul className="list-disc list-inside space-y-1">
+                                {medications.map((med, index) => (
+                                  <li key={index} className="flex items-center justify-between">
+                                    <span>{med}</span>
+                                    <Button 
+                                      type="button" 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => removeMedication(index)} 
+                                      className="h-8 px-2 text-red-500 hover:text-red-700"
+                                    >
+                                      Supprimer
+                                    </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-gray-500 italic">Aucun médicament enregistré</p>
+                            )}
+                            
+                            <div className="flex mt-2">
+                              <Input
+                                placeholder="Ajouter un médicament"
+                                value={newMedication}
+                                onChange={(e) => setNewMedication(e.target.value)}
+                                className="mr-2"
+                              />
+                              <Button 
+                                type="button" 
+                                onClick={addMedication}
+                                variant="outline"
+                              >
+                                Ajouter
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 border-t pt-4">
+                          <h3 className="text-lg font-medium">Allergies connues</h3>
+                          <div className="space-y-2">
+                            {allergies.length > 0 ? (
+                              <ul className="list-disc list-inside space-y-1">
+                                {allergies.map((allergy, index) => (
+                                  <li key={index} className="flex items-center justify-between">
+                                    <span>{allergy}</span>
+                                    <Button 
+                                      type="button" 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => removeAllergy(index)} 
+                                      className="h-8 px-2 text-red-500 hover:text-red-700"
+                                    >
+                                      Supprimer
+                                    </Button>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-gray-500 italic">Aucune allergie enregistrée</p>
+                            )}
+                            
+                            <div className="flex mt-2">
+                              <Input
+                                placeholder="Ajouter une allergie"
+                                value={newAllergy}
+                                onChange={(e) => setNewAllergy(e.target.value)}
+                                className="mr-2"
+                              />
+                              <Button 
+                                type="button" 
+                                onClick={addAllergy}
+                                variant="outline"
+                              >
+                                Ajouter
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 border-t pt-4">
+                          <h3 className="text-lg font-medium">Ordonnances</h3>
+                          <PrescriptionList prescriptions={prescriptions} />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">Le dossier médical n'est disponible que pour les patients.</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
