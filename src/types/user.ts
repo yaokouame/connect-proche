@@ -13,6 +13,8 @@ export interface PatientProfile extends User {
   role: "patient";
   dateOfBirth?: string;
   medicalHistory?: string[];
+  medications?: string[];
+  allergies?: string[];
   appointments?: Appointment[];
 }
 
