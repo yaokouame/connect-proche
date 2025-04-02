@@ -13,6 +13,7 @@ import Map from "./pages/Map";
 import Products from "./pages/Products";
 import Appointments from "./pages/Appointments";
 import Chat from "./pages/Chat";
+import MedicalTutorials from "./pages/MedicalTutorials";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/products" element={<Products />} />
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/tutorials" element={<MedicalTutorials />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -11,7 +11,8 @@ import {
   ShoppingBag, 
   LogOut, 
   Menu,
-  MessageCircle
+  MessageCircle,
+  BookOpen
 } from "lucide-react";
 import {
   Sheet,
@@ -66,6 +67,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       label: "Produits",
       path: "/products",
       icon: <ShoppingBag className="h-5 w-5 mr-2" />,
+    },
+    {
+      label: "Tutoriels",
+      path: "/tutorials",
+      icon: <BookOpen className="h-5 w-5 mr-2" />,
     },
   ];
 
