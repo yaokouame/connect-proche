@@ -11,7 +11,7 @@ import {
   ShoppingBag, 
   LogOut, 
   Menu,
-  X
+  MessageCircle
 } from "lucide-react";
 import {
   Sheet,
@@ -49,6 +49,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       label: "Rendez-vous",
       path: "/appointments",
       icon: <CalendarClock className="h-5 w-5 mr-2" />,
+      requiresAuth: true,
+    },
+    {
+      label: "Messagerie",
+      path: "/chat",
+      icon: <MessageCircle className="h-5 w-5 mr-2" />,
       requiresAuth: true,
     },
     {
