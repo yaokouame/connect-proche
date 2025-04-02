@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/contexts/UserContext";
 import Layout from "@/components/Layout";
-import { Prescription } from "@/types/user";
+import { Prescription, PatientProfile } from "@/types/user";
 import { useToast } from "@/hooks/use-toast";
 
 // Import refactored components
@@ -71,7 +71,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (currentUser && currentUser.role === "patient") {
-      const patientUser = currentUser as any;
+      const patientUser = currentUser as PatientProfile;
       if (patientUser.medicalHistory) setMedicalHistory(patientUser.medicalHistory);
       if (patientUser.medications) setMedications(patientUser.medications);
       if (patientUser.allergies) setAllergies(patientUser.allergies);
@@ -83,7 +83,7 @@ const ProfilePage = () => {
   // Check for unsaved changes when medical data updates
   useEffect(() => {
     if (currentUser && currentUser.role === "patient") {
-      const patientUser = currentUser as any;
+      const patientUser = currentUser as PatientProfile;
       const hasChanges = 
         JSON.stringify(patientUser.medicalHistory || []) !== JSON.stringify(medicalHistory) ||
         JSON.stringify(patientUser.medications || []) !== JSON.stringify(medications) ||
@@ -95,12 +95,19 @@ const ProfilePage = () => {
 
   const saveMedicalData = () => {
     if (currentUser && currentUser.role === "patient") {
-      updateUserProfile({
+      // Create an updated profile with the correct type
+      const updatedProfile = {
         ...currentUser,
-        medicalHistory,
-        medications,
-        allergies
-      });
+      };
+      
+      // Cast to PatientProfile to safely add the medical fields
+      const patientProfile = updatedProfile as PatientProfile;
+      patientProfile.medicalHistory = medicalHistory;
+      patientProfile.medications = medications;
+      patientProfile.allergies = allergies;
+      
+      // Update the user profile
+      updateUserProfile(patientProfile);
       
       setUnsavedChanges(false);
       
@@ -173,7 +180,7 @@ const ProfilePage = () => {
                   allergies={allergies}
                   setAllergies={setAllergies}
                   prescriptions={prescriptions}
-                  userRole={currentUser.role}
+                  userRole={currentUser?.role || "none"}
                 />
               </TabsContent>
               
