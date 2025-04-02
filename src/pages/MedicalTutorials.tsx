@@ -19,13 +19,103 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Info, Heart, BookOpen, CheckCircle } from "lucide-react";
+import { Info, Heart, BookOpen, CheckCircle, Bandage } from "lucide-react";
 
 const MedicalTutorials = () => {
   const [expandedTutorial, setExpandedTutorial] = useState<string | null>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const tutorials = [
+    {
+      id: "first-aid",
+      title: "Premiers secours d'urgence",
+      description: "Gestes essentiels pour porter assistance à une personne en détresse",
+      icon: <Bandage className="h-6 w-6 text-health-red" />,
+      content: (
+        <>
+          <h3 className="text-lg font-medium mb-2">Les bases des premiers secours</h3>
+          <p className="mb-4">
+            Connaître les gestes de premiers secours peut sauver des vies. Voici les étapes fondamentales à suivre 
+            en cas d'urgence médicale.
+          </p>
+          
+          <h3 className="text-lg font-medium mb-2">Évaluer la situation</h3>
+          <ol className="list-decimal pl-5 mb-4 space-y-2">
+            <li>Assurez-vous que la zone est sûre pour vous et la victime</li>
+            <li>Vérifiez l'état de conscience de la personne</li>
+            <li>Appelez ou faites appeler les secours (15, 18 ou 112)</li>
+            <li>Effectuez les gestes appropriés en attendant les secours</li>
+          </ol>
+          
+          <Alert className="mb-4">
+            <Info className="h-4 w-4" />
+            <AlertTitle>Important</AlertTitle>
+            <AlertDescription>
+              Ne déplacez jamais une personne blessée, sauf si sa vie est en danger immédiat (incendie, explosion, etc.).
+            </AlertDescription>
+          </Alert>
+          
+          <h3 className="text-lg font-medium mb-2">Position latérale de sécurité (PLS)</h3>
+          <p className="mb-4">
+            Si la personne est inconsciente mais respire normalement, placez-la en position latérale de sécurité :
+          </p>
+          <Accordion type="single" collapsible className="mb-4">
+            <AccordionItem value="pls-steps">
+              <AccordionTrigger>Comment placer en PLS</AccordionTrigger>
+              <AccordionContent>
+                <ol className="list-decimal pl-5 space-y-2">
+                  <li>Placez-vous à genoux à côté de la victime</li>
+                  <li>Placez le bras de la victime le plus proche de vous à angle droit</li>
+                  <li>Ramenez son autre main contre sa joue opposée</li>
+                  <li>Pliez sa jambe la plus éloignée</li>
+                  <li>Faites-la rouler doucement vers vous</li>
+                  <li>Stabilisez sa position en ajustant la jambe et le bras</li>
+                  <li>Vérifiez régulièrement sa respiration jusqu'à l'arrivée des secours</li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="cpr-steps">
+              <AccordionTrigger>Réanimation cardio-pulmonaire (RCP)</AccordionTrigger>
+              <AccordionContent>
+                <p className="mb-2">Si la personne ne respire pas, commencez immédiatement la RCP :</p>
+                <ol className="list-decimal pl-5 space-y-2">
+                  <li>Placez la personne sur le dos sur une surface ferme</li>
+                  <li>Placez vos mains au centre de sa poitrine</li>
+                  <li>Comprimez fermement à une profondeur d'environ 5-6 cm</li>
+                  <li>Effectuez 30 compressions à un rythme de 100-120 par minute</li>
+                  <li>Donnez 2 insufflations si vous êtes formé, sinon poursuivez les compressions</li>
+                  <li>Continuez jusqu'à l'arrivée des secours ou la reprise de la respiration</li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="bleeding">
+              <AccordionTrigger>Arrêter une hémorragie</AccordionTrigger>
+              <AccordionContent>
+                <ol className="list-decimal pl-5 space-y-2">
+                  <li>Appuyez fermement sur la plaie avec un linge propre ou vos mains (utilisez des gants si disponibles)</li>
+                  <li>Maintenez une pression continue jusqu'à l'arrêt du saignement</li>
+                  <li>Si le saignement persiste, ajoutez des compresses sans retirer les premières</li>
+                  <li>Surélevez le membre blessé si possible</li>
+                  <li>Ne posez pas de garrot sauf en cas d'hémorragie massive incontrôlable</li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+          
+          <Alert className="mb-4 border-health-red bg-health-red/5">
+            <Info className="h-4 w-4 text-health-red" />
+            <AlertTitle className="text-health-red">Numéros d'urgence</AlertTitle>
+            <AlertDescription>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>SAMU : 15</li>
+                <li>Pompiers : 18</li>
+                <li>Numéro d'urgence européen : 112</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
+        </>
+      )
+    },
     {
       id: "hypertension",
       title: "Comprendre l'hypertension",
