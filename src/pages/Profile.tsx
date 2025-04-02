@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/contexts/UserContext";
 import Layout from "@/components/Layout";
 import { Prescription } from "@/types/user";
+import { useToast } from "@/hooks/use-toast";
 
 // Import refactored components
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
@@ -14,11 +15,14 @@ import LoginPrompt from "@/components/profile/LoginPrompt";
 
 const ProfilePage = () => {
   const { currentUser, updateUserProfile } = useUser();
+  const { toast } = useToast();
   
   const [medicalHistory, setMedicalHistory] = useState<string[]>([]);
   const [medications, setMedications] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string[]>([]);
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [activeTab, setActiveTab] = useState("personal");
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const mockPrescriptions: Prescription[] = [
     {
@@ -76,6 +80,37 @@ const ProfilePage = () => {
     }
   }, [currentUser]);
 
+  // Check for unsaved changes when medical data updates
+  useEffect(() => {
+    if (currentUser && currentUser.role === "patient") {
+      const patientUser = currentUser as any;
+      const hasChanges = 
+        JSON.stringify(patientUser.medicalHistory || []) !== JSON.stringify(medicalHistory) ||
+        JSON.stringify(patientUser.medications || []) !== JSON.stringify(medications) ||
+        JSON.stringify(patientUser.allergies || []) !== JSON.stringify(allergies);
+      
+      setUnsavedChanges(hasChanges);
+    }
+  }, [currentUser, medicalHistory, medications, allergies]);
+
+  const saveMedicalData = () => {
+    if (currentUser && currentUser.role === "patient") {
+      updateUserProfile({
+        ...currentUser,
+        medicalHistory,
+        medications,
+        allergies
+      });
+      
+      setUnsavedChanges(false);
+      
+      toast({
+        title: "Données médicales mises à jour",
+        description: "Votre dossier médical a été mis à jour avec succès.",
+      });
+    }
+  };
+
   if (!currentUser) {
     return (
       <Layout>
@@ -95,10 +130,19 @@ const ProfilePage = () => {
           </div>
 
           <div className="md:col-span-2">
-            <Tabs defaultValue="personal" className="w-full">
+            <Tabs 
+              value={activeTab} 
+              onValueChange={setActiveTab} 
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="personal">Informations personnelles</TabsTrigger>
-                <TabsTrigger value="medical">Dossier médical</TabsTrigger>
+                <TabsTrigger value="medical">
+                  Dossier médical
+                  {unsavedChanges && (
+                    <span className="ml-2 h-2 w-2 rounded-full bg-red-500"></span>
+                  )}
+                </TabsTrigger>
                 <TabsTrigger value="preferences">Préférences</TabsTrigger>
               </TabsList>
               
@@ -110,6 +154,17 @@ const ProfilePage = () => {
               </TabsContent>
               
               <TabsContent value="medical">
+                {unsavedChanges && (
+                  <div className="mb-4 flex justify-end">
+                    <button
+                      onClick={saveMedicalData}
+                      className="bg-health-blue text-white py-2 px-4 rounded-lg hover:bg-health-dark transition"
+                    >
+                      Enregistrer les modifications
+                    </button>
+                  </div>
+                )}
+                
                 <MedicalRecordSection
                   medicalHistory={medicalHistory}
                   setMedicalHistory={setMedicalHistory}
