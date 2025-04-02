@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { PaperPlane } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface ChatInputProps {
   contactId: string;
@@ -43,7 +43,7 @@ const ChatInput = ({ contactId }: ChatInputProps) => {
         size="icon" 
         className="h-[60px] flex-shrink-0"
       >
-        <PaperPlane className="h-5 w-5" />
+        <Send className="h-5 w-5" />
       </Button>
     </div>
   );
