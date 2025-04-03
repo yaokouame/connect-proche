@@ -15,32 +15,36 @@ import Appointments from "./pages/Appointments";
 import Chat from "./pages/Chat";
 import MedicalTutorials from "./pages/MedicalTutorials";
 import NotFound from "./pages/NotFound";
+import { useState } from "react";
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Create a new QueryClient instance for each app render to prevent sharing between renders
+  const [queryClient] = useState(() => new QueryClient());
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <UserProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/map" element={<Map />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/tutorials" element={<MedicalTutorials />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </UserProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/map" element={<Map />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/appointments" element={<Appointments />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/tutorials" element={<MedicalTutorials />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </UserProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
