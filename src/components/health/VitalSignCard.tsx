@@ -10,7 +10,8 @@ import {
   Thermometer, 
   Activity, 
   Scale, 
-  Lungs 
+  LucideIcon, 
+  Wind
 } from "lucide-react";
 
 interface VitalSignCardProps {
@@ -38,7 +39,7 @@ const VitalSignCard: React.FC<VitalSignCardProps> = ({
       case 'weight':
         return <Scale className="h-5 w-5" />;
       case 'oxygen':
-        return <Lungs className="h-5 w-5" />;
+        return <Wind className="h-5 w-5" />; // Replaced Lungs with Wind icon
       default:
         return <Activity className="h-5 w-5" />;
     }
