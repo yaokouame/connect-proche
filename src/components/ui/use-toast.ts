@@ -1,3 +1,4 @@
 
 // Re-export from the hooks directory
-export { useToast, toast, type ToastActionElement } from "@/hooks/use-toast";
+export { useToast, toast } from "@/hooks/use-toast";
+export type { ToastActionElement } from "@/hooks/use-toast";
