@@ -18,14 +18,58 @@ import {
 } from "@/components/ui/accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Info, Heart, BookOpen, CheckCircle, Bandage } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Info, Heart, BookOpen, CheckCircle, Bandage, Calendar, Phone } from "lucide-react";
 import ConferencesSection from "@/components/tutorials/ConferencesSection";
+import { Link } from "react-router-dom";
+import { useUser } from "@/contexts/UserContext";
 
 const MedicalTutorials = () => {
   const [expandedTutorial, setExpandedTutorial] = useState<string | null>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeTab, setActiveTab] = useState<string>("tutorials");
+  const { toast } = useToast();
+  const { currentUser } = useUser();
+  
+  const [contactForm, setContactForm] = useState({
+    subject: "",
+    message: "",
+    specialty: ""
+  });
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Message envoyé",
+      description: "Votre message a été envoyé au spécialiste. Vous serez contacté prochainement.",
+    });
+    setContactForm({ subject: "", message: "", specialty: "" });
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setContactForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setContactForm(prev => ({ ...prev, specialty: value }));
+  };
 
   const tutorials = [
     {
@@ -334,8 +378,101 @@ const MedicalTutorials = () => {
             un professionnel de santé pour obtenir des conseils personnalisés.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button>Prendre rendez-vous</Button>
-            <Button variant="outline">Contacter un spécialiste</Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Prendre rendez-vous
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Prendre rendez-vous</DialogTitle>
+                  <DialogDescription>
+                    {currentUser ? 
+                      "Vous allez être redirigé vers la page de prise de rendez-vous." : 
+                      "Veuillez vous connecter pour prendre rendez-vous."
+                    }
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  {currentUser ? (
+                    <Link to="/appointments" className="w-full">
+                      <Button className="w-full">Continuer vers les rendez-vous</Button>
+                    </Link>
+                  ) : (
+                    <Link to="/login" className="w-full">
+                      <Button className="w-full">Se connecter</Button>
+                    </Link>
+                  )}
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Phone className="mr-2 h-4 w-4" />
+                  Contacter un spécialiste
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Contacter un spécialiste</DialogTitle>
+                  <DialogDescription>
+                    Complétez le formulaire ci-dessous pour envoyer un message à un spécialiste.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleContactSubmit} className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="specialty">Spécialité</Label>
+                    <Select 
+                      value={contactForm.specialty}
+                      onValueChange={handleSelectChange}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez une spécialité" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cardiology">Cardiologie</SelectItem>
+                        <SelectItem value="dermatology">Dermatologie</SelectItem>
+                        <SelectItem value="general">Médecine générale</SelectItem>
+                        <SelectItem value="neurology">Neurologie</SelectItem>
+                        <SelectItem value="pediatrics">Pédiatrie</SelectItem>
+                        <SelectItem value="psychiatry">Psychiatrie</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Sujet</Label>
+                    <Input 
+                      id="subject" 
+                      name="subject"
+                      value={contactForm.subject}
+                      onChange={handleInputChange}
+                      placeholder="Sujet de votre message"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea 
+                      id="message" 
+                      name="message"
+                      value={contactForm.message}
+                      onChange={handleInputChange}
+                      placeholder="Décrivez votre question ou préoccupation..."
+                      required
+                      rows={5}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" className="w-full">Envoyer</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
