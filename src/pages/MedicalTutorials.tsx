@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { 
@@ -10,6 +9,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Accordion,
   AccordionContent,
@@ -20,10 +20,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Info, Heart, BookOpen, CheckCircle, Bandage } from "lucide-react";
+import ConferencesSection from "@/components/tutorials/ConferencesSection";
 
 const MedicalTutorials = () => {
   const [expandedTutorial, setExpandedTutorial] = useState<string | null>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const [activeTab, setActiveTab] = useState<string>("tutorials");
 
   const tutorials = [
     {
@@ -261,56 +263,69 @@ const MedicalTutorials = () => {
     <Layout>
       <div className="space-y-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4 text-health-blue">Tutoriels médicaux</h1>
+          <h1 className="text-3xl font-bold mb-4 text-health-blue">Centre d'apprentissage médical</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Des informations claires et fiables pour mieux comprendre votre santé 
-            et celle de vos proches.
+            Des informations claires et fiables pour mieux comprendre votre santé
+            et celle de vos proches, ainsi que des formations pour développer vos compétences.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tutorials.map((tutorial) => (
-            <Card key={tutorial.id} className="h-full flex flex-col">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  {tutorial.icon}
-                  <CardTitle>{tutorial.title}</CardTitle>
-                </div>
-                <CardDescription>{tutorial.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                {isMobile ? (
-                  <Collapsible
-                    open={expandedTutorial === tutorial.id}
-                    onOpenChange={() => handleTutorialClick(tutorial.id)}
-                  >
-                    <CollapsibleTrigger asChild>
-                      <Button variant="outline" className="w-full">
+        <Tabs defaultValue="tutorials" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="tutorials">Tutoriels</TabsTrigger>
+            <TabsTrigger value="conferences">Formations et conférences</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="tutorials">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tutorials.map((tutorial) => (
+                <Card key={tutorial.id} className="h-full flex flex-col">
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      {tutorial.icon}
+                      <CardTitle>{tutorial.title}</CardTitle>
+                    </div>
+                    <CardDescription>{tutorial.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    {isMobile ? (
+                      <Collapsible
+                        open={expandedTutorial === tutorial.id}
+                        onOpenChange={() => handleTutorialClick(tutorial.id)}
+                      >
+                        <CollapsibleTrigger asChild>
+                          <Button variant="outline" className="w-full">
+                            {expandedTutorial === tutorial.id ? "Masquer" : "En savoir plus"}
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-4">
+                          {tutorial.content}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ) : (
+                      expandedTutorial === tutorial.id && tutorial.content
+                    )}
+                  </CardContent>
+                  <CardFooter>
+                    {!isMobile && (
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => handleTutorialClick(tutorial.id)}
+                      >
                         {expandedTutorial === tutorial.id ? "Masquer" : "En savoir plus"}
                       </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-4">
-                      {tutorial.content}
-                    </CollapsibleContent>
-                  </Collapsible>
-                ) : (
-                  expandedTutorial === tutorial.id && tutorial.content
-                )}
-              </CardContent>
-              <CardFooter>
-                {!isMobile && (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => handleTutorialClick(tutorial.id)}
-                  >
-                    {expandedTutorial === tutorial.id ? "Masquer" : "En savoir plus"}
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                    )}
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="conferences">
+            <ConferencesSection />
+          </TabsContent>
+        </Tabs>
 
         <div className="mt-10 text-center">
           <h2 className="text-2xl font-semibold mb-4">Besoin de plus d'informations?</h2>
