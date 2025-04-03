@@ -15,6 +15,7 @@ import Appointments from "./pages/Appointments";
 import Chat from "./pages/Chat";
 import MedicalTutorials from "./pages/MedicalTutorials";
 import HealthTracker from "./pages/HealthTracker";
+import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -40,6 +41,7 @@ const App = () => {
               <Route path="/chat" element={<Chat />} />
               <Route path="/tutorials" element={<MedicalTutorials />} />
               <Route path="/health-tracker" element={<HealthTracker />} />
+              <Route path="/reviews" element={<Reviews />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
