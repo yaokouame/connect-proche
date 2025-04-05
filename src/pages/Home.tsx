@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Layout from "@/components/Layout";
-import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight, UserRound } from "lucide-react";
+import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight, UserRound, Activity } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -114,16 +114,16 @@ const Home = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
               <div className="w-12 h-12 rounded-full bg-health-blue/10 flex items-center justify-center mb-4">
-                <ShoppingCart className="w-6 h-6 text-health-blue" />
+                <Activity className="w-6 h-6 text-health-blue" />
               </div>
-              <CardTitle className="text-xl">Pharmacie en ligne</CardTitle>
+              <CardTitle className="text-xl">Bien-être & Prévention</CardTitle>
               <CardDescription>
-                Commandez vos médicaments et produits de santé en ligne.
+                Suivez votre activité physique, nutrition et sommeil pour une meilleure santé.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link to="/products" className="text-health-blue hover:underline flex items-center">
-                Voir les produits <ArrowRight className="ml-2 h-4 w-4" />
+              <Link to="/wellness" className="text-health-blue hover:underline flex items-center">
+                Accéder <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </CardContent>
           </Card>

@@ -15,6 +15,7 @@ import Appointments from "./pages/Appointments";
 import Chat from "./pages/Chat";
 import MedicalTutorials from "./pages/MedicalTutorials";
 import HealthTracker from "./pages/HealthTracker";
+import Wellness from "./pages/Wellness";
 import Reviews from "./pages/Reviews";
 import Medications from "./pages/Medications";
 import Professionals from "./pages/Professionals";
@@ -43,6 +44,7 @@ const App = () => {
               <Route path="/chat" element={<Chat />} />
               <Route path="/tutorials" element={<MedicalTutorials />} />
               <Route path="/health-tracker" element={<HealthTracker />} />
+              <Route path="/wellness" element={<Wellness />} />
               <Route path="/reviews" element={<Reviews />} />
               <Route path="/medications" element={<Medications />} />
               <Route path="/professionals" element={<Professionals />} />
