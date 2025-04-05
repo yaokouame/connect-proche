@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Search, Pills, Check, Info } from "lucide-react";
+import { AlertTriangle, Search, Pill, Check, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -227,7 +227,7 @@ const MedicationInteractions = () => {
                 </div>
               ) : (
                 <div className="text-center py-8 border rounded-md">
-                  <Pills className="mx-auto h-10 w-10 text-gray-400 mb-2" />
+                  <Pill className="mx-auto h-10 w-10 text-gray-400 mb-2" />
                   <p className="text-gray-500 mb-2">Aucune vérification effectuée</p>
                   <p className="text-sm text-gray-400">Saisissez deux médicaments pour vérifier leurs interactions</p>
                 </div>
