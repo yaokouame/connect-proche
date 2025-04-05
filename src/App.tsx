@@ -16,6 +16,7 @@ import Chat from "./pages/Chat";
 import MedicalTutorials from "./pages/MedicalTutorials";
 import HealthTracker from "./pages/HealthTracker";
 import Reviews from "./pages/Reviews";
+import Medications from "./pages/Medications";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -42,6 +43,7 @@ const App = () => {
               <Route path="/tutorials" element={<MedicalTutorials />} />
               <Route path="/health-tracker" element={<HealthTracker />} />
               <Route path="/reviews" element={<Reviews />} />
+              <Route path="/medications" element={<Medications />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
