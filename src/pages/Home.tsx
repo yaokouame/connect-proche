@@ -10,13 +10,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Layout from "@/components/Layout";
-import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight } from "lucide-react";
+import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight, UserRound } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
 
   const handleFindProfessional = () => {
-    navigate("/map");
+    navigate("/professionals");
   };
 
   return (
@@ -97,16 +97,16 @@ const Home = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
               <div className="w-12 h-12 rounded-full bg-health-green/10 flex items-center justify-center mb-4">
-                <MapIcon className="w-6 h-6 text-health-green" />
+                <UserRound className="w-6 h-6 text-health-green" />
               </div>
-              <CardTitle className="text-xl">Établissements de proximité</CardTitle>
+              <CardTitle className="text-xl">Professionnels de santé</CardTitle>
               <CardDescription>
-                Localisez les pharmacies et centres de santé près de chez vous.
+                Trouvez et contactez les professionnels de santé dont vous avez besoin.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link to="/map" className="text-health-blue hover:underline flex items-center">
-                Explorer la carte <ArrowRight className="ml-2 h-4 w-4" />
+              <Link to="/professionals" className="text-health-blue hover:underline flex items-center">
+                Voir les professionnels <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </CardContent>
           </Card>

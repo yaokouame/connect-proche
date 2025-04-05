@@ -28,6 +28,21 @@ export interface ProfessionalProfile extends User {
   appointments?: Appointment[];
 }
 
+export interface Professional {
+  id: string;
+  name: string;
+  specialty: string;
+  location: string;
+  photoUrl: string;
+  rating: number;
+  reviewCount: number;
+  availability?: { day: string; slots: string[] }[];
+  phone: string;
+  email: string;
+  languages: string[];
+  consultationTypes: string[];
+}
+
 export interface Appointment {
   id: string;
   patientId: string;
