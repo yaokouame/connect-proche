@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +13,12 @@ import Layout from "@/components/Layout";
 import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight } from "lucide-react";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleFindProfessional = () => {
+    navigate("/map");
+  };
+
   return (
     <Layout>
       {/* Hero section */}
@@ -32,11 +38,14 @@ const Home = () => {
                 S'inscrire
               </Button>
             </Link>
-            <Link to="/map">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20">
-                Trouver un professionnel
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white hover:bg-white/20"
+              onClick={handleFindProfessional}
+            >
+              Trouver un professionnel
+            </Button>
           </div>
         </div>
       </section>
@@ -62,7 +71,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link to="/register" className="text-health-blue hover:underline flex items-center">
+              <Link to="/profile" className="text-health-blue hover:underline flex items-center">
                 En savoir plus <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </CardContent>
