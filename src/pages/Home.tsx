@@ -44,7 +44,7 @@ const Home = () => {
               className="border-white text-white hover:bg-white/20"
               onClick={handleFindProfessional}
             >
-              Trouver un professionnel
+              Rechercher un professionnel de santé
             </Button>
           </div>
         </div>
