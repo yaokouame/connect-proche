@@ -28,6 +28,11 @@ export interface ProfessionalProfile extends User {
   specialty: string;
   license: string;
   experience: number;
+  // New fields for verification and rating
+  verified?: boolean;
+  verificationDetails?: VerificationDetails;
+  averageRating?: number;
+  reviewCount?: number;
   availability?: { day: string; slots: string[] }[];
   appointments?: Appointment[];
 }
@@ -45,6 +50,9 @@ export interface Professional {
   email: string;
   languages: string[];
   consultationTypes: string[];
+  // New fields for verification
+  verified?: boolean;
+  verificationDetails?: VerificationDetails;
 }
 
 export interface Appointment {
@@ -140,4 +148,26 @@ export interface MedicalShare {
   accessLevel: "full" | "partial" | "readonly";
   createdAt: string;
   isActive: boolean;
+}
+
+// New interface for professional verification
+export interface VerificationDetails {
+  diplomaUrls?: string[];
+  licenseUrl?: string;
+  certificationUrls?: string[];
+  verificationDate?: string;
+  verificationStatus: "pending" | "verified" | "rejected";
+  verificationComments?: string;
+}
+
+// Interface for doctor reviews
+export interface DoctorReview {
+  id: string;
+  doctorId: string;
+  patientId: string;
+  patientName: string;
+  rating: number;
+  comment: string;
+  date: string;
+  isVerified: boolean; // If the review is from a verified patient who had an appointment
 }

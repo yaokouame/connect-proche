@@ -19,8 +19,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { getPharmacies, getHealthCenters } from "@/services/dataService";
-import { Search, MapPin, Phone, Clock } from "lucide-react";
+import { Search, MapPin, Phone, Clock, Navigation, BadgeCheck } from "lucide-react";
 import Layout from "@/components/Layout";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Map = () => {
   const [activeTab, setActiveTab] = useState<"pharmacies" | "centers">("pharmacies");
@@ -29,6 +31,10 @@ const Map = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCenter, setSelectedCenter] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [sortBy, setSortBy] = useState<"distance" | "rating" | "alphabetical">("distance");
+  const { t } = useLanguage();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +54,50 @@ const Map = () => {
     };
     
     fetchData();
-  }, []);
+    
+    // Try to get user's location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          toast({
+            title: "Localisation activée",
+            description: "Les établissements sont maintenant triés par proximité.",
+          });
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          toast({
+            variant: "destructive",
+            title: "Localisation non disponible",
+            description: "Impossible d'accéder à votre position. Vérifiez vos paramètres de confidentialité.",
+          });
+        }
+      );
+    }
+  }, [toast]);
+
+  const calculateDistance = (location: {lat: number, lng: number}) => {
+    if (!userLocation) return Infinity;
+    
+    // Calculate the distance using the Haversine formula
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(location.lat - userLocation.lat);
+    const dLng = deg2rad(location.lng - userLocation.lng);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(userLocation.lat)) * Math.cos(deg2rad(location.lat)) * 
+      Math.sin(dLng/2) * Math.sin(dLng/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    return R * c; // Distance in km
+  };
+
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI/180);
+  };
 
   const filteredPharmacies = pharmacies.filter(pharmacy =>
     pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,6 +111,32 @@ const Map = () => {
       service.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  const sortedPharmacies = [...filteredPharmacies].sort((a, b) => {
+    if (sortBy === "distance" && userLocation) {
+      return calculateDistance(a.location) - calculateDistance(b.location);
+    } else if (sortBy === "alphabetical") {
+      return a.name.localeCompare(b.name);
+    }
+    return 0;
+  });
+
+  const sortedHealthCenters = [...filteredHealthCenters].sort((a, b) => {
+    if (sortBy === "distance" && userLocation) {
+      return calculateDistance(a.location) - calculateDistance(b.location);
+    } else if (sortBy === "alphabetical") {
+      return a.name.localeCompare(b.name);
+    }
+    return 0;
+  });
+  
+  const getDistanceText = (location: {lat: number, lng: number}) => {
+    if (!userLocation) return "";
+    const distance = calculateDistance(location);
+    return distance < 1 ? 
+      `${(distance * 1000).toFixed(0)} m` : 
+      `${distance.toFixed(1)} km`;
+  };
 
   return (
     <Layout>
@@ -84,13 +159,12 @@ const Map = () => {
             </div>
           </div>
 
-          <Select>
+          <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
             <SelectTrigger className="w-full md:w-[200px]">
-              <SelectValue placeholder="Trier par distance" />
+              <SelectValue placeholder="Trier par..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="distance">Distance</SelectItem>
-              <SelectItem value="rating">Évaluation</SelectItem>
               <SelectItem value="alphabetical">Alphabétique</SelectItem>
             </SelectContent>
           </Select>
@@ -107,9 +181,9 @@ const Map = () => {
               <div className="text-center py-8">
                 <p>Chargement des pharmacies...</p>
               </div>
-            ) : filteredPharmacies.length > 0 ? (
+            ) : sortedPharmacies.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredPharmacies.map((pharmacy) => (
+                {sortedPharmacies.map((pharmacy) => (
                   <Card key={pharmacy.id} className="overflow-hidden">
                     <CardHeader className="pb-2">
                       <CardTitle>{pharmacy.name}</CardTitle>
@@ -127,6 +201,12 @@ const Map = () => {
                         <Clock className="h-4 w-4 mr-1" />
                         {pharmacy.hours}
                       </div>
+                      {userLocation && (
+                        <div className="flex items-center text-sm text-blue-600 font-medium mb-4">
+                          <Navigation className="h-4 w-4 mr-1" />
+                          {getDistanceText(pharmacy.location)}
+                        </div>
+                      )}
                       <Button size="sm">Voir sur la carte</Button>
                     </CardContent>
                   </Card>
@@ -144,9 +224,9 @@ const Map = () => {
               <div className="text-center py-8">
                 <p>Chargement des centres de santé...</p>
               </div>
-            ) : filteredHealthCenters.length > 0 ? (
+            ) : sortedHealthCenters.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredHealthCenters.map((center) => (
+                {sortedHealthCenters.map((center) => (
                   <Card key={center.id} className="overflow-hidden">
                     <CardHeader className="pb-2">
                       <CardTitle>{center.name}</CardTitle>
@@ -164,6 +244,13 @@ const Map = () => {
                         <Clock className="h-4 w-4 mr-1" />
                         {center.hours}
                       </div>
+                      
+                      {userLocation && (
+                        <div className="flex items-center text-sm text-blue-600 font-medium mb-4">
+                          <Navigation className="h-4 w-4 mr-1" />
+                          {getDistanceText(center.location)}
+                        </div>
+                      )}
                       
                       <div className="mt-2 mb-4">
                         <p className="text-sm font-medium mb-1">Services:</p>

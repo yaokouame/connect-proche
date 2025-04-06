@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ReviewFormProps {
   doctorId: string;
@@ -16,11 +17,12 @@ const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProp
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (rating === 0) {
-      alert("Veuillez attribuer une note");
+      alert(t('reviews.ratingRequired'));
       return;
     }
     onSubmit(rating, comment);
@@ -29,12 +31,12 @@ const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Donnez votre avis sur {doctorName}</CardTitle>
+        <CardTitle className="text-lg">{t('reviews.giveReview')} {doctorName}</CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Votre évaluation</label>
+            <label className="text-sm font-medium">{t('reviews.yourRating')}</label>
             <div className="flex">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
@@ -53,10 +55,10 @@ const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProp
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="comment" className="text-sm font-medium">Votre commentaire</label>
+            <label htmlFor="comment" className="text-sm font-medium">{t('reviews.yourComment')}</label>
             <Textarea
               id="comment"
-              placeholder="Partagez votre expérience avec ce médecin..."
+              placeholder={t('reviews.shareDoctorExperience')}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={5}
@@ -65,10 +67,10 @@ const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProp
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Annuler
+            {t('common.cancel')}
           </Button>
           <Button type="submit">
-            Publier l'avis
+            {t('reviews.publish')}
           </Button>
         </CardFooter>
       </form>
