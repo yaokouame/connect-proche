@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/sheet";
 import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
+import EmergencyButton from "./emergency/EmergencyButton";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -201,6 +201,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="flex-1 container mx-auto px-4 py-6">
         {children}
       </main>
+      
+      {/* Emergency SOS Button */}
+      <EmergencyButton />
 
       {/* Footer */}
       <footer className="bg-health-dark text-white py-8">

@@ -1,4 +1,3 @@
-
 export interface VitalSign {
   id: string;
   userId: string;
@@ -81,6 +80,12 @@ export interface WellnessGoal {
   startDate: string;
   endDate?: string;
   completed: boolean;
+}
+
+// Add isLoading property to match component props
+export interface WellnessGoalsProps {
+  goals: WellnessGoal[];
+  isLoading?: boolean;
 }
 
 export interface WellnessRecommendation {
