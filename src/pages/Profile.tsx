@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/contexts/UserContext";
 import Layout from "@/components/Layout";
-import { Prescription, PatientProfile } from "@/types/user";
+import { Prescription, PatientProfile, Vaccination, EmergencyContact } from "@/types/user";
 import { useToast } from "@/hooks/use-toast";
 
 // Import refactored components
@@ -23,6 +23,11 @@ const ProfilePage = () => {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [activeTab, setActiveTab] = useState("personal");
   const [unsavedChanges, setUnsavedChanges] = useState(false);
+  
+  // New state for complete health profile
+  const [bloodType, setBloodType] = useState<string>("unknown");
+  const [vaccinations, setVaccinations] = useState<Vaccination[]>([]);
+  const [emergencyContact, setEmergencyContact] = useState<EmergencyContact | undefined>(undefined);
 
   const mockPrescriptions: Prescription[] = [
     {
@@ -69,13 +74,37 @@ const ProfilePage = () => {
     }
   ];
 
+  // Sample vaccinations data
+  const mockVaccinations: Vaccination[] = [
+    {
+      id: "vacc-1",
+      name: "COVID-19 (Pfizer)",
+      date: "2021-05-15",
+      expiryDate: "2022-05-15",
+      batchNumber: "BNT162b2-L123456",
+      provider: "Centre de vaccination Paris 15",
+      notes: "Deuxième dose"
+    },
+    {
+      id: "vacc-2",
+      name: "Grippe saisonnière",
+      date: "2022-10-10",
+      provider: "Pharmacie du Centre",
+      notes: "Vaccination annuelle"
+    }
+  ];
+
   useEffect(() => {
     if (currentUser && currentUser.role === "patient") {
       const patientUser = currentUser as PatientProfile;
       if (patientUser.medicalHistory) setMedicalHistory(patientUser.medicalHistory);
       if (patientUser.medications) setMedications(patientUser.medications);
       if (patientUser.allergies) setAllergies(patientUser.allergies);
+      if (patientUser.bloodType) setBloodType(patientUser.bloodType);
+      if (patientUser.emergencyContact) setEmergencyContact(patientUser.emergencyContact);
       
+      // For demo purposes, we'll use mock data for vaccinations and prescriptions
+      setVaccinations(patientUser.vaccinations || mockVaccinations);
       setPrescriptions(mockPrescriptions);
     }
   }, [currentUser]);
@@ -87,11 +116,14 @@ const ProfilePage = () => {
       const hasChanges = 
         JSON.stringify(patientUser.medicalHistory || []) !== JSON.stringify(medicalHistory) ||
         JSON.stringify(patientUser.medications || []) !== JSON.stringify(medications) ||
-        JSON.stringify(patientUser.allergies || []) !== JSON.stringify(allergies);
+        JSON.stringify(patientUser.allergies || []) !== JSON.stringify(allergies) ||
+        patientUser.bloodType !== bloodType ||
+        JSON.stringify(patientUser.vaccinations || []) !== JSON.stringify(vaccinations) ||
+        JSON.stringify(patientUser.emergencyContact || {}) !== JSON.stringify(emergencyContact || {});
       
       setUnsavedChanges(hasChanges);
     }
-  }, [currentUser, medicalHistory, medications, allergies]);
+  }, [currentUser, medicalHistory, medications, allergies, bloodType, vaccinations, emergencyContact]);
 
   const saveMedicalData = () => {
     if (currentUser && currentUser.role === "patient") {
@@ -105,6 +137,9 @@ const ProfilePage = () => {
       patientProfile.medicalHistory = medicalHistory;
       patientProfile.medications = medications;
       patientProfile.allergies = allergies;
+      patientProfile.bloodType = bloodType as PatientProfile["bloodType"];
+      patientProfile.vaccinations = vaccinations;
+      patientProfile.emergencyContact = emergencyContact;
       
       // Update the user profile
       updateUserProfile(patientProfile);
@@ -181,6 +216,13 @@ const ProfilePage = () => {
                   setAllergies={setAllergies}
                   prescriptions={prescriptions}
                   userRole={currentUser?.role || "none"}
+                  bloodType={bloodType}
+                  setBloodType={setBloodType}
+                  vaccinations={vaccinations}
+                  setVaccinations={setVaccinations}
+                  emergencyContact={emergencyContact}
+                  setEmergencyContact={setEmergencyContact}
+                  patientId={currentUser.id}
                 />
               </TabsContent>
               

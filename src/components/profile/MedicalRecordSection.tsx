@@ -1,13 +1,18 @@
 
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Prescription } from "@/types/user";
+import { Prescription, Vaccination, EmergencyContact } from "@/types/user";
+import { useLanguage } from "@/contexts/LanguageContext";
 import UnauthorizedMedicalRecord from "./UnauthorizedMedicalRecord";
 import MedicalInfoBanner from "./MedicalInfoBanner";
 import MedicalHistorySection from "./MedicalHistorySection";
 import MedicationsSection from "./MedicationsSection";
 import AllergiesSection from "./AllergiesSection";
 import PrescriptionsSection from "./PrescriptionsSection";
+import BloodTypeSection from "./BloodTypeSection";
+import VaccinationsSection from "./VaccinationsSection";
+import EmergencyContactSection from "./EmergencyContactSection";
+import MedicalShareSection from "./MedicalShareSection";
 
 interface MedicalRecordSectionProps {
   medicalHistory: string[];
@@ -18,6 +23,14 @@ interface MedicalRecordSectionProps {
   setAllergies: React.Dispatch<React.SetStateAction<string[]>>;
   prescriptions: Prescription[];
   userRole: string;
+  // New props for complete health profile
+  bloodType?: string;
+  setBloodType?: React.Dispatch<React.SetStateAction<string>>;
+  vaccinations: Vaccination[];
+  setVaccinations: React.Dispatch<React.SetStateAction<Vaccination[]>>;
+  emergencyContact?: EmergencyContact;
+  setEmergencyContact: React.Dispatch<React.SetStateAction<EmergencyContact | undefined>>;
+  patientId: string;
 }
 
 const MedicalRecordSection = ({
@@ -28,8 +41,17 @@ const MedicalRecordSection = ({
   allergies,
   setAllergies,
   prescriptions,
-  userRole
+  userRole,
+  bloodType,
+  setBloodType,
+  vaccinations,
+  setVaccinations,
+  emergencyContact,
+  setEmergencyContact,
+  patientId
 }: MedicalRecordSectionProps) => {
+  const { t } = useLanguage();
+  
   const addMedicalHistory = (item: string) => {
     setMedicalHistory([...medicalHistory, item]);
   };
@@ -68,6 +90,13 @@ const MedicalRecordSection = ({
       </CardHeader>
       <CardContent className="space-y-8">
         <MedicalInfoBanner />
+        
+        {setBloodType && (
+          <BloodTypeSection 
+            bloodType={bloodType}
+            setBloodType={setBloodType}
+          />
+        )}
 
         <MedicalHistorySection 
           medicalHistory={medicalHistory}
@@ -87,7 +116,19 @@ const MedicalRecordSection = ({
           removeAllergy={removeAllergy}
         />
         
+        <VaccinationsSection 
+          vaccinations={vaccinations}
+          setVaccinations={setVaccinations}
+        />
+        
+        <EmergencyContactSection 
+          emergencyContact={emergencyContact}
+          setEmergencyContact={setEmergencyContact}
+        />
+        
         <PrescriptionsSection prescriptions={prescriptions} />
+        
+        <MedicalShareSection patientId={patientId} />
       </CardContent>
     </Card>
   );

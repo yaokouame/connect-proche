@@ -17,6 +17,10 @@ export interface PatientProfile extends User {
   allergies?: string[];
   prescriptions?: Prescription[];
   appointments?: Appointment[];
+  // New fields for complete health profile
+  bloodType?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "unknown";
+  vaccinations?: Vaccination[];
+  emergencyContact?: EmergencyContact;
 }
 
 export interface ProfessionalProfile extends User {
@@ -107,4 +111,33 @@ export interface Product {
   imageUrl: string;
   inStock: boolean;
   requiresPrescription: boolean;
+}
+
+// New interfaces for complete health profile
+export interface Vaccination {
+  id: string;
+  name: string;
+  date: string;
+  expiryDate?: string;
+  batchNumber?: string;
+  provider?: string;
+  notes?: string;
+}
+
+export interface EmergencyContact {
+  name: string;
+  relationship: string;
+  phone: string;
+  email?: string;
+}
+
+export interface MedicalShare {
+  id: string;
+  patientId: string;
+  professionalId?: string;
+  token: string;
+  expiryDate: string;
+  accessLevel: "full" | "partial" | "readonly";
+  createdAt: string;
+  isActive: boolean;
 }
