@@ -13,15 +13,16 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Phone, Mail, MessageSquare, Video, PhoneCall } from "lucide-react";
+import { Calendar, MapPin, Phone, Mail, MessageSquare, Video, PhoneCall, Languages } from "lucide-react";
 import { Professional } from "@/types/user";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const Professionals = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
 
@@ -37,6 +38,18 @@ const Professionals = () => {
     "Dentiste",
     "Kinésithérapeute",
     "Infirmier"
+  ];
+
+  // Liste des langues parlées par les professionnels
+  const availableLanguages = [
+    "Français",
+    "Anglais",
+    "Espagnol",
+    "Allemand",
+    "Italien",
+    "Arabe",
+    "Portugais",
+    "Chinois"
   ];
 
   // Données de démonstration pour les professionnels de santé
@@ -131,7 +144,18 @@ const Professionals = () => {
     }
   ];
 
-  // Filtrage des professionnels en fonction de la recherche et de la spécialité sélectionnée
+  // Toggle a language filter
+  const handleLanguageToggle = (language: string) => {
+    setSelectedLanguages(prev => {
+      if (prev.includes(language)) {
+        return prev.filter(lang => lang !== language);
+      } else {
+        return [...prev, language];
+      }
+    });
+  };
+
+  // Filtrage des professionnels en fonction de la recherche, spécialité et langues
   const filteredProfessionals = professionals.filter(prof => {
     const matchesSearch = prof.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                         prof.specialty.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -139,7 +163,11 @@ const Professionals = () => {
     
     const matchesSpecialty = selectedSpecialty ? prof.specialty === selectedSpecialty : true;
     
-    return matchesSearch && matchesSpecialty;
+    const matchesLanguages = selectedLanguages.length > 0 
+      ? selectedLanguages.some(lang => prof.languages.includes(lang))
+      : true;
+    
+    return matchesSearch && matchesSpecialty && matchesLanguages;
   });
 
   // Navigation vers la page de chat avec le professionnel
@@ -165,16 +193,7 @@ const Professionals = () => {
             <p className="text-gray-600 mb-8">{t('professionals.subtitle')}</p>
           </div>
           <div className="w-48">
-            <Select value={language} onValueChange={(value) => setLanguage(value as 'fr' | 'en' | 'es')}>
-              <SelectTrigger>
-                <SelectValue placeholder="Language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="es">Español</SelectItem>
-              </SelectContent>
-            </Select>
+            <LanguageSelector />
           </div>
         </div>
         
@@ -218,6 +237,30 @@ const Professionals = () => {
                       onClick={() => handleSpecialtyClick(specialty)}
                     >
                       {specialty}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* New Card for Languages Filter */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center">
+                  <Languages className="h-5 w-5 mr-2" />
+                  {t('professionals.filters.languages')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {availableLanguages.map(lang => (
+                    <Button
+                      key={lang}
+                      variant={selectedLanguages.includes(lang) ? "default" : "outline"}
+                      className="w-full justify-start"
+                      onClick={() => handleLanguageToggle(lang)}
+                    >
+                      {lang}
                     </Button>
                   ))}
                 </div>
@@ -290,11 +333,15 @@ const Professionals = () => {
                           </div>
                           
                           <div className="flex flex-wrap gap-2">
-                            {professional.languages.map(language => (
-                              <Badge key={language} variant="outline" className="bg-gray-100">
-                                {language}
-                              </Badge>
-                            ))}
+                            {/* Language badges with enhanced visual distinction */}
+                            <div className="flex items-center mr-2">
+                              <Languages className="h-4 w-4 mr-1 text-health-blue" />
+                              {professional.languages.map(language => (
+                                <Badge key={language} variant="outline" className="bg-blue-50 text-health-blue border-health-blue ml-1">
+                                  {language}
+                                </Badge>
+                              ))}
+                            </div>
                             {professional.consultationTypes.map(type => (
                               <Badge key={type} className="bg-health-blue/10 text-health-blue">
                                 {type}
