@@ -7,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Info } from "lucide-react";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
 
 const PreferencesSection = () => {
   const { toast } = useToast();
-  const [language, setLanguage] = useState("fr");
+  const { language, setLanguage } = useLanguage();
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifSms, setNotifSms] = useState(true);
   const [shareProfile, setShareProfile] = useState(true);
@@ -25,6 +26,10 @@ const PreferencesSection = () => {
     });
   };
 
+  const handleLanguageChange = (value: string) => {
+    setLanguage(value as Language);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -36,7 +41,7 @@ const PreferencesSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="language">Langue</Label>
-              <Select value={language} onValueChange={setLanguage}>
+              <Select value={language} onValueChange={handleLanguageChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une langue" />
                 </SelectTrigger>

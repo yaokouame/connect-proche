@@ -16,11 +16,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Phone, Mail, MessageSquare, Video, PhoneCall } from "lucide-react";
 import { Professional } from "@/types/user";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Professionals = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { language, setLanguage, t } = useLanguage();
 
   // Liste des spécialités pour le filtrage
   const specialties = [
@@ -156,15 +159,31 @@ const Professionals = () => {
   return (
     <Layout>
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-2 text-health-blue">Professionnels de santé</h1>
-        <p className="text-gray-600 mb-8">Trouvez et contactez les professionnels de santé dont vous avez besoin</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2 text-health-blue">{t('professionals.title')}</h1>
+            <p className="text-gray-600 mb-8">{t('professionals.subtitle')}</p>
+          </div>
+          <div className="w-48">
+            <Select value={language} onValueChange={(value) => setLanguage(value as 'fr' | 'en' | 'es')}>
+              <SelectTrigger>
+                <SelectValue placeholder="Language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="fr">Français</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Español</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="md:col-span-3">
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Rechercher par nom, spécialité ou lieu..."
+                placeholder={t('professionals.search.placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -175,8 +194,8 @@ const Professionals = () => {
           <div className="md:col-span-1">
             <Tabs defaultValue="specialty">
               <TabsList className="w-full">
-                <TabsTrigger value="specialty" className="flex-1">Spécialité</TabsTrigger>
-                <TabsTrigger value="location" className="flex-1">Lieu</TabsTrigger>
+                <TabsTrigger value="specialty" className="flex-1">{t('professionals.specialty')}</TabsTrigger>
+                <TabsTrigger value="location" className="flex-1">{t('professionals.location')}</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
@@ -187,7 +206,7 @@ const Professionals = () => {
           <div className="space-y-6">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle>Spécialités</CardTitle>
+                <CardTitle>{t('professionals.filters.specialties')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -207,18 +226,18 @@ const Professionals = () => {
             
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle>Types de consultation</CardTitle>
+                <CardTitle>{t('professionals.filters.consultationTypes')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <Button variant="outline" className="w-full justify-start">
-                    <span className="mr-2">🏥</span> Présentiel
+                    <span className="mr-2">🏥</span> {t('professionals.filters.inPerson')}
                   </Button>
                   <Button variant="outline" className="w-full justify-start">
-                    <Video className="h-4 w-4 mr-2" /> Vidéo
+                    <Video className="h-4 w-4 mr-2" /> {t('professionals.filters.video')}
                   </Button>
                   <Button variant="outline" className="w-full justify-start">
-                    <PhoneCall className="h-4 w-4 mr-2" /> Téléphone
+                    <PhoneCall className="h-4 w-4 mr-2" /> {t('professionals.filters.phone')}
                   </Button>
                 </div>
               </CardContent>
@@ -291,21 +310,21 @@ const Professionals = () => {
                               onClick={() => handleContactProfessional(professional.id)}
                             >
                               <MessageSquare className="h-4 w-4 mr-2" />
-                              Contacter
+                              {t('professionals.contact')}
                             </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
                             >
                               <Calendar className="h-4 w-4 mr-2" />
-                              Prendre rendez-vous
+                              {t('professionals.appointment')}
                             </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
                             >
                               <Video className="h-4 w-4 mr-2" />
-                              Consultation vidéo
+                              {t('professionals.videoConsultation')}
                             </Button>
                           </div>
                         </div>
@@ -316,8 +335,8 @@ const Professionals = () => {
               </div>
             ) : (
               <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <p className="text-gray-600">Aucun professionnel ne correspond à votre recherche.</p>
-                <p className="text-gray-600 mt-2">Essayez de modifier vos critères.</p>
+                <p className="text-gray-600">{t('professionals.noResults')}</p>
+                <p className="text-gray-600 mt-2">{t('professionals.tryAgain')}</p>
               </div>
             )}
           </div>

@@ -20,6 +20,8 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import LanguageSelector from "./LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -28,6 +30,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { currentUser, logout } = useUser();
   const location = useLocation();
+  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const handleLogout = () => {
@@ -104,6 +107,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Link>
               );
             })}
+            <LanguageSelector className="w-32" />
             {currentUser ? (
               <Button 
                 variant="ghost" 
@@ -136,6 +140,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="flex flex-col h-full">
                 <div className="py-4 border-b">
                   <h2 className="text-lg font-semibold text-health-blue">ConnectProche</h2>
+                  <div className="mt-2">
+                    <LanguageSelector className="w-full" />
+                  </div>
                 </div>
                 <nav className="flex flex-col space-y-4 mt-4">
                   {navItems.map((item) => {
