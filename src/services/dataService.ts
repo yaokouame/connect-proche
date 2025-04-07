@@ -1,5 +1,4 @@
-
-import { Pharmacy, HealthCenter, Product, Appointment, InsuranceProvider } from "../types/user";
+import { InsuranceVoucher, InsuranceProvider } from "@/types/health";
 
 // Mock data for pharmacies
 export const getPharmacies = async (): Promise<Pharmacy[]> => {

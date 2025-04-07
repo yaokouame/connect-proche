@@ -144,3 +144,11 @@ export interface InsuranceProvider {
   availablePlans: string[];
 }
 
+// New interface for voice recognition
+export interface VoiceRecognitionProps {
+  onResult: (text: string) => void;
+  onListening?: (isListening: boolean) => void;
+  language?: string;
+  continuous?: boolean;
+  className?: string;
+}

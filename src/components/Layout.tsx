@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ import {
 import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import EmergencyButton from "./emergency/EmergencyButton";
+import GlobalVoiceSearch from "./voice/GlobalVoiceSearch";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -107,6 +109,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Link>
               );
             })}
+            
+            {/* Voice Search */}
+            <GlobalVoiceSearch className="mx-4" placeholder="Recherche ou commande vocale..." />
+            
             <LanguageSelector className="w-32" />
             {currentUser ? (
               <Button 
@@ -130,70 +136,73 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </nav>
 
           {/* Mobile Navigation */}
-          <Sheet>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[250px]">
-              <div className="flex flex-col h-full">
-                <div className="py-4 border-b">
-                  <h2 className="text-lg font-semibold text-health-blue">ConnectProche</h2>
-                  <div className="mt-2">
-                    <LanguageSelector className="w-full" />
+          <div className="flex items-center space-x-2 md:hidden">
+            <GlobalVoiceSearch className="w-full max-w-[180px]" placeholder="Recherche..." />
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[250px]">
+                <div className="flex flex-col h-full">
+                  <div className="py-4 border-b">
+                    <h2 className="text-lg font-semibold text-health-blue">ConnectProche</h2>
+                    <div className="mt-2">
+                      <LanguageSelector className="w-full" />
+                    </div>
+                  </div>
+                  <nav className="flex flex-col space-y-4 mt-4">
+                    {navItems.map((item) => {
+                      if (item.requiresAuth && !currentUser) return null;
+                      return (
+                        <SheetClose asChild key={item.path}>
+                          <Link
+                            to={item.path}
+                            className={`flex items-center p-2 rounded-md ${
+                              location.pathname === item.path
+                                ? "bg-health-teal/10 text-health-blue"
+                                : "text-gray-600 hover:bg-gray-100"
+                            }`}
+                          >
+                            {item.icon}
+                            {item.label}
+                          </Link>
+                        </SheetClose>
+                      );
+                    })}
+                  </nav>
+                  <div className="mt-auto pb-6">
+                    {currentUser ? (
+                      <SheetClose asChild>
+                        <Button 
+                          variant="outline" 
+                          className="w-full flex items-center justify-center"
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="h-5 w-5 mr-2" />
+                          Déconnexion
+                        </Button>
+                      </SheetClose>
+                    ) : (
+                      <div className="space-y-2">
+                        <SheetClose asChild>
+                          <Link to="/login">
+                            <Button variant="outline" className="w-full">Connexion</Button>
+                          </Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                          <Link to="/register">
+                            <Button className="w-full">Inscription</Button>
+                          </Link>
+                        </SheetClose>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <nav className="flex flex-col space-y-4 mt-4">
-                  {navItems.map((item) => {
-                    if (item.requiresAuth && !currentUser) return null;
-                    return (
-                      <SheetClose asChild key={item.path}>
-                        <Link
-                          to={item.path}
-                          className={`flex items-center p-2 rounded-md ${
-                            location.pathname === item.path
-                              ? "bg-health-teal/10 text-health-blue"
-                              : "text-gray-600 hover:bg-gray-100"
-                          }`}
-                        >
-                          {item.icon}
-                          {item.label}
-                        </Link>
-                      </SheetClose>
-                    );
-                  })}
-                </nav>
-                <div className="mt-auto pb-6">
-                  {currentUser ? (
-                    <SheetClose asChild>
-                      <Button 
-                        variant="outline" 
-                        className="w-full flex items-center justify-center"
-                        onClick={handleLogout}
-                      >
-                        <LogOut className="h-5 w-5 mr-2" />
-                        Déconnexion
-                      </Button>
-                    </SheetClose>
-                  ) : (
-                    <div className="space-y-2">
-                      <SheetClose asChild>
-                        <Link to="/login">
-                          <Button variant="outline" className="w-full">Connexion</Button>
-                        </Link>
-                      </SheetClose>
-                      <SheetClose asChild>
-                        <Link to="/register">
-                          <Button className="w-full">Inscription</Button>
-                        </Link>
-                      </SheetClose>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
