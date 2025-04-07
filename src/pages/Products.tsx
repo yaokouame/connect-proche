@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -33,14 +32,16 @@ import {
   DialogDescription 
 } from "@/components/ui/dialog";
 import { useUser } from "@/contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+  const [cart, setCart] = useState<{ product: Product; quantity: number; prescription?: Prescription }[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [userPrescriptions, setUserPrescriptions] = useState<Prescription[]>([]);
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
@@ -50,7 +51,6 @@ const Products = () => {
   const { currentUser } = useUser();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Mock prescriptions for testing
   const mockPrescriptions: Prescription[] = [
     {
       id: "presc-1",
@@ -88,8 +88,12 @@ const Products = () => {
   ];
 
   useEffect(() => {
-    // In a real app, we would fetch the user's prescriptions here
     setUserPrescriptions(mockPrescriptions);
+    
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
     
     const fetchProducts = async () => {
       setLoading(true);
@@ -139,15 +143,24 @@ const Products = () => {
         (item) => item.product.id === product.id
       );
 
+      let updatedCart;
       if (existingItem) {
-        return prevCart.map((item) =>
+        updatedCart = prevCart.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        return [...prevCart, { product, quantity: 1 }];
+        updatedCart = [...prevCart, { 
+          product, 
+          quantity: 1, 
+          prescription: selectedPrescription || undefined 
+        }];
       }
+      
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      
+      return updatedCart;
     });
 
     toast({
@@ -155,17 +168,14 @@ const Products = () => {
       description: `${product.name} a été ajouté à votre panier.`,
     });
     
-    // Reset selected prescription after adding to cart
     setSelectedPrescription(null);
   };
 
   const handlePrescriptionSelect = (prescription: Prescription) => {
     setSelectedPrescription(prescription);
     
-    // Close the dialog
     setIsPrescriptionUploadOpen(false);
     
-    // If a product was selected, add it to cart with the prescription
     if (selectedProduct) {
       setTimeout(() => {
         setCart((prevCart) => {
@@ -173,15 +183,24 @@ const Products = () => {
             (item) => item.product.id === selectedProduct.id
           );
 
+          let updatedCart;
           if (existingItem) {
-            return prevCart.map((item) =>
+            updatedCart = prevCart.map((item) =>
               item.product.id === selectedProduct.id
                 ? { ...item, quantity: item.quantity + 1 }
                 : item
             );
           } else {
-            return [...prevCart, { product: selectedProduct, quantity: 1 }];
+            updatedCart = [...prevCart, { 
+              product: selectedProduct, 
+              quantity: 1,
+              prescription
+            }];
           }
+          
+          localStorage.setItem("cart", JSON.stringify(updatedCart));
+          
+          return updatedCart;
         });
 
         toast({
@@ -224,16 +243,14 @@ const Products = () => {
 
     setIsUploading(true);
     
-    // Simuler un téléchargement
     setTimeout(() => {
-      // Créer une nouvelle ordonnance avec le fichier téléchargé
       const newPrescription: Prescription = {
         id: `presc-${Date.now()}`,
         patientId: currentUser?.id || "guest",
         professionalId: "unknown",
         professionalName: "Ordonnance externe",
         date: new Date().toISOString().split('T')[0],
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // + 90 jours
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         status: "active",
         medications: [],
         instructions: "Ordonnance externe téléchargée via l'application",
@@ -256,7 +273,6 @@ const Products = () => {
         description: "Votre ordonnance a été téléchargée et sera vérifiée par un pharmacien.",
       });
       
-      // If a product was selected, add it to cart with the prescription
       if (selectedProduct) {
         setTimeout(() => {
           setCart((prevCart) => {
@@ -264,15 +280,24 @@ const Products = () => {
               (item) => item.product.id === selectedProduct.id
             );
 
+            let updatedCart;
             if (existingItem) {
-              return prevCart.map((item) =>
+              updatedCart = prevCart.map((item) =>
                 item.product.id === selectedProduct.id
                   ? { ...item, quantity: item.quantity + 1 }
                   : item
               );
             } else {
-              return [...prevCart, { product: selectedProduct, quantity: 1 }];
+              updatedCart = [...prevCart, { 
+                product: selectedProduct, 
+                quantity: 1,
+                prescription
+              }];
             }
+            
+            localStorage.setItem("cart", JSON.stringify(updatedCart));
+            
+            return updatedCart;
           });
 
           toast({
@@ -296,7 +321,12 @@ const Products = () => {
         <div className="flex flex-col md:flex-row items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-health-dark">Pharmacie en ligne</h1>
           <div className="flex items-center mt-4 md:mt-0">
-            <Button variant="outline" size="sm" className="flex items-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center"
+              onClick={() => navigate("/cart")}
+            >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Panier ({cart.reduce((sum, item) => sum + item.quantity, 0)})
             </Button>
@@ -338,7 +368,6 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Information banner about prescription medication */}
         <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-8">
           <div className="flex items-start">
             <FileText className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
@@ -419,7 +448,6 @@ const Products = () => {
         )}
       </div>
       
-      {/* Dialog for prescription upload */}
       <Dialog open={isPrescriptionUploadOpen} onOpenChange={setIsPrescriptionUploadOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -430,7 +458,6 @@ const Products = () => {
           </DialogHeader>
           
           <div className="space-y-4 my-2">
-            {/* List existing prescriptions */}
             {userPrescriptions.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium mb-2">Vos ordonnances disponibles</h3>
@@ -467,7 +494,6 @@ const Products = () => {
               </div>
             )}
             
-            {/* Divider */}
             {userPrescriptions.length > 0 && (
               <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
@@ -479,7 +505,6 @@ const Products = () => {
               </div>
             )}
             
-            {/* Upload new prescription */}
             <div>
               <h3 className="text-sm font-medium mb-2">Télécharger une nouvelle ordonnance</h3>
               <input 
