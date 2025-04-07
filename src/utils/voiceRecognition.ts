@@ -1,4 +1,18 @@
 
+// Type definition for SpeechRecognition
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+  onerror: (event: any) => void;
+  onresult: (event: any) => void;
+  onend: () => void;
+  onstart: () => void;
+}
+
 // Check if browser supports speech recognition
 const isSpeechRecognitionSupported = () => {
   return 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;

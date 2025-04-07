@@ -115,6 +115,19 @@ export interface Prescription {
     coveragePercentage?: number;
     voucherId?: string;
   };
+  // New field for prescription image/file
+  prescriptionImage?: PrescriptionFile;
+}
+
+// New interface for prescription files
+export interface PrescriptionFile {
+  id: string;
+  fileUrl: string;
+  fileName: string;
+  uploadDate: string;
+  verified: boolean;
+  verifiedBy?: string;
+  verificationDate?: string;
 }
 
 export interface PrescribedMedication {
@@ -169,6 +182,19 @@ export interface Product {
     coveragePercentage?: number;
     requiresVoucher?: boolean;
   };
+}
+
+// New interface for product order with prescription
+export interface ProductOrder {
+  id: string;
+  productId: string;
+  patientId: string;
+  quantity: number;
+  status: "pending" | "verified" | "processing" | "completed" | "rejected";
+  prescriptionId?: string;
+  prescriptionFileId?: string;
+  orderDate: string;
+  notes?: string;
 }
 
 // New interfaces for complete health profile
