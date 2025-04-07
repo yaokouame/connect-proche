@@ -1,6 +1,6 @@
 
 // Type definition for SpeechRecognition
-interface SpeechRecognition extends EventTarget {
+export interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;

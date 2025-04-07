@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { isSpeechRecognitionSupported, createSpeechRecognition } from "@/utils/voiceRecognition";
+import { isSpeechRecognitionSupported, createSpeechRecognition, SpeechRecognition } from "@/utils/voiceRecognition";
 import { VoiceRecognitionProps } from "@/types/health";
 
 const VoiceRecognition: React.FC<VoiceRecognitionProps> = ({
