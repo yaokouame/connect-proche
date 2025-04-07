@@ -6,6 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -17,12 +18,14 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { getPharmacies, getHealthCenters } from "@/services/dataService";
-import { Search, MapPin, Phone, Clock, Navigation, BadgeCheck } from "lucide-react";
+import { Search, MapPin, Phone, Clock, Navigation, BadgeCheck, Wallet, ShieldCheck } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const Map = () => {
   const [activeTab, setActiveTab] = useState<"pharmacies" | "centers">("pharmacies");
@@ -33,8 +36,11 @@ const Map = () => {
   const [selectedCenter, setSelectedCenter] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [sortBy, setSortBy] = useState<"distance" | "rating" | "alphabetical">("distance");
+  const [filterByInsurance, setFilterByInsurance] = useState<string | null>(null);
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { currentUser } = useUser();
+  const patientUser = currentUser?.role === "patient" ? currentUser : null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,18 +105,34 @@ const Map = () => {
     return deg * (Math.PI/180);
   };
 
-  const filteredPharmacies = pharmacies.filter(pharmacy =>
-    pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter pharmacies by search term and insurance provider
+  const filteredPharmacies = pharmacies.filter(pharmacy => {
+    const matchesSearch = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesInsurance = !filterByInsurance || 
+      (pharmacy.acceptedInsuranceProviders && 
+       pharmacy.acceptedInsuranceProviders.some(provider => 
+         provider.toLowerCase().includes(filterByInsurance.toLowerCase())
+       ));
+    
+    return matchesSearch && matchesInsurance;
+  });
 
-  const filteredHealthCenters = healthCenters.filter(center =>
-    center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    center.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    center.services.some(service => 
-      service.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  // Filter health centers by search term and insurance provider
+  const filteredHealthCenters = healthCenters.filter(center => {
+    const matchesSearch = center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      center.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      center.services.some(service => service.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesInsurance = !filterByInsurance || 
+      (center.acceptedInsuranceProviders && 
+       center.acceptedInsuranceProviders.some(provider => 
+         provider.toLowerCase().includes(filterByInsurance.toLowerCase())
+       ));
+    
+    return matchesSearch && matchesInsurance;
+  });
 
   const sortedPharmacies = [...filteredPharmacies].sort((a, b) => {
     if (sortBy === "distance" && userLocation) {
@@ -138,6 +160,9 @@ const Map = () => {
       `${distance.toFixed(1)} km`;
   };
 
+  // Get the user's insurance provider if available
+  const userInsuranceProvider = patientUser?.insuranceInfo?.provider || null;
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto">
@@ -159,16 +184,58 @@ const Map = () => {
             </div>
           </div>
 
-          <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
-            <SelectTrigger className="w-full md:w-[200px]">
-              <SelectValue placeholder="Trier par..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="distance">Distance</SelectItem>
-              <SelectItem value="alphabetical">Alphabétique</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
+              <SelectTrigger className="w-full sm:w-[150px]">
+                <SelectValue placeholder="Trier par..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="distance">Distance</SelectItem>
+                <SelectItem value="alphabetical">Alphabétique</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select 
+              value={filterByInsurance || ""} 
+              onValueChange={(value) => setFilterByInsurance(value || null)}
+            >
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Filtrer par assurance" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Toutes les assurances</SelectItem>
+                <SelectItem value="CPAM">CPAM</SelectItem>
+                <SelectItem value="MGEN">MGEN</SelectItem>
+                <SelectItem value="AXA">AXA</SelectItem>
+                <SelectItem value="Harmonie">Harmonie Mutuelle</SelectItem>
+                {userInsuranceProvider && (
+                  <SelectItem value={userInsuranceProvider}>
+                    {userInsuranceProvider} (Votre assurance)
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
+        
+        {patientUser?.insuranceInfo && (
+          <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-md flex items-center gap-3">
+            <ShieldCheck className="h-5 w-5 text-blue-600" />
+            <div className="text-sm">
+              <span className="font-medium">Votre assurance: </span>
+              <span>{patientUser.insuranceInfo.provider}</span>
+              {filterByInsurance !== patientUser.insuranceInfo.provider && (
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto text-sm ml-2"
+                  onClick={() => setFilterByInsurance(patientUser.insuranceInfo?.provider || null)}
+                >
+                  Voir les établissements compatibles
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
         
         <Tabs defaultValue="pharmacies" className="w-full" onValueChange={(val) => setActiveTab(val as "pharmacies" | "centers")}>
           <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -207,6 +274,32 @@ const Map = () => {
                           {getDistanceText(pharmacy.location)}
                         </div>
                       )}
+                      
+                      {pharmacy.acceptedInsuranceProviders && pharmacy.acceptedInsuranceProviders.length > 0 && (
+                        <div className="mb-4">
+                          <p className="text-sm font-medium flex items-center mb-2">
+                            <Wallet className="h-4 w-4 mr-1 text-gray-500" />
+                            Assurances acceptées:
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {pharmacy.acceptedInsuranceProviders.map((provider, idx) => {
+                              const isUserInsurance = provider === userInsuranceProvider;
+                              return (
+                                <Badge 
+                                  key={idx} 
+                                  className={isUserInsurance ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+                                >
+                                  {provider}
+                                  {isUserInsurance && (
+                                    <BadgeCheck className="h-3 w-3 ml-1 text-green-600" />
+                                  )}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
                       <Button size="sm">Voir sur la carte</Button>
                     </CardContent>
                   </Card>
@@ -214,7 +307,12 @@ const Map = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500">Aucune pharmacie trouvée pour "{searchTerm}"</p>
+                <p className="text-gray-500">
+                  {filterByInsurance
+                    ? `Aucune pharmacie trouvée pour "${searchTerm}" acceptant l'assurance ${filterByInsurance}`
+                    : `Aucune pharmacie trouvée pour "${searchTerm}"`
+                  }
+                </p>
               </div>
             )}
           </TabsContent>
@@ -252,7 +350,7 @@ const Map = () => {
                         </div>
                       )}
                       
-                      <div className="mt-2 mb-4">
+                      <div className="mb-4">
                         <p className="text-sm font-medium mb-1">Services:</p>
                         <div className="flex flex-wrap gap-1">
                           {center.services.map((service, idx) => (
@@ -266,6 +364,31 @@ const Map = () => {
                         </div>
                       </div>
                       
+                      {center.acceptedInsuranceProviders && center.acceptedInsuranceProviders.length > 0 && (
+                        <div className="mb-4">
+                          <p className="text-sm font-medium flex items-center mb-2">
+                            <Wallet className="h-4 w-4 mr-1 text-gray-500" />
+                            Assurances acceptées:
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {center.acceptedInsuranceProviders.map((provider, idx) => {
+                              const isUserInsurance = provider === userInsuranceProvider;
+                              return (
+                                <Badge 
+                                  key={idx} 
+                                  className={isUserInsurance ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+                                >
+                                  {provider}
+                                  {isUserInsurance && (
+                                    <BadgeCheck className="h-3 w-3 ml-1 text-green-600" />
+                                  )}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
                       <Button size="sm">Voir sur la carte</Button>
                     </CardContent>
                   </Card>
@@ -273,7 +396,12 @@ const Map = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-gray-500">Aucun centre de santé trouvé pour "{searchTerm}"</p>
+                <p className="text-gray-500">
+                  {filterByInsurance
+                    ? `Aucun centre de santé trouvé pour "${searchTerm}" acceptant l'assurance ${filterByInsurance}`
+                    : `Aucun centre de santé trouvé pour "${searchTerm}"`
+                  }
+                </p>
               </div>
             )}
           </TabsContent>

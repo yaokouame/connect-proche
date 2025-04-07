@@ -1,3 +1,4 @@
+
 export interface VitalSign {
   id: string;
   userId: string;
@@ -82,7 +83,6 @@ export interface WellnessGoal {
   completed: boolean;
 }
 
-// Add isLoading property to match component props
 export interface WellnessGoalsProps {
   goals: WellnessGoal[];
   isLoading?: boolean;
@@ -106,3 +106,41 @@ export interface ExerciseVideo {
   videoUrl: string;
   description: string;
 }
+
+// New interfaces for insurance vouchers
+export interface InsuranceVoucher {
+  id: string;
+  userId: string;
+  insuranceProvider: string;
+  policyNumber: string;
+  coverageType: 'basic' | 'premium' | 'comprehensive';
+  validFrom: string;
+  validUntil: string;
+  coveragePercentage: number;
+  allowedPharmacies?: string[];
+  allowedHealthCenters?: string[];
+  status: 'active' | 'expired' | 'pending';
+  qrCode?: string;
+  voucherCode: string;
+  coverageDetails?: CoverageDetail[];
+  additionalNotes?: string;
+}
+
+export interface CoverageDetail {
+  serviceType: 'consultation' | 'medication' | 'procedure' | 'test' | 'hospitalization';
+  coverageAmount: number; // in currency or percentage
+  isPercentage: boolean;
+  limit?: number; // max amount or count
+  deductible?: number;
+}
+
+export interface InsuranceProvider {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  contactPhone: string;
+  contactEmail?: string;
+  website?: string;
+  availablePlans: string[];
+}
+

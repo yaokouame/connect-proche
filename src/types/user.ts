@@ -21,6 +21,34 @@ export interface PatientProfile extends User {
   bloodType?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "unknown";
   vaccinations?: Vaccination[];
   emergencyContact?: EmergencyContact;
+  // New field for insurance information
+  insuranceInfo?: InsuranceInfo;
+  insuranceVouchers?: InsuranceVoucher[];
+}
+
+export interface InsuranceInfo {
+  provider: string;
+  policyNumber: string;
+  membershipNumber: string;
+  validUntil: string;
+  coverageType?: string;
+  coveragePercentage?: number;
+}
+
+export interface InsuranceVoucher {
+  id: string;
+  provider: string;
+  voucherNumber: string;
+  validFrom: string;
+  validUntil: string;
+  coverageType: string;
+  coverageAmount: number;
+  isPercentage: boolean;
+  forService?: string;
+  forPharmacy?: string;
+  forHealthCenter?: string;
+  status: "active" | "used" | "expired";
+  qrCodeUrl?: string;
 }
 
 export interface ProfessionalProfile extends User {
@@ -35,6 +63,8 @@ export interface ProfessionalProfile extends User {
   reviewCount?: number;
   availability?: { day: string; slots: string[] }[];
   appointments?: Appointment[];
+  // New field for accepted insurance providers
+  acceptedInsuranceProviders?: string[];
 }
 
 export interface Professional {
@@ -53,6 +83,8 @@ export interface Professional {
   // New fields for verification
   verified?: boolean;
   verificationDetails?: VerificationDetails;
+  // New field for accepted insurance providers
+  acceptedInsuranceProviders?: string[];
 }
 
 export interface Appointment {
@@ -63,6 +95,8 @@ export interface Appointment {
   time: string;
   status: "scheduled" | "completed" | "cancelled";
   notes?: string;
+  // New field for insurance voucher
+  insuranceVoucherId?: string;
 }
 
 export interface Prescription {
@@ -75,6 +109,12 @@ export interface Prescription {
   instructions: string;
   expiryDate: string;
   status: "active" | "expired" | "completed";
+  // New field for insurance coverage
+  insuranceCoverage?: {
+    covered: boolean;
+    coveragePercentage?: number;
+    voucherId?: string;
+  };
 }
 
 export interface PrescribedMedication {
@@ -94,6 +134,8 @@ export interface Pharmacy {
     lat: number;
     lng: number;
   };
+  // New field for accepted insurance providers
+  acceptedInsuranceProviders?: string[];
 }
 
 export interface HealthCenter {
@@ -108,6 +150,8 @@ export interface HealthCenter {
     lat: number;
     lng: number;
   };
+  // New field for accepted insurance providers
+  acceptedInsuranceProviders?: string[];
 }
 
 export interface Product {
@@ -119,6 +163,12 @@ export interface Product {
   imageUrl: string;
   inStock: boolean;
   requiresPrescription: boolean;
+  // New field for insurance coverage
+  insuranceCoverage?: {
+    eligible: boolean;
+    coveragePercentage?: number;
+    requiresVoucher?: boolean;
+  };
 }
 
 // New interfaces for complete health profile

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Prescription, Vaccination, EmergencyContact } from "@/types/user";
+import { Prescription, Vaccination, EmergencyContact, InsuranceInfo, InsuranceVoucher } from "@/types/user";
 import { useLanguage } from "@/contexts/LanguageContext";
 import UnauthorizedMedicalRecord from "./UnauthorizedMedicalRecord";
 import MedicalInfoBanner from "./MedicalInfoBanner";
@@ -13,6 +13,7 @@ import BloodTypeSection from "./BloodTypeSection";
 import VaccinationsSection from "./VaccinationsSection";
 import EmergencyContactSection from "./EmergencyContactSection";
 import MedicalShareSection from "./MedicalShareSection";
+import InsuranceSection from "./InsuranceSection";
 
 interface MedicalRecordSectionProps {
   medicalHistory: string[];
@@ -31,6 +32,11 @@ interface MedicalRecordSectionProps {
   emergencyContact?: EmergencyContact;
   setEmergencyContact: React.Dispatch<React.SetStateAction<EmergencyContact | undefined>>;
   patientId: string;
+  // New props for insurance information
+  insuranceInfo?: InsuranceInfo;
+  setInsuranceInfo?: React.Dispatch<React.SetStateAction<InsuranceInfo | undefined>>;
+  insuranceVouchers?: InsuranceVoucher[];
+  setInsuranceVouchers?: React.Dispatch<React.SetStateAction<InsuranceVoucher[] | undefined>>;
 }
 
 const MedicalRecordSection = ({
@@ -48,7 +54,11 @@ const MedicalRecordSection = ({
   setVaccinations,
   emergencyContact,
   setEmergencyContact,
-  patientId
+  patientId,
+  insuranceInfo,
+  setInsuranceInfo,
+  insuranceVouchers,
+  setInsuranceVouchers
 }: MedicalRecordSectionProps) => {
   const { t } = useLanguage();
   
@@ -125,6 +135,15 @@ const MedicalRecordSection = ({
           emergencyContact={emergencyContact}
           setEmergencyContact={setEmergencyContact}
         />
+        
+        {setInsuranceInfo && (
+          <InsuranceSection
+            insuranceInfo={insuranceInfo}
+            setInsuranceInfo={setInsuranceInfo}
+            insuranceVouchers={insuranceVouchers || []}
+            setInsuranceVouchers={setInsuranceVouchers}
+          />
+        )}
         
         <PrescriptionsSection prescriptions={prescriptions} />
         

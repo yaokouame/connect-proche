@@ -4,7 +4,7 @@ import { useUser } from "@/contexts/UserContext";
 import { PatientProfile } from "@/types/user";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { Phone, Share2, AlertCircle, X, Heart, User } from "lucide-react";
+import { Phone, Share2, AlertCircle, X, Heart, User, FileText } from "lucide-react";
 import { 
   Drawer, 
   DrawerClose, 
@@ -74,6 +74,26 @@ export const EmergencyDrawer = ({ open, onOpenChange, onCallEmergency }: Emergen
                   )}
                   {patientUser?.bloodType && (
                     <p><strong>Groupe sanguin:</strong> {patientUser.bloodType}</p>
+                  )}
+                </div>
+              </div>
+              
+              {/* Insurance Information Section */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg flex items-center">
+                  <FileText className="mr-2 h-5 w-5 text-blue-500" /> 
+                  Assurance santé
+                </h3>
+                <div className="bg-white p-3 rounded-md shadow-sm">
+                  {patientUser?.insuranceInfo ? (
+                    <>
+                      <p><strong>Assureur:</strong> {patientUser.insuranceInfo.provider}</p>
+                      <p><strong>N° Police:</strong> {patientUser.insuranceInfo.policyNumber}</p>
+                      <p><strong>N° Adhérent:</strong> {patientUser.insuranceInfo.membershipNumber}</p>
+                      <p><strong>Validité:</strong> {patientUser.insuranceInfo.validUntil}</p>
+                    </>
+                  ) : (
+                    <p className="text-gray-500 italic">Aucune information d'assurance enregistrée</p>
                   )}
                 </div>
               </div>
