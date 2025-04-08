@@ -31,8 +31,8 @@ const es = {
   "nav.logout": "Cerrar sesión",
   "nav.findProfessional": "Encontrar un profesional",
   "nav.onlinePharmacy": "Farmacia en línea",
-  "footer.quickLinks": "Enlaces rápidos",
-  "footer.contact": "Contacto",
+  "footer.links": "Enlaces rápidos",
+  "footer.contactUs": "Contacto",
   "footer.rights": "Todos los derechos reservados",
   "footer.description": "Tu plataforma de salud conectada para cuidar de ti y de tus seres queridos.",
   

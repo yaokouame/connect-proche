@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">ConnectProche</h3>
             <p className="text-gray-300">
-              {t("footer.about")}
+              {t("footer.description")}
             </p>
           </div>
           <div>

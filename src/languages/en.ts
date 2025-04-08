@@ -34,7 +34,7 @@ const en = {
   "footer.links": "Quick Links",
   "footer.contactUs": "Contact Us",
   "footer.rights": "All rights reserved",
-  "footer.about": "Your connected health platform for taking care of you and your loved ones.",
+  "footer.description": "Your connected health platform for taking care of you and your loved ones.",
   
   // Map page
   "map.title": "Find healthcare facilities nearby",
