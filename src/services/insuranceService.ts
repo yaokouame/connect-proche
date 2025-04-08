@@ -1,47 +1,47 @@
 
-import { InsuranceVoucher } from "@/types/user";
-import { getStorageItem, addItemToStorageArray } from "./storage/localStorageUtils";
+import { InsuranceProvider } from "@/types/health";
 
-/**
- * Services for insurance operations
- */
-
-/**
- * Save insurance voucher to localStorage
- */
-export const saveInsuranceVoucher = async (voucher: Omit<InsuranceVoucher, 'id'>) => {
-  try {
-    console.log("Saving insurance voucher:", voucher);
-    
-    // Generate an ID
-    const newVoucher = {
-      id: `voucher-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      ...voucher
-    };
-    
-    // Store in localStorage
-    const key = `insurance_vouchers_${voucher.userId}`;
-    addItemToStorageArray(key, newVoucher);
-    
-    return newVoucher;
-  } catch (error) {
-    console.error("Error saving insurance voucher:", error);
-    throw error;
-  }
-};
-
-/**
- * Get insurance vouchers for user from localStorage
- */
-export const getUserInsuranceVouchers = async (userId: string) => {
-  try {
-    console.log("Getting insurance vouchers for user:", userId);
-    
-    // Retrieve from localStorage
-    const key = `insurance_vouchers_${userId}`;
-    return getStorageItem<InsuranceVoucher[]>(key, []);
-  } catch (error) {
-    console.error("Error getting insurance vouchers:", error);
-    throw error;
-  }
+// Mock data for insurance providers
+export const getInsuranceProviders = async (): Promise<InsuranceProvider[]> => {
+  // In a real app, this would be an API call
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return [
+    {
+      id: "ins-1",
+      name: "CMU (Couverture Maladie Universelle)",
+      logoUrl: "/placeholder.svg",
+      contactPhone: "+225 27 22 52 78 00",
+      contactEmail: "contact@cmu.ci",
+      website: "https://www.cmu.ci",
+      availablePlans: ["Régime général", "Régime indigent", "Régime étudiant"]
+    },
+    {
+      id: "ins-2",
+      name: "MUGEFCI",
+      logoUrl: "/placeholder.svg",
+      contactPhone: "+225 27 22 52 63 80",
+      contactEmail: "contact@mugefci.ci",
+      website: "https://www.mugefci.ci",
+      availablePlans: ["Base", "Complémentaire", "Familial"]
+    },
+    {
+      id: "ins-3",
+      name: "CNPS",
+      logoUrl: "/placeholder.svg",
+      contactPhone: "+225 27 20 25 21 00",
+      contactEmail: "contact@cnps.ci",
+      website: "https://www.cnps.ci",
+      availablePlans: ["Assurance maladie", "Retraite", "Prestations familiales"]
+    },
+    {
+      id: "ins-4",
+      name: "SUNU Assurances",
+      logoUrl: "/placeholder.svg",
+      contactPhone: "+225 27 20 31 02 03",
+      contactEmail: "contact@sunu-ci.com",
+      website: "https://www.sunu-group.com",
+      availablePlans: ["Essentiel", "Confort", "Prestige", "Excellence"]
+    },
+  ];
 };

@@ -1,7 +1,8 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { calculateDistance } from "@/utils/mapUtils";
-import { getPharmacies, getHealthCenters } from "@/services/dataService";
+import { getPharmacies, getHealthCenters } from "@/services/pharmacyService";
 import { useToast } from "@/components/ui/use-toast";
 
 export function useMap() {
