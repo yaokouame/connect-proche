@@ -1,39 +1,15 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Trash2, Plus, Minus, FileText, CreditCard, Truck } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/Layout";
+import { CartItem } from "@/types/user";
+import EmptyCart from "@/components/cart/EmptyCart";
+import CartItems from "@/components/cart/CartItems";
+import CartSummary from "@/components/cart/CartSummary";
+import CheckoutSteps from "@/components/cart/CheckoutSteps";
+import ShippingStepContent from "@/components/cart/ShippingStepContent";
 import { useUser } from "@/contexts/UserContext";
-import { CartItem, Product, Prescription } from "@/types/user";
-import ShippingForm from "@/components/payment/ShippingForm";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -166,14 +142,7 @@ const Cart = () => {
       <Layout>
         <div className="max-w-4xl mx-auto mt-10 p-8">
           <h1 className="text-3xl font-bold mb-8 text-health-dark">Votre Panier</h1>
-          <Card>
-            <CardContent className="p-10 text-center">
-              <p className="text-gray-500 mb-6">Votre panier est vide</p>
-              <Button onClick={() => navigate("/products")}>
-                Parcourir les produits
-              </Button>
-            </CardContent>
-          </Card>
+          <EmptyCart />
         </div>
       </Layout>
     );
@@ -187,175 +156,48 @@ const Cart = () => {
         </h1>
 
         {/* Étapes du processus d'achat */}
-        <div className="flex justify-between mb-8">
-          <div className={`flex flex-col items-center ${step === "cart" ? "text-primary" : "text-gray-400"}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${step === "cart" ? "bg-primary text-white" : "bg-gray-200"}`}>
-              1
-            </div>
-            <span className="text-sm">Panier</span>
-          </div>
-          <div className="flex-1 border-t border-gray-200 relative top-4 mx-4"></div>
-          <div className={`flex flex-col items-center ${step === "shipping" ? "text-primary" : "text-gray-400"}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${step === "shipping" ? "bg-primary text-white" : "bg-gray-200"}`}>
-              2
-            </div>
-            <span className="text-sm">Livraison</span>
-          </div>
-          <div className="flex-1 border-t border-gray-200 relative top-4 mx-4"></div>
-          <div className="flex flex-col items-center text-gray-400">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center mb-2 bg-gray-200">
-              3
-            </div>
-            <span className="text-sm">Paiement</span>
-          </div>
-        </div>
+        <CheckoutSteps step={step} />
 
         {/* Afficher le contenu en fonction de l'étape */}
         {step === "cart" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Articles ({cartItems.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {cartItems.map((item) => (
-                    <div key={item.product.id} className="flex items-center py-4 border-b last:border-0">
-                      <div className="w-20 h-20 bg-gray-100 flex items-center justify-center rounded">
-                        <img src={item.product.imageUrl} alt={item.product.name} className="max-w-full max-h-full object-contain" />
-                      </div>
-                      <div className="ml-4 flex-1">
-                        <h3 className="font-medium">{item.product.name}</h3>
-                        <p className="text-sm text-gray-500">{item.product.category}</p>
-                        {item.product.requiresPrescription && item.prescription && (
-                          <div className="flex items-center mt-1 text-xs text-green-600">
-                            <FileText className="w-3 h-3 mr-1" />
-                            Ordonnance fournie
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center">
-                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.product.id, item.quantity - 1)}>
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-10 text-center">{item.quantity}</span>
-                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.product.id, item.quantity + 1)}>
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <div className="w-20 text-right font-medium">
-                        {(item.product.price * item.quantity).toFixed(2)} €
-                      </div>
-                      <Button variant="ghost" size="icon" className="ml-2" onClick={() => removeFromCart(item.product.id)}>
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+              <CartItems 
+                cartItems={cartItems} 
+                updateQuantity={updateQuantity} 
+                removeFromCart={removeFromCart} 
+              />
             </div>
 
             <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Récapitulatif</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span>Sous-total</span>
-                      <span>{subtotal.toFixed(2)} €</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Livraison</span>
-                      <span>{shippingCost.toFixed(2)} €</span>
-                    </div>
-                    {discount > 0 && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Réduction</span>
-                        <span>-{discount.toFixed(2)} €</span>
-                      </div>
-                    )}
-                    <Separator />
-                    <div className="flex justify-between font-bold">
-                      <span>Total</span>
-                      <span>{total.toFixed(2)} €</span>
-                    </div>
-
-                    <div className="pt-4">
-                      <Label htmlFor="shipping-method">Méthode de livraison</Label>
-                      <Select value={shippingMethod} onValueChange={setShippingMethod}>
-                        <SelectTrigger id="shipping-method" className="w-full">
-                          <SelectValue placeholder="Choisir une méthode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="standard">Standard (3-5 jours) - 3,99 €</SelectItem>
-                          <SelectItem value="express">Express (1-2 jours) - 7,99 €</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="flex space-x-2">
-                      <Input
-                        placeholder="Code promo"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                      />
-                      <Button variant="outline" onClick={applyCoupon}>Appliquer</Button>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full" onClick={nextStep}>Passer à la livraison</Button>
-                </CardFooter>
-              </Card>
+              <CartSummary
+                cartItems={cartItems}
+                shippingMethod={shippingMethod}
+                setShippingMethod={setShippingMethod}
+                couponCode={couponCode}
+                setCouponCode={setCouponCode}
+                applyCoupon={applyCoupon}
+                nextStep={nextStep}
+                subtotal={subtotal}
+                shippingCost={shippingCost}
+                discount={discount}
+                total={total}
+              />
             </div>
           </div>
         )}
 
         {step === "shipping" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Adresse de livraison</CardTitle>
-                  <CardDescription>Veuillez entrer vos informations de livraison</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ShippingForm 
-                    shippingInfo={shippingInfo}
-                    handleChange={handleShippingInfoChange}
-                    setCountry={(value) => setShippingInfo({ ...shippingInfo, country: value })}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Récapitulatif</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="text-sm text-gray-500">
-                      <p>Articles: {cartItems.length}</p>
-                      <p>Livraison: {shippingMethod === "express" ? "Express (1-2 jours)" : "Standard (3-5 jours)"}</p>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between font-bold">
-                      <span>Total</span>
-                      <span>{total.toFixed(2)} €</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline" onClick={prevStep}>Retour</Button>
-                  <Button onClick={nextStep}>Continuer vers le paiement</Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </div>
+          <ShippingStepContent
+            cartItems={cartItems}
+            shippingInfo={shippingInfo}
+            handleShippingInfoChange={handleShippingInfoChange}
+            setCountry={(value) => setShippingInfo({ ...shippingInfo, country: value })}
+            shippingMethod={shippingMethod}
+            total={total}
+            prevStep={prevStep}
+            nextStep={nextStep}
+          />
         )}
       </div>
     </Layout>
