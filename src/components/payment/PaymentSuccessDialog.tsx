@@ -1,15 +1,8 @@
 
 import React from "react";
-import { Check } from "lucide-react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { CheckCircle, Package, ArrowRight } from "lucide-react";
 
 interface PaymentSuccessDialogProps {
   isOpen: boolean;
@@ -18,30 +11,39 @@ interface PaymentSuccessDialogProps {
   orderNumber: string;
 }
 
-const PaymentSuccessDialog = ({ 
-  isOpen, 
-  onOpenChange, 
-  onClose, 
-  orderNumber 
+const PaymentSuccessDialog = ({
+  isOpen,
+  onOpenChange,
+  onClose,
+  orderNumber
 }: PaymentSuccessDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center text-green-600">
-            <Check className="mr-2 h-6 w-6" />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+            <CheckCircle className="h-6 w-6 text-green-600" />
+          </div>
+          <DialogTitle className="text-center text-lg font-semibold text-gray-900 sm:text-xl">
             Paiement réussi
           </DialogTitle>
-          <DialogDescription>
-            Votre commande a été confirmée et sera traitée dans les plus brefs délais.
+          <DialogDescription className="text-center">
+            Votre commande #{orderNumber} a été confirmée
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
-          <p className="mb-2">Numéro de commande: <span className="font-medium">{orderNumber}</span></p>
-          <p>Un e-mail de confirmation vous a été envoyé.</p>
+        
+        <div className="mt-4 text-center">
+          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+            <Package className="h-5 w-5 text-gray-400" />
+            <p>Nous préparons votre commande et vous enverrons un e-mail de confirmation</p>
+          </div>
         </div>
-        <DialogFooter>
-          <Button onClick={onClose}>Voir les détails de ma commande</Button>
+
+        <DialogFooter className="flex-col sm:flex-col sm:space-y-2">
+          <Button onClick={onClose} className="mt-2 w-full">
+            Voir les détails de la commande
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

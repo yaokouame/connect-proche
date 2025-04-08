@@ -21,7 +21,7 @@ const PaymentMethodSelector = ({
       className="space-y-3"
     >
       <div>
-        <Card className={`border ${selectedMethod === "card" ? "border-primary" : "border-gray-200"}`}>
+        <Card className={`border ${selectedMethod === "card" ? "border-primary bg-primary/5" : "border-gray-200"}`}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="card" id="card" />
@@ -35,7 +35,7 @@ const PaymentMethodSelector = ({
       </div>
       
       <div>
-        <Card className={`border ${selectedMethod === "insurance" ? "border-primary" : "border-gray-200"}`}>
+        <Card className={`border ${selectedMethod === "insurance" ? "border-primary bg-primary/5" : "border-gray-200"}`}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="insurance" id="insurance" />
@@ -49,7 +49,7 @@ const PaymentMethodSelector = ({
       </div>
       
       <div>
-        <Card className={`border ${selectedMethod === "paypal" ? "border-primary" : "border-gray-200"}`}>
+        <Card className={`border ${selectedMethod === "paypal" ? "border-primary bg-primary/5" : "border-gray-200"}`}>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="paypal" id="paypal" />

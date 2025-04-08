@@ -40,7 +40,7 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
           const isActive = index <= currentIndex;
           const isCurrentStep = index === currentIndex;
           const StatusIcon = status.icon;
-          const statusColor = isActive 
+          const statusColorClass = isActive 
             ? (currentStatus === "delayed" && index === currentIndex) 
               ? "text-amber-600 bg-amber-100" 
               : `text-${status.color}-600 bg-${status.color}-100`
@@ -57,7 +57,7 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
               }`}>
                 <StatusIcon className={`h-5 w-5 ${isCurrentStep ? "animate-pulse" : ""}`} />
               </div>
-              <p className={`mt-2 text-sm ${
+              <p className={`mt-2 text-xs sm:text-sm ${
                 isActive 
                   ? (currentStatus === "delayed" && index === currentIndex)
                     ? "font-medium text-amber-600" 
@@ -72,9 +72,9 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
       </div>
       
       <div className="relative mt-2 mb-4">
-        <div className="absolute top-0 h-0.5 w-full bg-gray-200">
+        <div className="absolute top-0 h-1 w-full bg-gray-200 rounded-full">
           <div 
-            className={`absolute top-0 h-0.5 ${
+            className={`absolute top-0 h-1 rounded-full ${
               currentStatus === "delayed" ? "bg-amber-500" : "bg-green-500"
             }`}
             style={{ 
@@ -87,21 +87,21 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
       
       <div className="mt-6 space-y-2 text-sm">
         {estimatedDelivery && (
-          <div className="flex justify-between items-center px-2 py-1 bg-blue-50 rounded-md">
+          <div className="flex justify-between items-center px-3 py-2 bg-blue-50 rounded-md">
             <span className="font-medium">Livraison estimée:</span>
             <span>{estimatedDelivery}</span>
           </div>
         )}
         
         {trackingNumber && (
-          <div className="flex justify-between items-center px-2 py-1 bg-gray-50 rounded-md">
+          <div className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-md">
             <span className="font-medium">Numéro de suivi:</span>
             <span className="font-mono">{trackingNumber}</span>
           </div>
         )}
         
         {currentStatus === "shipped" && (
-          <div className="flex justify-center mt-2">
+          <div className="flex justify-center mt-3">
             <a 
               href={trackingNumber ? `https://tracking.example.com?number=${trackingNumber}` : "#"}
               target="_blank"

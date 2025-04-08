@@ -146,7 +146,8 @@ export const usePaymentProcessing = (
             ? "Assurance santé" 
             : "PayPal",
         lastFourDigits: formData.cardNumber ? formData.cardNumber.replace(/\s/g, "").slice(-4) : null,
-        email: shippingInfo?.email || ""
+        email: shippingInfo?.email || "",
+        status: "confirmed"
       };
       
       // Save order data to localStorage

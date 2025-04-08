@@ -6,6 +6,7 @@ import { CartItem } from "@/types/user";
 import ShippingMethodSelector from "./ShippingMethodSelector";
 import PromoCodeInput from "./PromoCodeInput";
 import OrderSummaryDetails from "./OrderSummaryDetails";
+import { CalendarCheck } from "lucide-react";
 
 interface CartSummaryProps {
   cartItems: CartItem[];
@@ -63,6 +64,13 @@ const CartSummary = ({
           total={total}
           estimatedDelivery={getEstimatedDelivery()}
         />
+        
+        <div className="mt-4 p-3 bg-green-50 rounded-md border border-green-100 flex items-center">
+          <CalendarCheck className="h-5 w-5 text-green-600 mr-2" />
+          <span className="text-sm text-green-700">
+            Livraison estimée: <strong>{getEstimatedDelivery()}</strong>
+          </span>
+        </div>
 
         <ShippingMethodSelector 
           shippingMethod={shippingMethod}

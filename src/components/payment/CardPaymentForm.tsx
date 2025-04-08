@@ -2,7 +2,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Lock } from "lucide-react";
 
 interface CardPaymentFormProps {
   cardNumber: string;
@@ -76,6 +76,7 @@ const CardPaymentForm = ({
             placeholder="1234 5678 9012 3456"
             value={cardNumber}
             onChange={handleCardNumberChange}
+            className="font-mono"
           />
         </div>
         
@@ -97,6 +98,7 @@ const CardPaymentForm = ({
               placeholder="MM/YY"
               value={expiryDate}
               onChange={handleExpiryDateChange}
+              className="font-mono"
             />
           </div>
           <div>
@@ -110,9 +112,15 @@ const CardPaymentForm = ({
               value={cvv}
               onChange={handleCvvChange}
               type="password"
+              className="font-mono"
             />
           </div>
         </div>
+      </div>
+      
+      <div className="mt-4 flex items-center justify-center bg-gray-50 p-2 rounded text-sm text-gray-600">
+        <Lock className="h-4 w-4 mr-1 text-gray-500" />
+        Paiement sécurisé avec cryptage SSL 256-bit
       </div>
     </div>
   );
