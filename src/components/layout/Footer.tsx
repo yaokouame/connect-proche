@@ -13,11 +13,11 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">ConnectProche</h3>
             <p className="text-gray-300">
-              {t("footer.description")}
+              {t("footer.about")}
             </p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">{t("footer.quickLinks")}</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("footer.links")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-300 hover:text-white">
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">{t("footer.contact")}</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("footer.contactUs")}</h3>
             <address className="not-italic text-gray-300">
               <p>2 PLTX Garage CFA</p>
               <p>Abidjan, Cocody</p>

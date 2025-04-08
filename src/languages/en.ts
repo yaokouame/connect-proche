@@ -1,3 +1,4 @@
+
 // English translations
 const en = {
   // Common elements
@@ -30,10 +31,10 @@ const en = {
   "nav.logout": "Logout",
   "nav.findProfessional": "Find a professional",
   "nav.onlinePharmacy": "Online pharmacy",
-  "footer.quickLinks": "Quick Links",
-  "footer.contact": "Contact",
+  "footer.links": "Quick Links",
+  "footer.contactUs": "Contact Us",
   "footer.rights": "All rights reserved",
-  "footer.description": "Your connected health platform for taking care of you and your loved ones.",
+  "footer.about": "Your connected health platform for taking care of you and your loved ones.",
   
   // Map page
   "map.title": "Find healthcare facilities nearby",
