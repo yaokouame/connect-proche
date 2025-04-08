@@ -64,7 +64,7 @@ const ProductCard = React.memo(({ product, onAddToCart, enableVoiceHelp = false 
       <CardContent className="flex-grow">
         <div className="space-y-2">
           <p><span className="font-medium">Catégorie:</span> {product.category}</p>
-          <p><span className="font-medium">Disponibilité:</span> {product.stock > 0 ? 'En stock' : 'Épuisé'}</p>
+          <p><span className="font-medium">Disponibilité:</span> {product.inStock ? 'En stock' : 'Épuisé'}</p>
         </div>
       </CardContent>
       
@@ -72,7 +72,7 @@ const ProductCard = React.memo(({ product, onAddToCart, enableVoiceHelp = false 
         <div className="text-lg font-bold">{formattedPrice}</div>
         <Button 
           onClick={handleAddToCart}
-          disabled={product.stock <= 0}
+          disabled={!product.inStock}
           size="sm"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />

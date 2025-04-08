@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,7 @@ import PageVoiceHelp from "@/components/voice/PageVoiceHelp";
 
 const Register = () => {
   const translations = useRegisterTranslation();
-  const { t } = translations;
+  const { register: t } = translations;
   const [accountType, setAccountType] = useState("patient");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

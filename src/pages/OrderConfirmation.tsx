@@ -1,105 +1,200 @@
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, TruckIcon, Clock, ShoppingBag, Home } from "lucide-react";
+import { CheckCircle, Printer, ChevronLeft } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/components/ui/use-toast";
+import { OrderStatus } from "@/components/orders/OrderStatus";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
-  const [orderNumber, setOrderNumber] = useState("");
-  const [estimatedDelivery, setEstimatedDelivery] = useState("");
+  const location = useLocation();
+  const { toast } = useToast();
+  const [orderData, setOrderData] = useState<any>(null);
   
+  // Récupérer les données de commande depuis le localStorage ou state
   useEffect(() => {
-    // Générer un numéro de commande et une date de livraison estimée
-    const generateOrderNumber = () => {
-      const timestamp = Date.now().toString().slice(-8);
-      return `ORD-${timestamp}`;
-    };
-    
-    const generateEstimatedDelivery = () => {
-      const today = new Date();
-      const deliveryDate = new Date(today);
-      // Ajouter 3-5 jours ouvrables
-      deliveryDate.setDate(today.getDate() + 3 + Math.floor(Math.random() * 3));
-      
-      // Formater la date (ex: "15 avril 2025")
-      const options: Intl.DateTimeFormatOptions = { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-      };
-      return deliveryDate.toLocaleDateString('fr-FR', options);
-    };
-    
-    setOrderNumber(generateOrderNumber());
-    setEstimatedDelivery(generateEstimatedDelivery());
-  }, []);
-  
+    // Tenter de récupérer les données du state (payment.tsx)
+    if (location.state?.orderData) {
+      setOrderData(location.state.orderData);
+    } else {
+      // Tenter de récupérer les données du localStorage
+      const savedOrderData = localStorage.getItem("latestOrder");
+      if (savedOrderData) {
+        setOrderData(JSON.parse(savedOrderData));
+      } else {
+        // Si aucune donnée n'est disponible, rediriger vers la page d'accueil
+        toast({
+          title: "Erreur",
+          description: "Impossible de récupérer les détails de votre commande",
+          variant: "destructive",
+        });
+        setTimeout(() => navigate("/"), 3000);
+      }
+    }
+  }, [location.state, navigate, toast]);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  if (!orderData) {
+    return (
+      <Layout>
+        <div className="max-w-3xl mx-auto mt-10 p-4">
+          <h1 className="text-2xl font-bold mb-4">Chargement de votre commande...</h1>
+        </div>
+      </Layout>
+    );
+  }
+
+  const { orderNumber, orderDate, total, shippingInfo, items, paymentMethod, estimatedDelivery } = orderData;
+
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto mt-10 p-4">
-        <Card className="border-none shadow-none">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 bg-green-100 p-3 rounded-full">
-              <CheckCircle2 className="h-12 w-12 text-green-500" />
-            </div>
-            <CardTitle className="text-3xl font-bold">Commande confirmée !</CardTitle>
+      <div className="max-w-3xl mx-auto my-10 p-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate("/")}
+          className="mb-4 print:hidden"
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Retour à l'accueil
+        </Button>
+        
+        <div className="bg-green-50 p-6 rounded-lg border border-green-200 mb-8 flex items-center justify-center">
+          <CheckCircle className="text-green-500 h-10 w-10 mr-4" />
+          <div>
+            <h1 className="text-2xl font-bold text-green-700">Commande confirmée</h1>
+            <p className="text-green-600">Merci pour votre achat !</p>
+          </div>
+        </div>
+        
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Détails de la commande</CardTitle>
+            <CardDescription>Commande #{orderNumber}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center text-gray-600">
-              <p className="mb-2">
-                Merci pour votre achat. Nous avons bien reçu votre commande.
-              </p>
-              <p>
-                Un e-mail de confirmation a été envoyé à l'adresse associée à votre compte.
-              </p>
-            </div>
+          <CardContent className="space-y-4">
+            <OrderStatus currentStatus="confirmed" />
             
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <div className="flex items-start mb-4">
-                <div className="bg-primary/10 p-2 rounded-full mr-3">
-                  <ShoppingBag className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium">Numéro de commande</h3>
-                  <p className="text-gray-600">{orderNumber}</p>
-                </div>
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <div>
+                <p className="text-sm text-gray-500">Date de commande</p>
+                <p className="font-medium">{orderDate}</p>
               </div>
-              
-              <div className="flex items-start mb-4">
-                <div className="bg-primary/10 p-2 rounded-full mr-3">
-                  <Clock className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium">Date estimée de livraison</h3>
-                  <p className="text-gray-600">{estimatedDelivery}</p>
-                </div>
+              <div>
+                <p className="text-sm text-gray-500">Paiement</p>
+                <p className="font-medium">{paymentMethod}</p>
               </div>
-              
-              <div className="flex items-start">
-                <div className="bg-primary/10 p-2 rounded-full mr-3">
-                  <TruckIcon className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-medium">État de la commande</h3>
-                  <p className="text-gray-600">En cours de traitement</p>
-                </div>
+              <div>
+                <p className="text-sm text-gray-500">Livraison estimée</p>
+                <p className="font-medium">{estimatedDelivery}</p>
               </div>
-            </div>
-            
-            <div className="flex flex-col md:flex-row justify-center gap-4 pt-6">
-              <Button onClick={() => navigate("/products")}>
-                Continuer mes achats
-              </Button>
-              <Button variant="outline" onClick={() => navigate("/")}>
-                <Home className="mr-2 h-4 w-4" />
-                Retour à l'accueil
-              </Button>
+              <div>
+                <p className="text-sm text-gray-500">Total</p>
+                <p className="font-bold">{total} €</p>
+              </div>
             </div>
           </CardContent>
         </Card>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Adresse de livraison</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-medium">{shippingInfo.fullName}</p>
+              <p>{shippingInfo.streetAddress}</p>
+              <p>{shippingInfo.postalCode} {shippingInfo.city}</p>
+              <p>{shippingInfo.country}</p>
+              <p className="mt-2 text-gray-500">{shippingInfo.phone}</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Méthode de paiement</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-medium">{paymentMethod}</p>
+              {paymentMethod === "Carte bancaire" && (
+                <p className="text-gray-500">**** **** **** {orderData.lastFourDigits || "1234"}</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+        
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Articles ({items.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {items.map((item: any, index: number) => (
+                <div key={index} className="flex items-center py-3 border-b last:border-0">
+                  <div className="w-16 h-16 bg-gray-100 flex items-center justify-center rounded">
+                    <img src={item.product.imageUrl} alt={item.product.name} className="max-w-full max-h-full object-contain" />
+                  </div>
+                  <div className="ml-4 flex-grow">
+                    <h3 className="font-medium">{item.product.name}</h3>
+                    <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
+                  </div>
+                  <div className="text-right font-medium">
+                    {(item.product.price * item.quantity).toFixed(2)} €
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <Separator className="my-4" />
+            
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Sous-total</span>
+                <span>{(orderData.subtotal || 0).toFixed(2)} €</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Livraison</span>
+                <span>{(orderData.shippingCost || 0).toFixed(2)} €</span>
+              </div>
+              {(orderData.discount || 0) > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Réduction</span>
+                  <span>-{(orderData.discount || 0).toFixed(2)} €</span>
+                </div>
+              )}
+              <Separator className="my-2" />
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span>{total} €</span>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="print:hidden">
+            <Button 
+              variant="outline" 
+              onClick={handlePrint}
+              className="w-full flex items-center justify-center"
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              Imprimer la confirmation
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        <div className="text-center space-y-4 print:hidden">
+          <Button onClick={() => navigate("/products")}>
+            Continuer mes achats
+          </Button>
+          <p className="text-sm text-gray-500">
+            Un email de confirmation a été envoyé à {orderData.email || shippingInfo.email || "votre adresse email"}
+          </p>
+        </div>
       </div>
     </Layout>
   );

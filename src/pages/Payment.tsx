@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { CartItem } from "@/types/user";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -13,12 +12,12 @@ import CardPaymentForm from "@/components/payment/CardPaymentForm";
 import InsurancePaymentForm from "@/components/payment/InsurancePaymentForm";
 import OrderSummary from "@/components/payment/OrderSummary";
 import { ChevronLeft, CreditCard, Check, Loader2 } from "lucide-react";
+import { format } from "date-fns";
 
 type PaymentMethod = "card" | "insurance" | "paypal";
 
 const Payment = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const { currentUser } = useUser();
   
@@ -29,6 +28,7 @@ const Payment = () => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
+  const [subtotal, setSubtotal] = useState(0);
   
   // État du formulaire de paiement
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
@@ -75,22 +75,23 @@ const Payment = () => {
       // Calculer la réduction
       if (savedCart) {
         const cart = JSON.parse(savedCart);
-        const subtotal = cart.reduce(
+        const calculatedSubtotal = cart.reduce(
           (sum: number, item: CartItem) => sum + item.product.price * item.quantity,
           0
         );
-        setDiscount(subtotal * 0.1);
+        setDiscount(calculatedSubtotal * 0.1);
       }
     }
   }, []);
   
   // Calculer le total
   useEffect(() => {
-    const subtotal = cartItems.reduce(
+    const calculatedSubtotal = cartItems.reduce(
       (sum, item) => sum + item.product.price * item.quantity,
       0
     );
-    setTotal(subtotal + shippingCost - discount);
+    setSubtotal(calculatedSubtotal);
+    setTotal(calculatedSubtotal + shippingCost - discount);
   }, [cartItems, shippingCost, discount]);
   
   // Rediriger vers le panier si celui-ci est vide
@@ -174,14 +175,42 @@ const Payment = () => {
     
     // Simuler un traitement de paiement
     setTimeout(() => {
-      setIsProcessing(false);
-      setIsSuccessDialogOpen(true);
+      // Générer un numéro de commande
+      const orderNumber = `ORD-${Date.now().toString().slice(-8)}`;
       
-      // Vider le panier
+      // Préparer les données de la commande pour le récapitulatif
+      const orderData = {
+        orderNumber,
+        orderDate: format(new Date(), "dd/MM/yyyy"),
+        estimatedDelivery: format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), "dd/MM/yyyy"),
+        total: total.toFixed(2),
+        subtotal: subtotal,
+        discount: discount,
+        shippingCost: shippingCost,
+        items: cartItems,
+        shippingInfo: shippingInfo,
+        paymentMethod: paymentMethod === "card" 
+          ? "Carte bancaire" 
+          : paymentMethod === "insurance" 
+            ? "Assurance santé" 
+            : "PayPal",
+        lastFourDigits: cardNumber ? cardNumber.replace(/\s/g, "").slice(-4) : null,
+        email: currentUser?.email || shippingInfo?.email || ""
+      };
+      
+      // Enregistrer les données de la commande dans le localStorage
+      localStorage.setItem("latestOrder", JSON.stringify(orderData));
+      
+      // Vider le panier et les informations connexes
       localStorage.removeItem("cart");
       localStorage.removeItem("shippingInfo");
       localStorage.removeItem("shippingMethod");
       localStorage.removeItem("couponCode");
+      
+      setIsProcessing(false);
+      
+      // Afficher le dialogue de confirmation
+      setIsSuccessDialogOpen(true);
     }, 2000);
   };
   

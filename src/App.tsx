@@ -16,6 +16,8 @@ import Tutorials from "@/pages/Tutorials";
 import Admin from "@/pages/Admin";
 import Chat from "@/pages/Chat";
 import Cart from "@/pages/Cart";
+import Payment from "@/pages/Payment";
+import OrderConfirmation from "@/pages/OrderConfirmation";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import CheckoutCancel from "@/pages/CheckoutCancel";
 
@@ -45,6 +47,8 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/checkout/cancel" element={<CheckoutCancel />} />
             </Routes>
