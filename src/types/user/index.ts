@@ -8,4 +8,7 @@ export * from './insuranceTypes';
 export * from './orderTypes';
 
 // Re-export the Pharmacy type from patientTypes as PharmacyLocation to avoid ambiguity
-export type { Pharmacy as PharmacyLocation } from './patientTypes';
+// Using a different approach to avoid the "already exported" error
+import { Pharmacy } from './patientTypes';
+export type { Pharmacy };
+export type PharmacyLocation = Pharmacy;
