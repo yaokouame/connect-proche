@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { 
@@ -10,9 +10,9 @@ import {
   DialogFooter,
   DialogDescription 
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { FileText, Upload, Check } from "lucide-react";
 import { Prescription } from "@/types/user";
+import PrescriptionList from "../prescriptions/PrescriptionList";
+import PrescriptionUploader from "../prescriptions/PrescriptionUploader";
 
 interface PrescriptionDialogProps {
   isOpen: boolean;
@@ -36,36 +36,13 @@ const PrescriptionDialog = ({
   currentUserId
 }: PrescriptionDialogProps) => {
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localSelectedPrescription, setLocalSelectedPrescription] = useState<Prescription | null>(null);
 
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const handlePrescriptionSelect = (prescription: Prescription) => {
+    setLocalSelectedPrescription(prescription);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    if (file.type !== "image/jpeg" && file.type !== "image/png" && file.type !== "application/pdf") {
-      toast({
-        title: "Format de fichier non supporté",
-        description: "Veuillez télécharger une image (JPEG, PNG) ou un PDF",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "Fichier trop volumineux",
-        description: "La taille du fichier ne doit pas dépasser 5 Mo",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const handleFileSelected = (file: File) => {
     setIsUploading(true);
     
     setTimeout(() => {
@@ -98,6 +75,12 @@ const PrescriptionDialog = ({
     }, 1500);
   };
 
+  const handleConfirm = () => {
+    if (localSelectedPrescription) {
+      onPrescriptionSelect(localSelectedPrescription);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -109,41 +92,11 @@ const PrescriptionDialog = ({
         </DialogHeader>
         
         <div className="space-y-4 my-2">
-          {userPrescriptions.length > 0 && (
-            <div>
-              <h3 className="text-sm font-medium mb-2">Vos ordonnances disponibles</h3>
-              <div className="space-y-2">
-                {userPrescriptions
-                  .filter(p => p.status === "active")
-                  .map(prescription => (
-                    <div 
-                      key={prescription.id}
-                      className={`border rounded-md p-3 cursor-pointer hover:bg-gray-50 transition-colors
-                                ${selectedPrescription?.id === prescription.id ? 'ring-2 ring-primary' : ''}`}
-                      onClick={() => onPrescriptionSelect(prescription)}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center">
-                          <FileText className="w-4 h-4 mr-2 text-blue-500" />
-                          <div>
-                            <p className="text-sm font-medium">Dr. {prescription.professionalName}</p>
-                            <p className="text-xs text-gray-500">
-                              Expire le {prescription.expiryDate}
-                            </p>
-                          </div>
-                        </div>
-                        {prescription.prescriptionImage?.verified && (
-                          <Badge className="bg-green-500">
-                            <Check className="w-3 h-3 mr-1" />
-                            Vérifié
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <PrescriptionList 
+            prescriptions={userPrescriptions}
+            selectedPrescription={localSelectedPrescription}
+            onPrescriptionSelect={handlePrescriptionSelect}
+          />
           
           {userPrescriptions.length > 0 && (
             <div className="relative my-4">
@@ -156,43 +109,21 @@ const PrescriptionDialog = ({
             </div>
           )}
           
-          <div>
-            <h3 className="text-sm font-medium mb-2">Télécharger une nouvelle ordonnance</h3>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleFileChange} 
-              accept="image/jpeg,image/png,application/pdf" 
-              className="hidden" 
-            />
-            <Button 
-              variant="outline" 
-              className="w-full" 
-              onClick={triggerFileInput}
-              disabled={isUploading}
-            >
-              {isUploading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                  Téléchargement...
-                </div>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Télécharger ordonnance
-                </>
-              )}
-            </Button>
-            <p className="text-xs text-gray-500 mt-1">
-              Formats acceptés: JPEG, PNG, PDF (max 5 Mo)
-            </p>
-          </div>
+          <PrescriptionUploader 
+            isUploading={isUploading}
+            onFileSelected={handleFileSelected}
+          />
         </div>
         
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Annuler
           </Button>
+          {localSelectedPrescription && (
+            <Button onClick={handleConfirm}>
+              Confirmer
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
