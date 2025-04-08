@@ -46,8 +46,8 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
     }
     
     return (
-      <div className={`relative ${className}`}>
-        <div ref={mapRef} className="w-full h-full rounded-lg overflow-hidden"></div>
+      <div className={`relative ${className} rounded-lg overflow-hidden shadow-lg border border-gray-200`}>
+        <div ref={mapRef} className="w-full h-full"></div>
         
         {!userLocation && <LocationAlert />}
       </div>

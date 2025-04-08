@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown, SortAsc } from "lucide-react";
+import { Check, ChevronsUpDown, SortAsc, Filter, MapPin } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface MapFiltersProps {
   filterByInsurance: string | null;
@@ -30,8 +31,10 @@ const MapFilters: React.FC<MapFiltersProps> = ({
   sortBy,
   setSortBy,
 }) => {
+  const { t } = useLanguage();
+  
   const insuranceOptions = [
-    { label: "Show All", value: null },
+    { label: t("map.showAll"), value: null },
     { label: "CNAM", value: "CNAM" },
     { label: "MUGEFCI", value: "MUGEFCI" },
     { label: "CNPS", value: "CNPS" },
@@ -39,24 +42,29 @@ const MapFilters: React.FC<MapFiltersProps> = ({
   ];
 
   const sortOptions = [
-    { label: "Distance", value: "distance" },
-    { label: "Rating", value: "rating" },
-    { label: "Alphabetical", value: "alphabetical" },
+    { label: t("map.sortDistance"), value: "distance", icon: <MapPin className="h-4 w-4" /> },
+    { label: t("map.sortRating"), value: "rating", icon: <Check className="h-4 w-4" /> },
+    { label: t("map.sortAlphabetical"), value: "alphabetical", icon: <SortAsc className="h-4 w-4" /> },
   ];
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex flex-col sm:flex-row gap-2 w-full">
       {/* Insurance Filter */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="flex items-center">
-            <span className="mr-1">Insurance:</span> 
-            <span className="font-medium">{filterByInsurance || "All"}</span>
-            <ChevronsUpDown className="ml-2 h-4 w-4" />
+          <Button variant="outline" className="flex-1 flex items-center justify-between">
+            <div className="flex items-center">
+              <Filter className="mr-2 h-4 w-4 text-health-blue" />
+              <span>{t("map.insurance")}:</span> 
+            </div>
+            <div className="flex items-center">
+              <span className="font-medium mr-1">{filterByInsurance || t("map.all")}</span>
+              <ChevronsUpDown className="h-4 w-4" />
+            </div>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Filter by Insurance</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("map.filterByInsurance")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {insuranceOptions.map((option) => (
@@ -69,12 +77,14 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                 onClick={() => setFilterByInsurance(option.value)}
               >
                 {option.label}
-                {option.value === filterByInsurance && <Check className="h-4 w-4" />}
-                {option.value === userInsuranceProvider && (
-                  <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                    Your Plan
-                  </span>
-                )}
+                <div className="flex items-center">
+                  {option.value === filterByInsurance && <Check className="h-4 w-4 mr-1 text-health-blue" />}
+                  {option.value === userInsuranceProvider && (
+                    <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                      {t("map.yourPlan")}
+                    </span>
+                  )}
+                </div>
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
@@ -84,13 +94,21 @@ const MapFilters: React.FC<MapFiltersProps> = ({
       {/* Sort By Filter */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="flex items-center">
-            <SortAsc className="mr-2 h-4 w-4" />
-            <span>Sort: {sortOptions.find(o => o.value === sortBy)?.label}</span>
+          <Button variant="outline" className="flex-1 flex items-center justify-between">
+            <div className="flex items-center">
+              <SortAsc className="mr-2 h-4 w-4 text-health-blue" />
+              <span>{t("map.sortBy")}:</span>
+            </div>
+            <div className="flex items-center">
+              <span className="font-medium mr-1">
+                {sortOptions.find(o => o.value === sortBy)?.label}
+              </span>
+              <ChevronsUpDown className="h-4 w-4" />
+            </div>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("map.sortBy")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {sortOptions.map((option) => (
@@ -99,8 +117,11 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                 className="flex items-center justify-between"
                 onClick={() => setSortBy(option.value as "distance" | "rating" | "alphabetical")}
               >
-                {option.label}
-                {option.value === sortBy && <Check className="h-4 w-4" />}
+                <div className="flex items-center">
+                  <span className="mr-2">{option.icon}</span>
+                  {option.label}
+                </div>
+                {option.value === sortBy && <Check className="h-4 w-4 text-health-blue" />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>

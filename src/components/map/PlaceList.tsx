@@ -3,6 +3,7 @@ import React from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import PlaceCard from './PlaceCard';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Loader2, SearchX, Filter } from 'lucide-react';
 
 interface PlaceListProps {
   places: (Pharmacy | HealthCenter)[];
@@ -27,27 +28,44 @@ const PlaceList = ({
 
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <p>{t("map.loadingPlaces")}</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <Loader2 className="h-8 w-8 text-health-blue animate-spin mb-4" />
+        <p className="text-health-blue font-medium">{t("map.loadingPlaces")}</p>
       </div>
     );
   }
 
   if (places.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">
-          {filterByInsurance
-            ? t("map.noPlacesInsurance").replace("{0}", searchTerm).replace("{1}", filterByInsurance)
-            : t("map.noPlaces").replace("{0}", searchTerm)
-          }
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        {searchTerm ? (
+          <>
+            <SearchX className="h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-gray-600 font-medium mb-2">
+              {t("map.noResultsSearch").replace("{0}", searchTerm)}
+            </p>
+          </>
+        ) : filterByInsurance ? (
+          <>
+            <Filter className="h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-gray-600 font-medium mb-2">
+              {t("map.noResultsFilter").replace("{0}", filterByInsurance)}
+            </p>
+          </>
+        ) : (
+          <p className="text-gray-600 font-medium">
+            {t("map.noPlacesFound")}
+          </p>
+        )}
+        <p className="text-gray-500 text-sm max-w-xs">
+          {t("map.tryDifferentSearch")}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4">
       {places.map((place) => (
         <PlaceCard
           key={place.id}
