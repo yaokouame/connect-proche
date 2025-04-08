@@ -66,7 +66,7 @@ const Map = () => {
       <div className="container py-4 space-y-4">
         <Card className="bg-gradient-to-r from-health-blue/10 to-white border-none shadow-md">
           <CardHeader className="py-3">
-            <CardTitle className="text-health-blue text-xl">{t('map.locationSearch')}</CardTitle>
+            <CardTitle className="text-health-blue text-xl">{t('map.healthFacilities')}</CardTitle>
           </CardHeader>
           <CardContent className="py-2">
             <div className="space-y-2">
@@ -75,7 +75,7 @@ const Map = () => {
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
                   <Input
                     type="text"
-                    placeholder={t('map.searchPlaceholder')}
+                    placeholder={t('map.facilitiesPlaceholder')}
                     className="pl-9 py-4 text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -85,7 +85,7 @@ const Map = () => {
                   className="flex-shrink-0 bg-health-blue hover:bg-health-teal"
                   onClick={handleUseMyLocation}
                 >
-                  <MapPin className="mr-2 h-4 w-4" /> {t('map.useMyLocation')}
+                  <MapPin className="mr-2 h-4 w-4" /> {t('map.locateMe')}
                 </Button>
               </div>
             </div>

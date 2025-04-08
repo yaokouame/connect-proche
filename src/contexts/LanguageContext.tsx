@@ -54,7 +54,9 @@ const translations: Record<Language, Record<string, string>> = {
     "map.title": "Trouvez des établissements de santé à proximité",
     "map.pharmacies": "Pharmacies",
     "map.healthCenters": "Centres de santé",
-    "map.search.placeholder": "Rechercher un établissement...",
+    "map.healthFacilities": "Trouver des établissements de santé",
+    "map.facilitiesPlaceholder": "Rechercher un établissement de santé...",
+    "map.locateMe": "Ma position",
     "map.sort.distance": "Distance",
     "map.sort.rating": "Évaluation",
     "map.sort.alphabetical": "Alphabétique",
@@ -74,6 +76,8 @@ const translations: Record<Language, Record<string, string>> = {
     "map.loadingMap": "Chargement de la carte...",
     "map.yourPosition": "Votre position",
     "map.insuranceAccepted": "Assurances acceptées",
+    "map.updatingLocation": "Mise à jour de la position",
+    "map.findingYourLocation": "Recherche de votre position en cours...",
     
     // Professionals page
     "professionals.title": "Professionnels de santé",
@@ -189,7 +193,9 @@ const translations: Record<Language, Record<string, string>> = {
     "map.title": "Find healthcare facilities nearby",
     "map.pharmacies": "Pharmacies",
     "map.healthCenters": "Health Centers",
-    "map.search.placeholder": "Search for a facility...",
+    "map.healthFacilities": "Find healthcare facilities",
+    "map.facilitiesPlaceholder": "Search for a healthcare facility...",
+    "map.locateMe": "My location",
     "map.sort.distance": "Distance",
     "map.sort.rating": "Rating",
     "map.sort.alphabetical": "Alphabetical",
@@ -209,6 +215,8 @@ const translations: Record<Language, Record<string, string>> = {
     "map.loadingMap": "Loading map...",
     "map.yourPosition": "Your position",
     "map.insuranceAccepted": "Accepted insurances",
+    "map.updatingLocation": "Updating location",
+    "map.findingYourLocation": "Finding your location...",
     
     // Professionals page
     "professionals.title": "Healthcare Professionals",
@@ -324,7 +332,9 @@ const translations: Record<Language, Record<string, string>> = {
     "map.title": "Encuentra establecimientos de salud cercanos",
     "map.pharmacies": "Farmacias",
     "map.healthCenters": "Centros de salud",
-    "map.search.placeholder": "Buscar un establecimiento...",
+    "map.healthFacilities": "Encontrar centros de salud",
+    "map.facilitiesPlaceholder": "Buscar un centro de salud...",
+    "map.locateMe": "Mi ubicación",
     "map.sort.distance": "Distancia",
     "map.sort.rating": "Valoración",
     "map.sort.alphabetical": "Alfabético",
@@ -344,6 +354,8 @@ const translations: Record<Language, Record<string, string>> = {
     "map.loadingMap": "Cargando mapa...",
     "map.yourPosition": "Tu posición",
     "map.insuranceAccepted": "Seguros aceptados",
+    "map.updatingLocation": "Actualizando ubicación",
+    "map.findingYourLocation": "Buscando tu ubicación...",
     
     // Professionals page
     "professionals.title": "Profesionales de la salud",
