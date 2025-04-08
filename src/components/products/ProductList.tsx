@@ -2,6 +2,7 @@
 import React from "react";
 import ProductCard from "./ProductCard";
 import { Product } from "@/types/user";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface ProductListProps {
   products: Product[];
@@ -11,6 +12,8 @@ interface ProductListProps {
 }
 
 const ProductList = ({ products, loading, searchTerm, onAddToCart }: ProductListProps) => {
+  const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
+
   return (
     <>
       {loading ? (
@@ -18,7 +21,7 @@ const ProductList = ({ products, loading, searchTerm, onAddToCart }: ProductList
           <p>Chargement des produits...</p>
         </div>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className={`grid grid-cols-1 ${isTablet ? 'sm:grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-4 md:gap-6`}>
           {products.map((product) => (
             <ProductCard 
               key={product.id} 

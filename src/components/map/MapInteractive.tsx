@@ -10,10 +10,14 @@ import AdBanner from "../ads/AdBanner";
 import AwarenessBanner from "../ads/AwarenessBanner";
 import VisitorCounter from "../analytics/VisitorCounter";
 import { Card, CardContent } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 const MapInteractive = () => {
   const mapRef = useRef<GoogleMapRefHandle>(null);
   const [selectedPlace, setSelectedPlace] = useState<Pharmacy | HealthCenter | null>(null);
+  const isMobile = useIsMobile();
+  const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
   
   const {
     userLocation,
@@ -56,9 +60,9 @@ const MapInteractive = () => {
         <AdBanner className="h-full" />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-300px)] min-h-[500px]">
+      <div className={`grid grid-cols-1 ${isTablet ? 'sm:grid-cols-2' : 'md:grid-cols-3'} gap-4 md:gap-6 h-[calc(100vh-300px)] min-h-[500px]`}>
         {/* Map Container */}
-        <div className="md:col-span-2 h-full flex flex-col">
+        <div className={`${isTablet ? '' : 'md:col-span-2'} h-full flex flex-col`}>
           <Card className="h-full border-none shadow-md overflow-hidden">
             <CardContent className="p-0 h-full">
               <GoogleMap
@@ -67,6 +71,7 @@ const MapInteractive = () => {
                 places={places}
                 onMarkerClick={handleMarkerClick}
                 height="h-full"
+                compact={isMobile || isTablet}
               />
               
               {/* Visitor Counter - positioned on the map */}
@@ -82,8 +87,8 @@ const MapInteractive = () => {
         {/* Sidebar with Filters and Results */}
         <div className="flex flex-col h-full">
           <Card className="h-full overflow-hidden">
-            <CardContent className="p-4 flex flex-col h-full">
-              <div className="mb-4">
+            <CardContent className="p-2 sm:p-4 flex flex-col h-full">
+              <div className="mb-2 sm:mb-4">
                 <MapFilters
                   filterByInsurance={filterByInsurance}
                   setFilterByInsurance={setFilterByInsurance}
@@ -108,8 +113,8 @@ const MapInteractive = () => {
               </div>
               
               {selectedPlace && (
-                <div className="mt-4 border-t pt-4">
-                  <h3 className="text-lg font-medium mb-2">Selected Location</h3>
+                <div className="mt-2 sm:mt-4 border-t pt-2 sm:pt-4">
+                  <h3 className="text-base sm:text-lg font-medium mb-2">Selected Location</h3>
                   <PlaceCard 
                     place={selectedPlace} 
                     userLocation={userLocation}

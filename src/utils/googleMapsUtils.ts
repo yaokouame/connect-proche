@@ -52,7 +52,7 @@ export const createGoogleMap = (
     streetViewControl: false,
     mapTypeId: "roadmap",
     zoomControl: true,
-    scrollwheel: !compact,
+    gestureHandling: compact ? "cooperative" : "auto",
     disableDefaultUI: compact,
     styles: compact ? [
       { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
