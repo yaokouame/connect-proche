@@ -17,4 +17,5 @@ export default {
   "nav.tutorials": "Tutoriels",
   "nav.appointments": "Rendez-vous",
   "nav.messaging": "Messagerie",
+  "nav.admin": "Administration",
 }

@@ -19,6 +19,7 @@ import Wellness from "@/pages/Wellness";
 import Cart from "@/pages/Cart";
 import OrderConfirmation from "@/pages/OrderConfirmation";
 import Premium from "@/pages/Premium";
+import Admin from "@/pages/Admin";
 
 import { UserProvider } from "@/contexts/UserContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -48,6 +49,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/premium" element={<Premium />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />

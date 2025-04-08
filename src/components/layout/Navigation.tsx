@@ -12,7 +12,8 @@ import {
   LogOut, 
   Menu,
   MessageCircle,
-  BookOpen
+  BookOpen,
+  Settings
 } from "lucide-react";
 import {
   Sheet,
@@ -32,6 +33,8 @@ const Navigation: React.FC = () => {
   const handleLogout = () => {
     logout();
   };
+
+  const isProfessional = currentUser?.role === "professional";
 
   const navItems = [
     {
@@ -72,6 +75,13 @@ const Navigation: React.FC = () => {
       path: "/tutorials",
       icon: <BookOpen className="h-5 w-5 mr-2" />,
     },
+    {
+      label: t("nav.admin"),
+      path: "/admin",
+      icon: <Settings className="h-5 w-5 mr-2" />,
+      requiresAuth: true,
+      requiresProfessional: true,
+    },
   ];
 
   return (
@@ -86,6 +96,7 @@ const Navigation: React.FC = () => {
         <nav className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => {
             if (item.requiresAuth && !currentUser) return null;
+            if (item.requiresProfessional && !isProfessional) return null;
             return (
               <Link
                 key={item.path}
@@ -147,6 +158,7 @@ const Navigation: React.FC = () => {
                 <nav className="flex flex-col space-y-4 mt-4">
                   {navItems.map((item) => {
                     if (item.requiresAuth && !currentUser) return null;
+                    if (item.requiresProfessional && !isProfessional) return null;
                     return (
                       <SheetClose asChild key={item.path}>
                         <Link
