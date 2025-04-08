@@ -6,6 +6,8 @@ import PlaceList from "./PlaceList";
 import PlaceCard from "./PlaceCard";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { useMap } from "@/hooks/useMap";
+import AdBanner from "../ads/AdBanner";
+import VisitorCounter from "../analytics/VisitorCounter";
 
 const MapInteractive = () => {
   const mapRef = useRef<GoogleMapRefHandle>(null);
@@ -45,46 +47,58 @@ const MapInteractive = () => {
   };
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-200px)] min-h-[500px]">
-      <div className="md:col-span-2 h-full">
-        <GoogleMap
-          ref={mapRef}
-          userLocation={userLocation}
-          places={places}
-          onMarkerClick={handleMarkerClick}
-        />
-      </div>
-      <div className="flex flex-col h-full">
-        <MapFilters
-          filterByInsurance={filterByInsurance}
-          setFilterByInsurance={setFilterByInsurance}
-          userInsuranceProvider={userInsuranceProvider}
-          searchTerm={searchTerm}
-          setSearchTerm={() => {}} // This is a placeholder, we'll fix the proper implementation
-          sortBy="distance"
-          setSortBy={setSortBy}
-        />
-        <div className="flex-1 overflow-auto mt-4">
-          <PlaceList 
-            places={places} 
-            loading={loading}
-            searchTerm={searchTerm}
-            filterByInsurance={filterByInsurance}
+    <div className="flex flex-col gap-4">
+      {/* Ad Banner */}
+      <AdBanner className="mb-2" />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-200px)] min-h-[500px]">
+        <div className="md:col-span-2 h-full">
+          <GoogleMap
+            ref={mapRef}
             userLocation={userLocation}
-            userInsuranceProvider={userInsuranceProvider}
-            viewOnMap={viewOnMap}
+            places={places}
+            onMarkerClick={handleMarkerClick}
           />
+          
+          {/* Visitor Counter - positioned on the map */}
+          <div className="relative">
+            <div className="absolute bottom-4 right-4 z-10">
+              <VisitorCounter />
+            </div>
+          </div>
         </div>
-        {selectedPlace && (
-          <div className="mt-4">
-            <PlaceCard 
-              place={selectedPlace} 
+        <div className="flex flex-col h-full">
+          <MapFilters
+            filterByInsurance={filterByInsurance}
+            setFilterByInsurance={setFilterByInsurance}
+            userInsuranceProvider={userInsuranceProvider}
+            searchTerm={searchTerm}
+            setSearchTerm={() => {}} // This is a placeholder, we'll fix the proper implementation
+            sortBy="distance"
+            setSortBy={setSortBy}
+          />
+          <div className="flex-1 overflow-auto mt-4">
+            <PlaceList 
+              places={places} 
+              loading={loading}
+              searchTerm={searchTerm}
+              filterByInsurance={filterByInsurance}
               userLocation={userLocation}
               userInsuranceProvider={userInsuranceProvider}
               viewOnMap={viewOnMap}
             />
           </div>
-        )}
+          {selectedPlace && (
+            <div className="mt-4">
+              <PlaceCard 
+                place={selectedPlace} 
+                userLocation={userLocation}
+                userInsuranceProvider={userInsuranceProvider}
+                viewOnMap={viewOnMap}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
