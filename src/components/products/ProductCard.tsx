@@ -1,11 +1,17 @@
 
 import React, { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Volume2 } from "lucide-react";
+import { ShoppingCart, Info, Volume2 } from "lucide-react";
 import { Product } from "@/types/user";
-import { VoiceHelp } from "@/components/voice/VoiceAssistant";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ProductCardProps {
   product: Product;
@@ -14,105 +20,103 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart, enableVoiceHelp = false }: ProductCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
+  const isMobile = useIsMobile();
+  const [isLoading, setIsLoading] = useState(false);
+  const requiresPrescription = product.requiresPrescription || false;
+
+  const handleAddToCart = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      onAddToCart(product);
+      setIsLoading(false);
+    }, 500);
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
+  };
+
+  const getStockLabel = () => {
+    if (product.inStock === 0) {
+      return "Rupture de stock";
+    }
+    if (product.inStock < 5) {
+      return "Stock limité";
+    }
+    return "En stock";
+  };
+
+  const getStockColor = () => {
+    if (product.inStock === 0) {
+      return "bg-red-100 text-red-800 border-red-200";
+    }
+    if (product.inStock < 5) {
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    }
+    return "bg-green-100 text-green-800 border-green-200";
+  };
+
   const speakProductInfo = () => {
     if ('speechSynthesis' in window) {
-      const description = `${product.name}. ${product.description}. Prix: ${product.price} euros. ${product.requiresPrescription ? 'Ce produit nécessite une ordonnance.' : ''}`;
-      const utterance = new SpeechSynthesisUtterance(description);
+      const text = `${product.name}. ${product.description}. Prix: ${formatPrice(product.price)}. ${getStockLabel()}. ${requiresPrescription ? 'Ce produit nécessite une ordonnance.' : ''}`;
+      
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'fr-FR';
-      
-      // Essaie de trouver une voix française
-      const voices = window.speechSynthesis.getVoices();
-      const frenchVoice = voices.find(voice => voice.lang.includes('fr'));
-      if (frenchVoice) {
-        utterance.voice = frenchVoice;
-      }
-      
       window.speechSynthesis.speak(utterance);
     }
   };
 
   return (
-    <Card
-      className="overflow-hidden transition-all duration-200 hover:shadow-md relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="h-40 overflow-hidden bg-gray-100 relative">
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="w-full h-full object-contain p-2"
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-400">
-            Image non disponible
-          </div>
-        )}
-        {enableVoiceHelp && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-1 right-1 bg-white/80 hover:bg-white"
-            onClick={speakProductInfo}
-            title="Écouter la description du produit"
-          >
-            <Volume2 className="h-4 w-4 text-health-blue" />
-          </Button>
-        )}
-        {product.requiresPrescription && (
-          <Badge variant="destructive" className="absolute top-2 left-2">
-            Ordonnance requise
+    <Card className="flex flex-col h-full">
+      <CardContent className="pt-6 px-4 flex-grow">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-medium text-lg line-clamp-2">{product.name}</h3>
+          {enableVoiceHelp && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 -mr-2 -mt-2" 
+              onClick={speakProductInfo}
+              title="Écouter les informations du produit"
+            >
+              <Volume2 className="h-4 w-4 text-health-blue" />
+            </Button>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-2 mb-2">
+          <Badge variant="outline" className={`text-xs ${getStockColor()}`}>
+            {getStockLabel()}
           </Badge>
-        )}
-        {product.stock < 5 && product.stock > 0 && (
-          <Badge variant="secondary" className="absolute bottom-2 left-2">
-            Stock limité: {product.stock}
-          </Badge>
-        )}
-        {product.stock === 0 && (
-          <Badge variant="outline" className="absolute bottom-2 left-2 bg-gray-100">
-            Rupture de stock
-          </Badge>
-        )}
-      </div>
-
-      <CardContent className="p-4">
-        <h3 className="font-medium text-md mb-1 line-clamp-1">{product.name}</h3>
-        <p className="text-sm text-gray-600 line-clamp-2 h-10">
-          {product.description}
-        </p>
-        <div className="mt-2 flex justify-between items-center">
-          <p className="font-semibold text-health-blue">{product.price} €</p>
-          {product.category && (
-            <Badge variant="outline" className="text-xs">
-              {product.category}
+          
+          {requiresPrescription && (
+            <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 text-xs">
+              Ordonnance
             </Badge>
           )}
         </div>
+        
+        <p className="text-sm text-gray-500 line-clamp-3 mb-4">{product.description}</p>
+        
+        <div className="font-semibold text-lg">{formatPrice(product.price)}</div>
       </CardContent>
-
-      <CardFooter className="p-4 pt-0">
-        <Button
-          onClick={() => onAddToCart(product)}
-          disabled={product.stock === 0}
-          className="w-full"
-          variant={product.requiresPrescription ? "outline" : "default"}
-        >
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          {product.requiresPrescription
-            ? "Ajouter avec ordonnance"
-            : "Ajouter au panier"}
-        </Button>
+      
+      <CardFooter className="pt-2 pb-4 px-4">
+        {product.inStock > 0 ? (
+          <Button 
+            className="w-full" 
+            onClick={handleAddToCart} 
+            disabled={isLoading}
+          >
+            {isLoading ? "Ajout..." : "Ajouter au panier"}
+            <ShoppingCart className="w-4 h-4 ml-2" />
+          </Button>
+        ) : (
+          <Button className="w-full" disabled>
+            Indisponible
+          </Button>
+        )}
       </CardFooter>
-
-      {enableVoiceHelp && (
-        <div className="p-2 text-center">
-          <VoiceHelp text={`${product.name}. ${product.description}. Prix: ${product.price} euros.`} />
-        </div>
-      )}
     </Card>
   );
 };

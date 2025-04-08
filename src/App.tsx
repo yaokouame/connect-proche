@@ -12,9 +12,12 @@ import Register from "@/pages/Register";
 import Appointments from "@/pages/Appointments";
 import MapView from "@/pages/Map";
 import Products from "@/pages/Products";
+import Tutorials from "@/pages/Tutorials";
 import Admin from "@/pages/Admin";
 import Chat from "@/pages/Chat";
 import Cart from "@/pages/Cart";
+import CheckoutSuccess from "@/pages/CheckoutSuccess";
+import CheckoutCancel from "@/pages/CheckoutCancel";
 
 // Import providers
 import { UserProvider } from "@/contexts/UserContext";
@@ -38,9 +41,12 @@ function App() {
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/map" element={<MapView />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/tutorials" element={<Tutorials />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout/success" element={<CheckoutSuccess />} />
+              <Route path="/checkout/cancel" element={<CheckoutCancel />} />
             </Routes>
             <VoiceGuidance />
             <Toaster />
