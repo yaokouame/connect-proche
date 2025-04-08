@@ -1,337 +1,127 @@
 
-import React, { useState } from "react";
+import React from "react";
+import { InsuranceInfo, InsuranceVoucher } from "@/types/user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wallet, Plus, Calendar } from "lucide-react";
-import { PatientProfile, InsuranceInfo } from "@/types/user";
-import { useToast } from "@/components/ui/use-toast";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Label } from "@/components/ui/label";
+import { Plus, X } from "lucide-react";
 
-interface InsuranceSectionProps {
-  currentUser: PatientProfile;
-  updateUserProfile: (user: PatientProfile) => void;
+export interface InsuranceSectionProps {
+  insuranceInfo: InsuranceInfo;
+  setInsuranceInfo: React.Dispatch<React.SetStateAction<InsuranceInfo>>;
+  insuranceVouchers: InsuranceVoucher[];
+  setInsuranceVouchers: React.Dispatch<React.SetStateAction<InsuranceVoucher[]>>;
 }
 
-const InsuranceSection = ({ currentUser, updateUserProfile }: InsuranceSectionProps) => {
-  const { toast } = useToast();
-  const { t } = useLanguage();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  const [insuranceProvider, setInsuranceProvider] = useState(currentUser.insuranceInfo?.provider || "");
-  const [membershipNumber, setMembershipNumber] = useState(currentUser.insuranceInfo?.membershipNumber || "");
-  const [policyNumber, setPolicyNumber] = useState(currentUser.insuranceInfo?.policyNumber || "");
-  const [validUntil, setValidUntil] = useState(currentUser.insuranceInfo?.validUntil || "");
-  const [coverageType, setCoverageType] = useState(currentUser.insuranceInfo?.coverageType || "");
-  const [coveragePercentage, setCoveragePercentage] = useState(
-    currentUser.insuranceInfo?.coveragePercentage?.toString() || ""
-  );
-  
-  const [isSaving, setIsSaving] = useState(false);
-
-  const handleSaveInsurance = () => {
-    if (!insuranceProvider || !membershipNumber || !policyNumber || !validUntil) {
-      toast({
-        variant: "destructive",
-        title: t("profile.missingFields"),
-        description: t("profile.fillAllRequiredFields"),
-      });
-      return;
-    }
-    
-    setIsSaving(true);
-    
-    setTimeout(() => {
-      const insuranceInfo: InsuranceInfo = {
-        provider: insuranceProvider,
-        membershipNumber,
-        policyNumber,
-        validUntil,
-        coverageType: coverageType || undefined,
-        coveragePercentage: coveragePercentage ? parseFloat(coveragePercentage) : undefined
-      };
-      
-      const updatedUser = {
-        ...currentUser,
-        insuranceInfo
-      };
-      
-      updateUserProfile(updatedUser);
-      
-      toast({
-        title: t("profile.insuranceUpdated"),
-        description: t("profile.insuranceUpdateSuccess"),
-      });
-      
-      setIsSaving(false);
-      setIsDialogOpen(false);
-    }, 1000);
+const InsuranceSection: React.FC<InsuranceSectionProps> = ({
+  insuranceInfo,
+  setInsuranceInfo,
+  insuranceVouchers,
+  setInsuranceVouchers
+}) => {
+  const handleAddVoucher = () => {
+    setInsuranceVouchers([
+      ...insuranceVouchers,
+      { id: `voucher-${Date.now()}`, name: "", code: "", expiryDate: "" }
+    ]);
   };
-  
-  const removeInsurance = () => {
-    const updatedUser = {
-      ...currentUser,
-      insuranceInfo: undefined
-    };
-    
-    updateUserProfile(updatedUser);
-    
-    toast({
-      title: t("profile.insuranceRemoved"),
-      description: t("profile.insuranceRemoveSuccess"),
-    });
+
+  const handleRemoveVoucher = (index: number) => {
+    const newVouchers = [...insuranceVouchers];
+    newVouchers.splice(index, 1);
+    setInsuranceVouchers(newVouchers);
+  };
+
+  const handleVoucherChange = (index: number, field: keyof InsuranceVoucher, value: string) => {
+    const newVouchers = [...insuranceVouchers];
+    newVouchers[index] = { ...newVouchers[index], [field]: value };
+    setInsuranceVouchers(newVouchers);
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <Wallet className="mr-2 h-5 w-5" />
-          {t("profile.insuranceInformation")}
-        </CardTitle>
+        <CardTitle>Insurance Information</CardTitle>
       </CardHeader>
-      <CardContent>
-        {currentUser.insuranceInfo ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label>{t("profile.insuranceProvider")}</Label>
-                <p className="font-medium">{currentUser.insuranceInfo.provider}</p>
-              </div>
-              <div>
-                <Label>{t("profile.validUntil")}</Label>
-                <p className="font-medium">{currentUser.insuranceInfo.validUntil}</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label>{t("profile.membershipNumber")}</Label>
-                <p className="font-medium">{currentUser.insuranceInfo.membershipNumber}</p>
-              </div>
-              <div>
-                <Label>{t("profile.policyNumber")}</Label>
-                <p className="font-medium">{currentUser.insuranceInfo.policyNumber}</p>
-              </div>
-            </div>
-            
-            {(currentUser.insuranceInfo.coverageType || currentUser.insuranceInfo.coveragePercentage) && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {currentUser.insuranceInfo.coverageType && (
-                  <div>
-                    <Label>{t("profile.coverageType")}</Label>
-                    <p className="font-medium">{currentUser.insuranceInfo.coverageType}</p>
-                  </div>
-                )}
-                {currentUser.insuranceInfo.coveragePercentage && (
-                  <div>
-                    <Label>{t("profile.coveragePercentage")}</Label>
-                    <p className="font-medium">{currentUser.insuranceInfo.coveragePercentage}%</p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            <div className="flex gap-2 pt-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline">{t("profile.updateInsurance")}</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>{t("profile.updateInsurance")}</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div>
-                      <Label htmlFor="provider">{t("profile.insuranceProvider")} *</Label>
-                      <Input
-                        id="provider"
-                        value={insuranceProvider}
-                        onChange={(e) => setInsuranceProvider(e.target.value)}
-                        placeholder="CMU, COOPEC, etc."
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="membershipNumber">{t("profile.membershipNumber")} *</Label>
-                        <Input
-                          id="membershipNumber"
-                          value={membershipNumber}
-                          onChange={(e) => setMembershipNumber(e.target.value)}
-                          placeholder="123456789"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="policyNumber">{t("profile.policyNumber")} *</Label>
-                        <Input
-                          id="policyNumber"
-                          value={policyNumber}
-                          onChange={(e) => setPolicyNumber(e.target.value)}
-                          placeholder="POL-123456"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="validUntil">{t("profile.validUntil")} *</Label>
-                      <div className="flex">
-                        <Input
-                          id="validUntil"
-                          type="date"
-                          value={validUntil}
-                          onChange={(e) => setValidUntil(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="coverageType">{t("profile.coverageType")}</Label>
-                      <Select value={coverageType} onValueChange={setCoverageType}>
-                        <SelectTrigger id="coverageType">
-                          <SelectValue placeholder={t("profile.selectCoverageType")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="basic">{t("profile.basic")}</SelectItem>
-                          <SelectItem value="standard">{t("profile.standard")}</SelectItem>
-                          <SelectItem value="premium">{t("profile.premium")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="coveragePercentage">{t("profile.coveragePercentage")}</Label>
-                      <Input
-                        id="coveragePercentage"
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={coveragePercentage}
-                        onChange={(e) => setCoveragePercentage(e.target.value)}
-                        placeholder="80"
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button 
-                      type="submit" 
-                      onClick={handleSaveInsurance}
-                      disabled={isSaving}
-                    >
-                      {isSaving ? t("common.saving") : t("common.save")}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-              
-              <Button 
-                variant="outline" 
-                onClick={removeInsurance}
-              >
-                {t("profile.removeInsurance")}
-              </Button>
-            </div>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="provider">Insurance Provider</Label>
+          <Input
+            id="provider"
+            value={insuranceInfo.provider || ""}
+            onChange={(e) => setInsuranceInfo({ ...insuranceInfo, provider: e.target.value })}
+            placeholder="e.g., CNAM, MUGEFCI, CMU"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="policyNumber">Policy Number</Label>
+          <Input
+            id="policyNumber"
+            value={insuranceInfo.policyNumber || ""}
+            onChange={(e) => setInsuranceInfo({ ...insuranceInfo, policyNumber: e.target.value })}
+            placeholder="e.g., INS-123456789"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="coverageDetails">Coverage Details</Label>
+          <Input
+            id="coverageDetails"
+            value={insuranceInfo.coverageDetails || ""}
+            onChange={(e) => setInsuranceInfo({ ...insuranceInfo, coverageDetails: e.target.value })}
+            placeholder="e.g., 80% coverage for consultations"
+          />
+        </div>
+        
+        <div className="pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium">Insurance Vouchers</h3>
+            <Button size="sm" variant="outline" onClick={handleAddVoucher}>
+              <Plus className="h-4 w-4 mr-1" /> Add Voucher
+            </Button>
           </div>
-        ) : (
-          <div className="text-center py-6">
-            <p className="text-gray-500 mb-4">{t("profile.noInsuranceInfo")}</p>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" /> {t("profile.addInsurance")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t("profile.addInsurance")}</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div>
-                    <Label htmlFor="provider">{t("profile.insuranceProvider")} *</Label>
+          
+          {insuranceVouchers.length === 0 ? (
+            <p className="text-sm text-gray-500 py-2">No vouchers added yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {insuranceVouchers.map((voucher, index) => (
+                <div key={voucher.id} className="flex items-start space-x-2">
+                  <div className="grid grid-cols-3 gap-2 flex-1">
                     <Input
-                      id="provider"
-                      value={insuranceProvider}
-                      onChange={(e) => setInsuranceProvider(e.target.value)}
-                      placeholder="CMU, COOPEC, etc."
+                      value={voucher.name}
+                      onChange={(e) => handleVoucherChange(index, "name", e.target.value)}
+                      placeholder="Voucher name"
+                      className="col-span-1"
+                    />
+                    <Input
+                      value={voucher.code}
+                      onChange={(e) => handleVoucherChange(index, "code", e.target.value)}
+                      placeholder="Code"
+                      className="col-span-1"
+                    />
+                    <Input
+                      type="date"
+                      value={voucher.expiryDate}
+                      onChange={(e) => handleVoucherChange(index, "expiryDate", e.target.value)}
+                      className="col-span-1"
                     />
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="membershipNumber">{t("profile.membershipNumber")} *</Label>
-                      <Input
-                        id="membershipNumber"
-                        value={membershipNumber}
-                        onChange={(e) => setMembershipNumber(e.target.value)}
-                        placeholder="123456789"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="policyNumber">{t("profile.policyNumber")} *</Label>
-                      <Input
-                        id="policyNumber"
-                        value={policyNumber}
-                        onChange={(e) => setPolicyNumber(e.target.value)}
-                        placeholder="POL-123456"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="validUntil">{t("profile.validUntil")} *</Label>
-                    <div className="flex">
-                      <Input
-                        id="validUntil"
-                        type="date"
-                        value={validUntil}
-                        onChange={(e) => setValidUntil(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="coverageType">{t("profile.coverageType")}</Label>
-                    <Select value={coverageType} onValueChange={setCoverageType}>
-                      <SelectTrigger id="coverageType">
-                        <SelectValue placeholder={t("profile.selectCoverageType")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="basic">{t("profile.basic")}</SelectItem>
-                        <SelectItem value="standard">{t("profile.standard")}</SelectItem>
-                        <SelectItem value="premium">{t("profile.premium")}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="coveragePercentage">{t("profile.coveragePercentage")}</Label>
-                    <Input
-                      id="coveragePercentage"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={coveragePercentage}
-                      onChange={(e) => setCoveragePercentage(e.target.value)}
-                      placeholder="80"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
                   <Button 
-                    type="submit" 
-                    onClick={handleSaveInsurance}
-                    disabled={isSaving}
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => handleRemoveVoucher(index)}
+                    className="h-10 w-10 rounded-full"
                   >
-                    {isSaving ? t("common.saving") : t("common.save")}
+                    <X className="h-4 w-4" />
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

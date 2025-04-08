@@ -17,6 +17,7 @@ export function useMap() {
   const [showMap, setShowMap] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userInsuranceProvider, setUserInsuranceProvider] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Get location function
@@ -179,5 +180,7 @@ export function useMap() {
     searchNearby,
     sortedPharmacies: getSortedPharmacies(),
     sortedHealthCenters: getSortedHealthCenters(),
+    userInsuranceProvider,
+    setUserInsuranceProvider
   };
 }

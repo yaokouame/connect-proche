@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 import { UserRole } from "@/types/user";
@@ -9,8 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Layout from "@/components/Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { medicalSpecialties } from "@/data/medicalData";
+import { ivoryCoastRegions, ivoryCoastCities } from "@/data/locationData";
 
 const Register = () => {
   const { language } = useLanguage();
@@ -27,12 +30,23 @@ const Register = () => {
   const [license, setLicense] = useState("");
   
   // Location fields
-  const [city, setCity] = useState("");
   const [region, setRegion] = useState("");
+  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
   
   const { register } = useUser();
   const navigate = useNavigate();
+
+  // Update available cities when region changes
+  useEffect(() => {
+    if (region) {
+      setAvailableCities(ivoryCoastCities[region] || []);
+      setCity(""); // Reset city when region changes
+    } else {
+      setAvailableCities([]);
+    }
+  }, [region]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,18 +91,21 @@ const Register = () => {
         confirmPassword: "Confirmer le mot de passe",
         passwordMismatch: "Les mots de passe ne correspondent pas",
         specialty: "Spécialité",
-        specialtyPlaceholder: "ex: Cardiologue, Infirmier, Dentiste...",
+        specialtyPlaceholder: "Sélectionnez votre spécialité",
         license: "Numéro de licence professionnelle",
         licensePlaceholder: "ex: 12345678",
         location: "Localisation",
         city: "Ville",
+        cityPlaceholder: "Sélectionnez votre ville",
         region: "Région",
+        regionPlaceholder: "Sélectionnez votre région",
         address: "Adresse",
         addressPlaceholder: "Adresse complète",
         creatingAccount: "Création du compte...",
         signUp: "S'inscrire",
         alreadyRegistered: "Déjà inscrit?",
-        logIn: "Se connecter"
+        logIn: "Se connecter",
+        selectOption: "Sélectionnez une option"
       };
     } else {
       return {
@@ -102,18 +119,21 @@ const Register = () => {
         confirmPassword: "Confirm Password",
         passwordMismatch: "Passwords don't match",
         specialty: "Specialty",
-        specialtyPlaceholder: "ex: Cardiologist, Nurse, Dentist...",
+        specialtyPlaceholder: "Select your specialty",
         license: "Professional License Number",
         licensePlaceholder: "ex: 12345678",
         location: "Location",
         city: "City",
+        cityPlaceholder: "Select your city",
         region: "Region",
+        regionPlaceholder: "Select your region",
         address: "Address",
         addressPlaceholder: "Full address",
         creatingAccount: "Creating account...",
         signUp: "Sign Up",
         alreadyRegistered: "Already registered?",
-        logIn: "Log In"
+        logIn: "Log In",
+        selectOption: "Select an option"
       };
     }
   };
@@ -195,24 +215,34 @@ const Register = () => {
                   <h3 className="text-md font-medium">{t.location}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="city">{t.city}</Label>
-                      <Input
-                        id="city"
-                        placeholder="Abidjan"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        required
-                      />
+                      <Label htmlFor="region">{t.region}</Label>
+                      <Select value={region} onValueChange={setRegion}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t.regionPlaceholder} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ivoryCoastRegions.map((regionName) => (
+                            <SelectItem key={regionName} value={regionName}>
+                              {regionName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="region">{t.region}</Label>
-                      <Input
-                        id="region"
-                        placeholder="Cocody"
-                        value={region}
-                        onChange={(e) => setRegion(e.target.value)}
-                        required
-                      />
+                      <Label htmlFor="city">{t.city}</Label>
+                      <Select value={city} onValueChange={setCity} disabled={!region}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t.cityPlaceholder} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableCities.map((cityName) => (
+                            <SelectItem key={cityName} value={cityName}>
+                              {cityName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -231,13 +261,18 @@ const Register = () => {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="specialty">{t.specialty}</Label>
-                      <Input
-                        id="specialty"
-                        placeholder={t.specialtyPlaceholder}
-                        value={specialty}
-                        onChange={(e) => setSpecialty(e.target.value)}
-                        required={role === "professional"}
-                      />
+                      <Select value={specialty} onValueChange={setSpecialty}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t.specialtyPlaceholder} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {medicalSpecialties.map((specialtyName) => (
+                            <SelectItem key={specialtyName} value={specialtyName}>
+                              {specialtyName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="license">{t.license}</Label>
