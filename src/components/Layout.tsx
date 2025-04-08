@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -247,10 +246,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <address className="not-italic text-gray-300">
-                <p>12 rue de la Santé</p>
-                <p>75001 Paris, France</p>
+                <p>2 PLTX Garage CFA</p>
+                <p>Abidjan, Cocody</p>
                 <p className="mt-2">contact@connectproche.fr</p>
-                <p>+33 1 23 45 67 89</p>
+                <p>+225 0748644886</p>
               </address>
             </div>
           </div>
