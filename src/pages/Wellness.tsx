@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { wellnessService } from "@/services/wellnessService";
-import { WellnessGoal } from "@/types/health";
+import { getUserActivities, getUserSleep, getUserNutrition, getUserHydration, getUserWellnessGoals, getWellnessRecommendations } from "@/services/wellnessService";
+import { WellnessGoal, PhysicalActivity, SleepEntry, NutritionEntry, HydrationEntry } from "@/types/health";
+import { useQuery } from "@tanstack/react-query";
 
 // Wellness Components
 import ActivityTracker from "@/components/wellness/ActivityTracker";
@@ -18,23 +19,66 @@ import VoiceRecognition from "@/components/voice/VoiceRecognition";
 
 const WellnessPage = () => {
   const [activeTab, setActiveTab] = useState("activity");
-  const [isLoading, setIsLoading] = useState(true);
-  const [wellnessGoals, setWellnessGoals] = useState<WellnessGoal[]>([]);
+  const userId = "user-123"; // Mock user ID for demo purposes
   
-  useEffect(() => {
-    const fetchWellnessData = async () => {
-      try {
-        const goalsData = await wellnessService.getWellnessGoals();
-        setWellnessGoals(goalsData);
-      } catch (error) {
-        console.error("Error fetching wellness data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchWellnessData();
-  }, []);
+  // Fetch wellness goals
+  const { 
+    data: wellnessGoals = [],
+    isLoading: isLoadingGoals
+  } = useQuery({
+    queryKey: ['wellnessGoals', userId],
+    queryFn: () => getUserWellnessGoals(userId)
+  });
+  
+  // Fetch wellness recommendations
+  const {
+    data: recommendations = [],
+    isLoading: isLoadingRecommendations
+  } = useQuery({
+    queryKey: ['wellnessRecommendations'],
+    queryFn: getWellnessRecommendations
+  });
+  
+  // Fetch activities
+  const {
+    data: activities = [],
+    isLoading: isLoadingActivities
+  } = useQuery({
+    queryKey: ['activities', userId],
+    queryFn: () => getUserActivities(userId)
+  });
+  
+  // Fetch sleep data
+  const {
+    data: sleepData = [],
+    isLoading: isLoadingSleep
+  } = useQuery({
+    queryKey: ['sleep', userId],
+    queryFn: () => getUserSleep(userId)
+  });
+  
+  // Fetch nutrition data
+  const {
+    data: nutritionData = [],
+    isLoading: isLoadingNutrition
+  } = useQuery({
+    queryKey: ['nutrition', userId],
+    queryFn: () => getUserNutrition(userId)
+  });
+  
+  // Fetch hydration data
+  const {
+    data: hydrationData = [],
+    isLoading: isLoadingHydration
+  } = useQuery({
+    queryKey: ['hydration', userId],
+    queryFn: () => getUserHydration(userId)
+  });
+  
+  const handleVoiceResult = (text: string) => {
+    console.log("Voice recognition result:", text);
+    // Handle voice commands for wellness page
+  };
   
   return (
     <Layout>
@@ -56,19 +100,19 @@ const WellnessPage = () => {
               
               <div className="bg-white rounded-lg p-4 shadow-sm">
                 <TabsContent value="activity" className="space-y-4">
-                  <ActivityTracker />
+                  <ActivityTracker activities={activities} isLoading={isLoadingActivities} />
                 </TabsContent>
                 
                 <TabsContent value="sleep" className="space-y-4">
-                  <SleepTracker />
+                  <SleepTracker sleepData={sleepData} isLoading={isLoadingSleep} />
                 </TabsContent>
                 
                 <TabsContent value="nutrition" className="space-y-4">
-                  <NutritionJournal />
+                  <NutritionJournal nutritionData={nutritionData} isLoading={isLoadingNutrition} />
                 </TabsContent>
                 
                 <TabsContent value="hydration" className="space-y-4">
-                  <HydrationTracker />
+                  <HydrationTracker hydrationData={hydrationData} isLoading={isLoadingHydration} />
                 </TabsContent>
               </div>
             </Tabs>
@@ -80,11 +124,11 @@ const WellnessPage = () => {
           </div>
           
           <div className="space-y-6">
-            <WellnessGoals goals={wellnessGoals} />
+            <WellnessGoals goals={wellnessGoals} isLoading={isLoadingGoals} />
             
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <h2 className="text-xl font-semibold mb-4">Recommandations personnalisées</h2>
-              <WellnessRecommendations />
+              <WellnessRecommendations recommendations={recommendations} isLoading={isLoadingRecommendations} />
             </div>
             
             <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -95,7 +139,7 @@ const WellnessPage = () => {
         </div>
         
         <div className="mt-8">
-          <VoiceRecognition />
+          <VoiceRecognition onResult={handleVoiceResult} />
         </div>
       </div>
     </Layout>
