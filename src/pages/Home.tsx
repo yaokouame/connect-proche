@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Layout from "@/components/Layout";
+import AdBanner from "@/components/ads/AdBanner";
+import AwarenessBanner from "@/components/ads/AwarenessBanner";
 import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight, UserRound, Activity } from "lucide-react";
 
 const Home = () => {
@@ -21,6 +22,9 @@ const Home = () => {
 
   return (
     <Layout>
+      {/* Awareness Banner */}
+      <AwarenessBanner className="mb-6" message="Protégez-vous et vos proches : maintenez une distance de sécurité et portez un masque dans les lieux publics" />
+      
       {/* Hero section */}
       <section className="relative py-20 bg-gradient-to-br from-health-blue to-health-teal text-white rounded-lg overflow-hidden mb-16">
         <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -129,6 +133,9 @@ const Home = () => {
           </Card>
         </div>
       </section>
+
+      {/* Premium Banner */}
+      <AdBanner className="my-8" />
 
       {/* CTA section */}
       <section className="py-16 bg-health-light rounded-lg my-12">

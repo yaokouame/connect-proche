@@ -7,6 +7,7 @@ import PlaceCard from "./PlaceCard";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { useMap } from "@/hooks/useMap";
 import AdBanner from "../ads/AdBanner";
+import AwarenessBanner from "../ads/AwarenessBanner";
 import VisitorCounter from "../analytics/VisitorCounter";
 
 const MapInteractive = () => {
@@ -48,6 +49,13 @@ const MapInteractive = () => {
   
   return (
     <div className="flex flex-col gap-4">
+      {/* Awareness Banner */}
+      <AwarenessBanner 
+        className="mb-2" 
+        variant="warning"
+        message="Attention: certaines zones affichent un taux élevé de paludisme. Utilisez des répulsifs et consultez un médecin en cas de symptômes."
+      />
+      
       {/* Ad Banner */}
       <AdBanner className="mb-2" />
       
