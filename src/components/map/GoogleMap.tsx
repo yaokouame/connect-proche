@@ -1,115 +1,120 @@
 
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Pharmacy, HealthCenter } from '@/types/user';
-import { GoogleMapRef } from '@/types/map';
-import { useLanguage } from '@/contexts/LanguageContext';
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { Pharmacy, HealthCenter } from "@/types/user";
+import { Marker } from "@/types/map";
+import { Info } from "lucide-react";
 
 interface GoogleMapProps {
   userLocation: { lat: number; lng: number } | null;
   places: (Pharmacy | HealthCenter)[];
-  mapLoaded: boolean;
+  onMarkerClick?: (place: Pharmacy | HealthCenter) => void;
+  className?: string;
 }
 
-// Create a ref-forwarding component
-const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
-  ({ userLocation, places, mapLoaded }, ref) => {
+export interface GoogleMapRefHandle {
+  centerMapOnLocation: (location: { lat: number; lng: number }) => void;
+}
+
+const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
+  ({ userLocation, places, onMarkerClick, className = "w-full h-full" }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
-    const googleMapRef = useRef<google.maps.Map | null>(null);
-    const markersRef = useRef<google.maps.Marker[]>([]);
-    const { t } = useLanguage();
-
+    const [map, setMap] = useState<google.maps.Map | null>(null);
+    const [markers, setMarkers] = useState<Marker[]>([]);
+    
+    // Create the map
     useEffect(() => {
-      if (!mapRef.current || !userLocation || !mapLoaded) return;
+      if (!mapRef.current || map) return;
       
-      // Initialize the map
-      googleMapRef.current = new window.google.maps.Map(mapRef.current, {
-        center: { lat: userLocation.lat, lng: userLocation.lng },
-        zoom: 14,
-        mapTypeControl: false,
+      const initialLocation = userLocation || { lat: 5.3599, lng: -4.0083 }; // Default to Abidjan
+      
+      const newMap = new google.maps.Map(mapRef.current, {
+        center: initialLocation,
+        zoom: 12,
+        fullscreenControl: true,
+        mapTypeControl: true,
+        streetViewControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
       });
       
-      // Add a marker for the user's location
-      new window.google.maps.Marker({
-        position: { lat: userLocation.lat, lng: userLocation.lng },
-        map: googleMapRef.current,
+      setMap(newMap);
+    }, [mapRef, map, userLocation]);
+    
+    // Add user location marker
+    useEffect(() => {
+      if (!map || !userLocation) return;
+      
+      // Center map on user location
+      map.setCenter(userLocation);
+      
+      // Add marker for user location
+      new google.maps.Marker({
+        position: userLocation,
+        map,
         icon: {
-          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%234285F4' stroke='%23FFFFFF' stroke-width='2'/%3E%3C/svg%3E",
-          scaledSize: new window.google.maps.Size(20, 20),
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "#4285F4",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+          scale: 8,
         },
-        title: t("map.yourPosition"),
+        title: "Your Location",
       });
-      
-      // Add markers for places
-      addMarkersToMap(places);
-
-      return () => {
-        // Clean up markers when component unmounts
-        if (markersRef.current) {
-          markersRef.current.forEach(marker => marker.setMap(null));
-          markersRef.current = [];
-        }
-      };
-    }, [userLocation, places, mapLoaded, t]);
-
-    const addMarkersToMap = (places: (Pharmacy | HealthCenter)[]) => {
-      if (!googleMapRef.current) return;
+    }, [map, userLocation]);
+    
+    // Add markers for places
+    useEffect(() => {
+      if (!map || !places.length) return;
       
       // Clear existing markers
-      markersRef.current.forEach(marker => marker.setMap(null));
-      markersRef.current = [];
+      markers.forEach(marker => marker.setMap(null));
       
-      // Create an info window to share between markers
-      const infoWindow = new window.google.maps.InfoWindow();
-      
-      // Add markers for all places
-      places.forEach((place) => {
-        const marker = new window.google.maps.Marker({
-          position: { lat: place.location.lat, lng: place.location.lng },
-          map: googleMapRef.current,
+      // Create new markers
+      const newMarkers = places.map(place => {
+        const marker = new google.maps.Marker({
+          position: place.location,
+          map,
+          animation: google.maps.Animation.DROP,
           title: place.name,
-          animation: window.google.maps.Animation.DROP,
+          icon: {
+            url: place.type === "pharmacy" 
+              ? "/images/pharmacy-marker.png" 
+              : "/images/hospital-marker.png",
+            scaledSize: new google.maps.Size(32, 32),
+          },
         });
         
-        // Create info window content
-        const contentString = `
-          <div class="p-2">
-            <h3 class="font-bold">${place.name}</h3>
-            <p class="text-sm">${place.address}</p>
-            <p class="text-sm">${place.phone}</p>
-          </div>
-        `;
-        
-        // Add click listener to open info window
+        // Add click listener
         marker.addListener("click", () => {
-          infoWindow.setContent(contentString);
-          infoWindow.open(googleMapRef.current, marker);
+          if (onMarkerClick) onMarkerClick(place);
         });
         
-        // Store marker reference for cleanup
-        markersRef.current.push(marker);
+        return marker;
       });
-    };
-
-    const centerMapOnLocation = (location: { lat: number; lng: number }) => {
-      if (googleMapRef.current) {
-        googleMapRef.current.setCenter({ lat: location.lat, lng: location.lng });
-        googleMapRef.current.setZoom(16);
-      }
-    };
-
-    // Expose the centerMapOnLocation method to parent components
+      
+      setMarkers(newMarkers);
+    }, [map, places, onMarkerClick]);
+    
+    // Expose methods via ref
     useImperativeHandle(ref, () => ({
-      centerMapOnLocation
+      centerMapOnLocation: (location: { lat: number; lng: number }) => {
+        if (map) {
+          map.setCenter(location);
+          map.setZoom(15);
+        }
+      },
     }));
-
+    
     return (
-      <div 
-        ref={mapRef} 
-        className="w-full h-[400px]"
-      >
-        {!mapLoaded && (
-          <div className="flex items-center justify-center h-full bg-gray-100">
-            <p>{t("map.loadingMap")}</p>
+      <div className={`relative ${className}`}>
+        <div ref={mapRef} className="w-full h-full rounded-lg overflow-hidden"></div>
+        
+        {!userLocation && (
+          <div className="absolute top-4 left-4 right-4 bg-white p-3 rounded-md shadow-md flex items-start">
+            <Info className="h-5 w-5 mr-2 text-orange-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm">
+              Location services are disabled. Enable location for better results.
+            </p>
           </div>
         )}
       </div>

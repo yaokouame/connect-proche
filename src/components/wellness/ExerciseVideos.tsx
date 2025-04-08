@@ -1,109 +1,85 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlayCircle, Heart } from "lucide-react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { getExerciseVideos } from "@/services/wellnessService";
-
-interface VideoItem {
-  id: string;
-  title: string;
-  thumbnail: string;
-  duration: string;
-  embedUrl: string;
-  category: "yoga" | "cardio" | "strength" | "flexibility";
-}
+import { ExerciseVideo } from "@/types/health";
+import { useQuery } from "@tanstack/react-query";
 
 const ExerciseVideos = () => {
-  const [activeCategory, setActiveCategory] = useState<"yoga" | "cardio" | "strength" | "flexibility">("yoga");
+  const [activeCategory, setActiveCategory] = useState<string>("all");
   
-  // In a real app, this would come from an API call
-  const videos = getExerciseVideos();
+  // Fetch exercise videos with React Query
+  const { data: videos = [], isLoading } = useQuery({
+    queryKey: ['exerciseVideos'],
+    queryFn: () => getExerciseVideos()
+  });
   
-  const filteredVideos = videos.filter(video => video.category === activeCategory);
-
+  // Filter videos by category
+  const filteredVideos = activeCategory === "all" 
+    ? videos 
+    : videos.filter(video => video.category === activeCategory);
+  
+  // Categories for tabs
+  const categories = [
+    { value: "all", label: "All" },
+    { value: "yoga", label: "Yoga" },
+    { value: "meditation", label: "Meditation" },
+    { value: "cardio", label: "Cardio" },
+    { value: "strength", label: "Strength" }
+  ];
+  
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent"></div>
+      </div>
+    );
+  }
+  
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <PlayCircle className="mr-2 h-5 w-5 text-health-blue" />
-          Vidéos d'exercices
-        </CardTitle>
+        <CardTitle>Exercices recommandés</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeCategory} onValueChange={(value) => setActiveCategory(value as any)}>
-          <TabsList className="grid grid-cols-4 mb-4">
-            <TabsTrigger value="yoga">Yoga</TabsTrigger>
-            <TabsTrigger value="cardio">Cardio</TabsTrigger>
-            <TabsTrigger value="strength">Force</TabsTrigger>
-            <TabsTrigger value="flexibility">Souplesse</TabsTrigger>
+        <Tabs value={activeCategory} onValueChange={setActiveCategory}>
+          <TabsList className="w-full grid grid-cols-5 mb-4">
+            {categories.map(category => (
+              <TabsTrigger key={category.value} value={category.value}>
+                {category.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
           
-          {["yoga", "cardio", "strength", "flexibility"].map(category => (
-            <TabsContent key={category} value={category} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredVideos.map(video => (
-                  <VideoCard key={video.id} video={video} />
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            {filteredVideos.length > 0 ? (
+              filteredVideos.map(video => (
+                <Card key={video.id} className="overflow-hidden">
+                  <img 
+                    src={video.thumbnailUrl} 
+                    alt={video.title} 
+                    className="w-full h-40 object-cover"
+                  />
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold">{video.title}</h3>
+                    <div className="flex justify-between items-center mt-2 text-sm text-gray-500">
+                      <span>{video.duration} minutes</span>
+                      <span className="capitalize">{video.difficulty}</span>
+                    </div>
+                    <p className="mt-2 text-sm line-clamp-2">{video.description}</p>
+                    <Button className="mt-4 w-full">Regarder</Button>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-2 text-center py-8 text-gray-500">
+                Aucune vidéo disponible dans cette catégorie.
               </div>
-            </TabsContent>
-          ))}
+            )}
+          </div>
         </Tabs>
-      </CardContent>
-    </Card>
-  );
-};
-
-interface VideoCardProps {
-  video: VideoItem;
-}
-
-const VideoCard = ({ video }: VideoCardProps) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  
-  const handleFavoriteToggle = () => {
-    setIsFavorite(!isFavorite);
-  };
-  
-  return (
-    <Card className="overflow-hidden">
-      <div className="relative">
-        <AspectRatio ratio={16/9}>
-          {isPlaying ? (
-            <iframe 
-              src={video.embedUrl} 
-              title={video.title}
-              className="w-full h-full"
-              allowFullScreen
-            />
-          ) : (
-            <div 
-              className="bg-cover bg-center w-full h-full flex items-center justify-center cursor-pointer"
-              style={{ backgroundImage: `url(${video.thumbnail})` }}
-              onClick={() => setIsPlaying(true)}
-            >
-              <div className="w-16 h-16 bg-health-blue rounded-full flex items-center justify-center text-white">
-                <PlayCircle className="h-10 w-10" />
-              </div>
-              <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 text-xs rounded">
-                {video.duration}
-              </div>
-            </div>
-          )}
-        </AspectRatio>
-        
-        <button 
-          className={`absolute top-2 right-2 p-1 rounded-full ${isFavorite ? 'bg-red-500 text-white' : 'bg-white text-gray-500'}`}
-          onClick={handleFavoriteToggle}
-        >
-          <Heart className="h-5 w-5" fill={isFavorite ? "white" : "none"} />
-        </button>
-      </div>
-      
-      <CardContent className="p-3">
-        <h3 className="font-medium text-sm">{video.title}</h3>
       </CardContent>
     </Card>
   );

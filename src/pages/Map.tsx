@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import { useMap } from "@/hooks/useMap";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Pharmacy, HealthCenter, PatientProfile } from "@/types/user";
+import { PatientProfile } from "@/types/user";
 import { GoogleMapRef } from "@/types/map";
 import EmergencyButton from "@/components/emergency/EmergencyButton";
 
@@ -30,7 +29,6 @@ const Map = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<GoogleMapRef>(null);
   
-  // Get user insurance provider if available (from patient profile)
   const userInsuranceProvider = currentUser?.role === 'patient' 
     ? (currentUser as PatientProfile)?.insuranceInfo?.provider || null 
     : null;
@@ -47,12 +45,10 @@ const Map = () => {
     setSortBy,
   } = useMap();
 
-  // Update search term when it changes
   useEffect(() => {
     setMapSearchTerm(searchTerm);
   }, [searchTerm, setMapSearchTerm]);
 
-  // Update insurance filter when it changes
   useEffect(() => {
     setMapFilterByInsurance(filterByInsurance);
   }, [filterByInsurance, setMapFilterByInsurance]);

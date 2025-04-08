@@ -7,7 +7,7 @@ import {
   HydrationEntry,
   SleepEntry
 } from '@/types/health';
-import { getUserVitalSigns } from './healthService';
+import { getVitalSigns } from './healthService';
 import { getWellnessGoals } from './wellnessService';
 
 export const updateProfilePhoto = async (userId: string, photoFile: File): Promise<string> => {
@@ -77,7 +77,7 @@ export const cacheUserData = async (userId: string): Promise<void> => {
   try {
     // Fetch data from various services
     const [vitalSigns, medicationReminders, wellnessGoals] = await Promise.all([
-      getUserVitalSigns(userId),
+      getVitalSigns(userId),
       getMedicationReminders(userId),
       getWellnessGoals(userId)
     ]);
