@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { User } from "@/types/user";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -17,6 +18,12 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || "");
   const [cmuCardNumber, setCmuCardNumber] = useState(currentUser?.cmuCardNumber || "");
+  
+  // Location fields
+  const [city, setCity] = useState(currentUser?.location?.city || "");
+  const [region, setRegion] = useState(currentUser?.location?.region || "");
+  const [address, setAddress] = useState(currentUser?.location?.address || "");
+  
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -28,7 +35,12 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
         ...currentUser,
         name,
         email,
-        cmuCardNumber
+        cmuCardNumber,
+        location: {
+          city,
+          region,
+          address
+        }
       };
       
       updateUserProfile(updatedUser);
@@ -44,6 +56,10 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
         cmuCardNumber: "Numéro de carte CMU",
         specialty: "Spécialité",
         license: "Numéro de licence",
+        location: "Localisation",
+        city: "Ville",
+        region: "Région",
+        address: "Adresse",
         saving: "Enregistrement...",
         save: "Enregistrer les modifications"
       };
@@ -54,6 +70,10 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
         cmuCardNumber: "Número de tarjeta CMU",
         specialty: "Especialidad",
         license: "Número de licencia",
+        location: "Ubicación",
+        city: "Ciudad",
+        region: "Región",
+        address: "Dirección",
         saving: "Guardando...",
         save: "Guardar cambios"
       };
@@ -64,6 +84,10 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
         cmuCardNumber: "CMU Card Number",
         specialty: "Specialty",
         license: "License number",
+        location: "Location",
+        city: "City",
+        region: "Region",
+        address: "Address",
         saving: "Saving...",
         save: "Save changes"
       };
@@ -131,6 +155,40 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
               </div>
             </>
           )}
+          
+          {/* Location information section */}
+          <div className="space-y-2 pt-4 border-t">
+            <h3 className="font-medium mb-2">{translations.location}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="city">{translations.city}</Label>
+                <Input 
+                  id="city" 
+                  value={city} 
+                  onChange={(e) => setCity(e.target.value)} 
+                  placeholder="Abidjan"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="region">{translations.region}</Label>
+                <Input 
+                  id="region" 
+                  value={region} 
+                  onChange={(e) => setRegion(e.target.value)} 
+                  placeholder="Cocody"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="address">{translations.address}</Label>
+              <Textarea 
+                id="address" 
+                value={address} 
+                onChange={(e) => setAddress(e.target.value)} 
+                placeholder="Rue des Jardins 123"
+              />
+            </div>
+          </div>
           
           <Button type="submit" className="mt-6" disabled={isSaving}>
             {isSaving ? translations.saving : translations.save}

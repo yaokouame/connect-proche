@@ -25,6 +25,11 @@ export interface User {
   isSharingMedicalData?: boolean;
   authorizedDoctors?: string[];
   cmuCardNumber?: string;
+  location?: {
+    city: string;
+    region: string;
+    address?: string;
+  };
 }
 
 export type UserRole = 'patient' | 'professional' | 'none';
@@ -40,6 +45,11 @@ export interface PatientProfile extends User {
   insuranceInfo?: InsuranceInfo;
   bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'unknown';
   cmuCardNumber?: string;
+  location?: {
+    city: string;
+    region: string;
+    address?: string;
+  };
 }
 
 export interface ProfessionalProfile extends User {
@@ -50,6 +60,15 @@ export interface ProfessionalProfile extends User {
   verified?: boolean;
   averageRating?: number;
   reviewCount?: number;
+  location?: {
+    city: string;
+    region: string;
+    address?: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+  };
 }
 
 export interface Professional {

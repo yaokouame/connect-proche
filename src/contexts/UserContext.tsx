@@ -46,14 +46,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: "pro-123",
           name: "Dr. Jean Michel",
           email,
-          role: "professional"
+          role: "professional",
+          location: {
+            city: "Abidjan",
+            region: "Cocody",
+            address: "Rue des Jardins 123"
+          }
         } as ProfessionalProfile;
       } else {
         user = {
           id: "patient-456",
           name: "Marie Dupont",
           email,
-          role: "patient"
+          role: "patient",
+          location: {
+            city: "Abidjan",
+            region: "Plateau",
+            address: "Avenue de la République 45"
+          }
         } as PatientProfile;
       }
       
@@ -97,6 +107,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: userData.name || "",
         email: userData.email || "",
         role: role,
+        location: userData.location,
+        ...(role === "professional" && { 
+          specialty: (userData as any).specialty,
+          license: (userData as any).license
+        }),
       };
       
       setCurrentUser(newUser);
