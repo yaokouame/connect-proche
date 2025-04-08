@@ -1,18 +1,22 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Printer, ChevronLeft } from "lucide-react";
+import { CheckCircle, Printer, ChevronLeft, Map, Bell } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import OrderStatus from "@/components/orders/OrderStatus";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const [orderData, setOrderData] = useState<any>(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   
   useEffect(() => {
     if (location.state?.orderData) {
@@ -35,6 +39,24 @@ const OrderConfirmation = () => {
   const handlePrint = () => {
     window.print();
   };
+  
+  const handleTrackingNotifications = () => {
+    setNotificationsEnabled(!notificationsEnabled);
+    toast({
+      title: notificationsEnabled ? "Notifications désactivées" : "Notifications activées",
+      description: notificationsEnabled 
+        ? "Vous ne recevrez plus de mises à jour sur cette commande" 
+        : "Vous recevrez des mises à jour sur le statut de votre commande",
+    });
+  };
+  
+  const handleViewOnMap = () => {
+    // This would typically navigate to a map view with the delivery location
+    toast({
+      title: "Carte de livraison",
+      description: "Fonctionnalité de carte en cours de développement",
+    });
+  };
 
   if (!orderData) {
     return (
@@ -47,6 +69,7 @@ const OrderConfirmation = () => {
   }
 
   const { orderNumber, orderDate, total, shippingInfo, items, paymentMethod, estimatedDelivery } = orderData;
+  const trackingNumber = orderData.trackingNumber || `TRK${orderNumber.slice(-6)}`;
 
   return (
     <Layout>
@@ -74,7 +97,11 @@ const OrderConfirmation = () => {
             <CardDescription>Commande #{orderNumber}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <OrderStatus currentStatus="confirmed" />
+            <OrderStatus 
+              currentStatus="confirmed" 
+              estimatedDelivery={estimatedDelivery}
+              trackingNumber={trackingNumber}
+            />
             
             <div className="grid grid-cols-2 gap-4 mt-6">
               <div>
@@ -93,6 +120,31 @@ const OrderConfirmation = () => {
                 <p className="text-sm text-gray-500">Total</p>
                 <p className="font-bold">{total} €</p>
               </div>
+            </div>
+            
+            <div className="mt-4 flex flex-col space-y-2 print:hidden">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="notifications" 
+                  checked={notificationsEnabled}
+                  onCheckedChange={handleTrackingNotifications}
+                />
+                <Label htmlFor="notifications" className="cursor-pointer">
+                  <div className="flex items-center">
+                    <Bell className="h-4 w-4 mr-2" />
+                    Recevoir des notifications de suivi
+                  </div>
+                </Label>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                className="w-full mt-2" 
+                onClick={handleViewOnMap}
+              >
+                <Map className="h-4 w-4 mr-2" />
+                Voir le statut de livraison sur la carte
+              </Button>
             </div>
           </CardContent>
         </Card>

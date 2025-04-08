@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { CartItem } from "@/types/user";
 
 type PaymentMethod = "card" | "insurance" | "paypal";
@@ -121,12 +121,19 @@ export const usePaymentProcessing = (
     setTimeout(() => {
       // Generate order number
       const orderNumber = `ORD-${Date.now().toString().slice(-8)}`;
+      const trackingNumber = `TRK${Date.now().toString().slice(-10)}`;
+      
+      // Calculate estimated delivery based on shipping method
+      const isExpress = localStorage.getItem("shippingMethod") === "express";
+      const deliveryDays = isExpress ? 2 : 5;
+      const estimatedDelivery = format(addDays(new Date(), deliveryDays), "dd/MM/yyyy");
       
       // Prepare order data for summary
       const orderData = {
         orderNumber,
+        trackingNumber,
         orderDate: format(new Date(), "dd/MM/yyyy"),
-        estimatedDelivery: format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), "dd/MM/yyyy"),
+        estimatedDelivery,
         total: total.toFixed(2),
         subtotal: subtotal,
         discount: discount,
