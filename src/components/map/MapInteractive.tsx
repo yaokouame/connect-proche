@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 import GoogleMap, { GoogleMapRefHandle } from "./GoogleMap";
 import MapFilters from "./MapFilters";
 import PlaceList from "./PlaceList";
-import PlaceCard from "./PlaceCard";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { useMap } from "@/hooks/useMap";
 import AdBanner from "../ads/AdBanner";
@@ -12,12 +11,15 @@ import VisitorCounter from "../analytics/VisitorCounter";
 import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const MapInteractive = () => {
   const mapRef = useRef<GoogleMapRefHandle>(null);
   const [selectedPlace, setSelectedPlace] = useState<Pharmacy | HealthCenter | null>(null);
   const isMobile = useIsMobile();
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
+  const { t } = useLanguage();
   
   const {
     userLocation,
@@ -60,9 +62,9 @@ const MapInteractive = () => {
         <AdBanner className="h-full" />
       </div>
       
-      <div className={`grid grid-cols-1 ${isTablet ? 'sm:grid-cols-2' : 'md:grid-cols-3'} gap-4 md:gap-6 h-[calc(100vh-300px)] min-h-[500px]`}>
+      <div className={`grid grid-cols-1 ${isTablet ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-4 md:gap-6 h-[calc(100vh-300px)] min-h-[500px]`}>
         {/* Map Container */}
-        <div className={`${isTablet ? '' : 'md:col-span-2'} h-full flex flex-col`}>
+        <div className={`${isTablet ? '' : 'lg:col-span-2'} h-full flex flex-col order-2 lg:order-1`}>
           <Card className="h-full border-none shadow-md overflow-hidden">
             <CardContent className="p-0 h-full">
               <GoogleMap
@@ -85,7 +87,7 @@ const MapInteractive = () => {
         </div>
         
         {/* Sidebar with Filters and Results */}
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full order-1 lg:order-2">
           <Card className="h-full overflow-hidden">
             <CardContent className="p-2 sm:p-4 flex flex-col h-full">
               <div className="mb-2 sm:mb-4">
@@ -100,29 +102,44 @@ const MapInteractive = () => {
                 />
               </div>
               
-              <div className="flex-1 overflow-auto pr-1 custom-scrollbar">
-                <PlaceList 
-                  places={places} 
-                  loading={loading}
-                  searchTerm={searchTerm}
-                  filterByInsurance={filterByInsurance}
-                  userLocation={userLocation}
-                  userInsuranceProvider={userInsuranceProvider}
-                  viewOnMap={viewOnMap}
-                />
-              </div>
-              
-              {selectedPlace && (
-                <div className="mt-2 sm:mt-4 border-t pt-2 sm:pt-4">
-                  <h3 className="text-base sm:text-lg font-medium mb-2">Selected Location</h3>
-                  <PlaceCard 
-                    place={selectedPlace} 
-                    userLocation={userLocation}
-                    userInsuranceProvider={userInsuranceProvider}
-                    viewOnMap={viewOnMap}
-                  />
-                </div>
-              )}
+              <Tabs defaultValue="results" className="w-full">
+                <TabsList className="w-full mb-4">
+                  <TabsTrigger value="results" className="flex-1">{t('map.pharmaciesTab')}</TabsTrigger>
+                  <TabsTrigger value="selected" className="flex-1">{t('map.centersTab')}</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="results" className="m-0">
+                  <div className="flex-1 overflow-auto pr-1 custom-scrollbar max-h-[calc(100vh-450px)]">
+                    <PlaceList 
+                      places={places} 
+                      loading={loading}
+                      searchTerm={searchTerm}
+                      filterByInsurance={filterByInsurance}
+                      userLocation={userLocation}
+                      userInsuranceProvider={userInsuranceProvider}
+                      viewOnMap={viewOnMap}
+                    />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="selected" className="m-0">
+                  {selectedPlace ? (
+                    <div className="flex-1 overflow-auto pr-1 custom-scrollbar max-h-[calc(100vh-450px)]">
+                      <h3 className="text-base sm:text-lg font-medium mb-2">Selected Location</h3>
+                      <PlaceCard 
+                        place={selectedPlace} 
+                        userLocation={userLocation}
+                        userInsuranceProvider={userInsuranceProvider}
+                        viewOnMap={viewOnMap}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-40 text-gray-500">
+                      Select a location on the map
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>

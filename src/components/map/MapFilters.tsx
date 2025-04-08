@@ -55,11 +55,11 @@ const MapFilters: React.FC<MapFiltersProps> = ({
           <Button variant="outline" className="flex-1 flex items-center justify-between">
             <div className="flex items-center">
               <Filter className="mr-2 h-4 w-4 text-health-blue" />
-              <span>{t("map.insurance")}:</span> 
+              <span className="whitespace-nowrap">{t("map.insurance")}:</span> 
             </div>
             <div className="flex items-center">
-              <span className="font-medium mr-1">{filterByInsurance || t("map.all")}</span>
-              <ChevronsUpDown className="h-4 w-4" />
+              <span className="font-medium mr-1 truncate max-w-[100px]">{filterByInsurance || t("map.all")}</span>
+              <ChevronsUpDown className="h-4 w-4 flex-shrink-0" />
             </div>
           </Button>
         </DropdownMenuTrigger>
@@ -97,13 +97,13 @@ const MapFilters: React.FC<MapFiltersProps> = ({
           <Button variant="outline" className="flex-1 flex items-center justify-between">
             <div className="flex items-center">
               <SortAsc className="mr-2 h-4 w-4 text-health-blue" />
-              <span>{t("map.sortBy")}:</span>
+              <span className="whitespace-nowrap">{t("map.sortBy")}:</span>
             </div>
             <div className="flex items-center">
-              <span className="font-medium mr-1">
-                {sortOptions.find(o => o.value === sortBy)?.label}
+              <span className="font-medium mr-1 truncate max-w-[100px]">
+                {sortOptions.find(o => o.value === sortBy)?.label || t("map.sortDistance")}
               </span>
-              <ChevronsUpDown className="h-4 w-4" />
+              <ChevronsUpDown className="h-4 w-4 flex-shrink-0" />
             </div>
           </Button>
         </DropdownMenuTrigger>

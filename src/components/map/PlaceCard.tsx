@@ -61,7 +61,7 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
             <CardTitle className="text-health-blue">{place.name}</CardTitle>
             <CardDescription className="flex items-start mt-1">
               <MapPin className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0 text-gray-500" />
-              {place.address}
+              <span className="line-clamp-2">{place.address}</span>
             </CardDescription>
           </div>
           {place.rating && (
@@ -74,19 +74,19 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
       <CardContent className="pt-4">
         <div className="space-y-3">
           <div className="flex items-center text-sm text-gray-700">
-            <Phone className="h-4 w-4 mr-2 text-health-blue" />
-            {place.phone}
+            <Phone className="h-4 w-4 mr-2 flex-shrink-0 text-health-blue" />
+            <span className="truncate">{place.phone}</span>
           </div>
           
           <div className="flex items-center text-sm text-gray-700">
-            <Clock className="h-4 w-4 mr-2 text-health-blue" />
-            {place.hours}
+            <Clock className="h-4 w-4 mr-2 flex-shrink-0 text-health-blue" />
+            <span className="line-clamp-2">{place.hours}</span>
           </div>
           
           {userLocation && distance && (
             <div className="flex items-center text-sm font-medium text-health-teal">
-              <Navigation className="h-4 w-4 mr-2" />
-              {distance} {t('map.fromYourLocation')}
+              <Navigation className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span>{distance} {t('map.fromYourLocation')}</span>
             </div>
           )}
           
@@ -109,7 +109,7 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
           {place.acceptedInsuranceProviders && place.acceptedInsuranceProviders.length > 0 && (
             <div className="mt-3">
               <p className="text-sm font-medium flex items-center mb-2 text-gray-700">
-                <Wallet className="h-4 w-4 mr-1 text-health-blue" />
+                <Wallet className="h-4 w-4 mr-1 flex-shrink-0 text-health-blue" />
                 {t('map.insuranceAccepted')}:
               </p>
               <div className="flex flex-wrap gap-1">
@@ -138,8 +138,8 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
             onClick={() => viewOnMap(place.location)}
             className="flex items-center w-full mt-3 border-health-blue text-health-blue hover:bg-health-blue hover:text-white"
           >
-            <MapIcon className="h-4 w-4 mr-2" />
-            {t('map.viewOnMap')}
+            <MapIcon className="h-4 w-4 mr-2 flex-shrink-0" />
+            <span className="truncate">{t('map.viewOnMap')}</span>
           </Button>
         </div>
       </CardContent>
