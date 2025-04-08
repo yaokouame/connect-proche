@@ -74,7 +74,7 @@ const PromoCodeInput = ({
       </div>
       
       {showSuccess && couponCode === "SANTE10" && discount > 0 && (
-        <Alert variant="success" className="bg-green-50 text-green-700 border-green-200">
+        <Alert className="bg-green-50 text-green-700 border-green-200">
           <AlertDescription className="flex items-center">
             <Check className="h-4 w-4 mr-2" />
             Code <strong>SANTE10</strong> appliqué ! Vous économisez {discount.toFixed(0)} F CFA

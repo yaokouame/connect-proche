@@ -1,5 +1,5 @@
 
-import { useToast } from "@/hooks/use-toast";
+import { toast as toastFunction } from "@/components/ui/use-toast";
 
 export const usePaymentValidation = () => {
   const validatePayment = (
@@ -9,12 +9,11 @@ export const usePaymentValidation = () => {
     expiryDate: string,
     cvv: string,
     insuranceProvider: string,
-    policyNumber: string,
-    toast: ReturnType<typeof useToast>
+    policyNumber: string
   ): boolean => {
     if (method === "card") {
       if (!cardNumber.trim() || cardNumber.replace(/\s/g, "").length < 16) {
-        toast({
+        toastFunction({
           variant: "destructive",
           title: "Numéro de carte invalide",
           description: "Veuillez saisir un numéro de carte valide",
@@ -23,7 +22,7 @@ export const usePaymentValidation = () => {
       }
       
       if (!cardHolder.trim()) {
-        toast({
+        toastFunction({
           variant: "destructive",
           title: "Titulaire de la carte manquant",
           description: "Veuillez saisir le nom du titulaire de la carte",
@@ -32,7 +31,7 @@ export const usePaymentValidation = () => {
       }
       
       if (!expiryDate.trim() || !expiryDate.includes("/") || expiryDate.length < 5) {
-        toast({
+        toastFunction({
           variant: "destructive",
           title: "Date d'expiration invalide",
           description: "Veuillez saisir une date d'expiration valide (MM/YY)",
@@ -41,7 +40,7 @@ export const usePaymentValidation = () => {
       }
       
       if (!cvv.trim() || cvv.length < 3) {
-        toast({
+        toastFunction({
           variant: "destructive",
           title: "CVV invalide",
           description: "Veuillez saisir un code de sécurité valide",
@@ -50,7 +49,7 @@ export const usePaymentValidation = () => {
       }
     } else if (method === "insurance") {
       if (!insuranceProvider) {
-        toast({
+        toastFunction({
           variant: "destructive",
           title: "Assureur manquant",
           description: "Veuillez sélectionner votre assureur",
@@ -59,7 +58,7 @@ export const usePaymentValidation = () => {
       }
       
       if (!policyNumber.trim()) {
-        toast({
+        toastFunction({
           variant: "destructive",
           title: "Numéro de police manquant",
           description: "Veuillez saisir votre numéro de police d'assurance",

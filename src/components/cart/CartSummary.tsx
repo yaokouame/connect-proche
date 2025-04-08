@@ -3,10 +3,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CartItem } from "@/types/user";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@/contexts/UserContext";
 import ShippingMethodSelector from "./ShippingMethodSelector";
 import PromoCodeInput from "./PromoCodeInput";
 import OrderSummaryDetails from "./OrderSummaryDetails";
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, LogIn, UserPlus } from "lucide-react";
 
 interface CartSummaryProps {
   cartItems: CartItem[];
@@ -35,6 +37,9 @@ const CartSummary = ({
   discount,
   total
 }: CartSummaryProps) => {
+  const navigate = useNavigate();
+  const { currentUser } = useUser();
+  
   // Calculate estimated delivery date based on shipping method
   const getEstimatedDelivery = () => {
     const today = new Date();
@@ -48,6 +53,16 @@ const CartSummary = ({
       const deliveryDate = new Date(today);
       deliveryDate.setDate(today.getDate() + 5);
       return deliveryDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    }
+  };
+
+  const handleNextStep = () => {
+    if (!currentUser) {
+      // User is not logged in, redirect to login page with fromCart flag
+      navigate('/login?fromCart=true');
+    } else {
+      // User is logged in, proceed to next step
+      nextStep();
     }
   };
 
@@ -85,9 +100,44 @@ const CartSummary = ({
             discount={discount}
           />
         </div>
+        
+        {!currentUser && (
+          <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-100">
+            <h4 className="text-sm font-medium text-blue-700 mb-2">Connexion requise</h4>
+            <p className="text-xs text-blue-600 mb-2">
+              Connectez-vous pour continuer ou commandez en tant qu'invité.
+            </p>
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs flex-1"
+                onClick={() => navigate('/login?fromCart=true')}
+              >
+                <LogIn className="h-3 w-3 mr-1" />
+                Se connecter
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs flex-1"
+                onClick={() => navigate('/register')}
+              >
+                <UserPlus className="h-3 w-3 mr-1" />
+                S'inscrire
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="bg-gray-50">
-        <Button className="w-full" onClick={nextStep}>Passer à la livraison</Button>
+        <Button 
+          className="w-full" 
+          onClick={handleNextStep}
+          disabled={cartItems.length === 0}
+        >
+          {currentUser ? "Passer à la livraison" : "Connexion / Continuer en invité"}
+        </Button>
       </CardFooter>
     </Card>
   );

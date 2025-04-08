@@ -55,5 +55,38 @@ export const useRegisterTranslation = () => {
     }
   };
 
-  return { register };
+  // These are added to match the expected properties in Register.tsx
+  const forms = {
+    fullName: "Nom complet",
+    email: "Email",
+    password: "Mot de passe",
+    confirmPassword: "Confirmer le mot de passe",
+    passwordMismatch: "Les mots de passe ne correspondent pas",
+    region: "Région",
+    regionPlaceholder: "Sélectionnez votre région",
+    city: "Ville",
+    cityPlaceholder: "Sélectionnez votre ville",
+    address: "Adresse",
+    addressPlaceholder: "Votre adresse complète",
+    location: "Localisation",
+    specialty: "Spécialité",
+    specialtyPlaceholder: "Votre spécialité médicale",
+    license: "Numéro de licence",
+    licensePlaceholder: "Votre numéro de licence professionnelle",
+    professionalTerms: "J'accepte les conditions spécifiques aux professionnels de santé",
+    patientRegistration: "Patient",
+    professionalRegistration: "Professionnel de santé",
+    alreadyHaveAccount: "Vous avez déjà un compte ?"
+  };
+
+  const buttons = {
+    register: "S'inscrire",
+    login: "Se connecter"
+  };
+
+  const pages = {
+    registration: "Créer un compte"
+  };
+
+  return { register, forms, buttons, pages };
 };

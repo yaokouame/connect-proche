@@ -112,7 +112,6 @@ export const useCartPage = () => {
       toast({
         title: "Code promo appliqué",
         description: `10% de réduction sur votre commande (-${discountAmount} F CFA)`,
-        variant: "success",
       });
     } else {
       toast({

@@ -1,14 +1,15 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useNavigate, Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { useRegisterTranslation } from "@/hooks/useRegisterTranslation";
+import { useUser } from "@/contexts/UserContext";
 import Layout from "@/components/Layout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserRole } from "@/types/user";
 import AuthFields from "@/components/register/AuthFields";
 import LocationSelect from "@/components/register/LocationSelect";
 import ProfessionalFields from "@/components/register/ProfessionalFields";
@@ -16,10 +17,11 @@ import ProfessionalFields from "@/components/register/ProfessionalFields";
 const Register = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { register } = useUser();
   const t = useRegisterTranslation();
 
   // Registration type: patient or professional
-  const [registrationType, setRegistrationType] = useState<"patient" | "professional">("patient");
+  const [registrationType, setRegistrationType] = useState<UserRole>("patient");
   
   // Form data
   const [formData, setFormData] = useState({
@@ -53,7 +55,7 @@ const Register = () => {
   };
   
   // Submit handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate passwords match
@@ -86,45 +88,41 @@ const Register = () => {
       return;
     }
     
-    // Here would normally be API calls to register the user
-    
-    // Show success and redirect
-    toast({
-      title: "Inscription réussie",
-      description: "Votre compte a été créé avec succès.",
-    });
-    
-    // Redirect to login
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
-  };
-  
-  // Translation objects for components
-  // Creating these objects with appropriate properties to match expected types
-  const authFieldsTranslations = {
-    fullName: t.forms.fullName,
-    email: t.forms.email,
-    password: t.forms.password,
-    confirmPassword: t.forms.confirmPassword,
-    passwordMismatch: t.forms.passwordMismatch
-  };
-  
-  const locationTranslations = {
-    region: t.forms.region,
-    regionPlaceholder: t.forms.regionPlaceholder,
-    city: t.forms.city, 
-    cityPlaceholder: t.forms.cityPlaceholder,
-    address: t.forms.address,
-    addressPlaceholder: t.forms.addressPlaceholder,
-    location: t.forms.location
-  };
-  
-  const professionalTranslations = {
-    specialty: t.forms.specialty,
-    specialtyPlaceholder: t.forms.specialtyPlaceholder,
-    license: t.forms.license,
-    licensePlaceholder: t.forms.licensePlaceholder
+    try {
+      // Prepare user data
+      const userData = {
+        name: formData.fullName,
+        email: formData.email,
+        location: {
+          region: formData.region,
+          city: formData.city,
+          address: formData.address
+        },
+        ...(registrationType === "professional" && {
+          specialty: formData.specialty,
+          license: formData.license
+        })
+      };
+      
+      // Register user
+      await register(userData, formData.password, registrationType);
+      
+      // Show success
+      toast({
+        title: "Inscription réussie",
+        description: "Votre compte a été créé avec succès. Bienvenue!",
+      });
+      
+      // Redirect to home page
+      navigate("/");
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        title: "Échec de l'inscription",
+        description: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -132,7 +130,7 @@ const Register = () => {
       <div className="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-6 text-center">{t.pages.registration}</h1>
         
-        <Tabs defaultValue="patient" onValueChange={(value) => setRegistrationType(value as "patient" | "professional")}>
+        <Tabs defaultValue="patient" onValueChange={(value) => setRegistrationType(value as UserRole)}>
           <TabsList className="grid grid-cols-2 mb-6">
             <TabsTrigger value="patient">{t.forms.patientRegistration}</TabsTrigger>
             <TabsTrigger value="professional">{t.forms.professionalRegistration}</TabsTrigger>
@@ -143,7 +141,7 @@ const Register = () => {
             <AuthFields 
               formData={formData}
               handleChange={handleChange}
-              translations={authFieldsTranslations}
+              translations={t.forms}
             />
             
             {/* Location fields */}
@@ -151,7 +149,7 @@ const Register = () => {
               formData={formData}
               handleChange={handleChange}
               handleSelectChange={handleSelectChange}
-              translations={locationTranslations}
+              translations={t.forms}
             />
             
             {/* Professional-specific fields */}
@@ -160,10 +158,10 @@ const Register = () => {
                 <ProfessionalFields
                   formData={formData}
                   handleChange={handleChange}
-                  translations={professionalTranslations}
+                  translations={t.forms}
                 />
                 
-                <div className="mb-4 flex items-center">
+                <div className="mb-4 mt-4 flex items-center">
                   <input
                     type="checkbox"
                     id="terms"
@@ -185,9 +183,9 @@ const Register = () => {
             
             <p className="text-center mt-4 text-sm">
               {t.forms.alreadyHaveAccount}{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
+              <Link to="/login" className="text-blue-600 hover:underline">
                 {t.buttons.login}
-              </a>
+              </Link>
             </p>
           </form>
         </Tabs>

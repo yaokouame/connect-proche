@@ -1,19 +1,18 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Volume2 } from "lucide-react";
-import { ivoryCoastRegions, ivoryCoastCities } from "@/data/locationData";
 
 interface LocationSelectProps {
-  region: string;
-  setRegion: (region: string) => void;
-  city: string;
-  setCity: (city: string) => void;
-  address: string;
-  setAddress: (address: string) => void;
+  formData: {
+    region: string;
+    city: string;
+    address: string;
+    [key: string]: any;
+  };
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSelectChange: (name: string, value: string) => void;
   translations: {
     region: string;
     regionPlaceholder: string;
@@ -21,134 +20,81 @@ interface LocationSelectProps {
     cityPlaceholder: string;
     address: string;
     addressPlaceholder: string;
-    location: string;
+    location?: string;
   };
-  showVoiceHelp?: boolean;
-  onSpeakField?: (fieldName: string) => void;
 }
 
 const LocationSelect: React.FC<LocationSelectProps> = ({
-  region,
-  setRegion,
-  city,
-  setCity,
-  address,
-  setAddress,
-  translations,
-  showVoiceHelp = false,
-  onSpeakField
+  formData,
+  handleChange,
+  handleSelectChange,
+  translations
 }) => {
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
-
-  // Update available cities when region changes
-  useEffect(() => {
-    if (region) {
-      setAvailableCities(ivoryCoastCities[region] || []);
-      setCity(""); // Reset city when region changes
-    } else {
-      setAvailableCities([]);
-    }
-  }, [region, setCity]);
+  // Mock data for regions and cities
+  const regions = ["Dakar", "Thiès", "Saint-Louis", "Ziguinchor", "Diourbel"];
+  const cities: Record<string, string[]> = {
+    "Dakar": ["Plateau", "Médina", "Yoff", "Ouakam", "Almadies"],
+    "Thiès": ["Thiès Ville", "Mbour", "Tivaouane"],
+    "Saint-Louis": ["Saint-Louis Ville", "Richard Toll", "Dagana"],
+    "Ziguinchor": ["Ziguinchor Ville", "Bignona", "Oussouye"],
+    "Diourbel": ["Diourbel Ville", "Bambey", "Mbacké"]
+  };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 mt-4">
+      {translations.location && (
         <h3 className="text-md font-medium">{translations.location}</h3>
-        {showVoiceHelp && onSpeakField && (
-          <Button 
-            type="button" 
-            variant="ghost" 
-            size="icon" 
-            className="h-6 w-6" 
-            onClick={() => onSpeakField("location")}
-            title="Écouter les instructions pour cette section"
-          >
-            <Volume2 className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="region">{translations.region}</Label>
-            {showVoiceHelp && onSpeakField && (
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="icon" 
-                className="h-6 w-6" 
-                onClick={() => onSpeakField("region")}
-                title="Écouter les instructions pour ce champ"
-              >
-                <Volume2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-          <Select value={region} onValueChange={setRegion}>
+          <Label htmlFor="region">{translations.region}</Label>
+          <Select 
+            value={formData.region} 
+            onValueChange={(value) => handleSelectChange("region", value)}
+          >
             <SelectTrigger>
               <SelectValue placeholder={translations.regionPlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              {ivoryCoastRegions.map((regionName) => (
-                <SelectItem key={regionName} value={regionName}>
-                  {regionName}
+              {regions.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+        
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="city">{translations.city}</Label>
-            {showVoiceHelp && onSpeakField && (
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="icon" 
-                className="h-6 w-6" 
-                onClick={() => onSpeakField("city")}
-                title="Écouter les instructions pour ce champ"
-              >
-                <Volume2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-          <Select value={city} onValueChange={setCity} disabled={!region}>
+          <Label htmlFor="city">{translations.city}</Label>
+          <Select 
+            value={formData.city} 
+            onValueChange={(value) => handleSelectChange("city", value)}
+            disabled={!formData.region}
+          >
             <SelectTrigger>
               <SelectValue placeholder={translations.cityPlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              {availableCities.map((cityName) => (
-                <SelectItem key={cityName} value={cityName}>
-                  {cityName}
+              {formData.region && cities[formData.region]?.map((city) => (
+                <SelectItem key={city} value={city}>
+                  {city}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
+      
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="address">{translations.address}</Label>
-          {showVoiceHelp && onSpeakField && (
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6" 
-              onClick={() => onSpeakField("address")}
-              title="Écouter les instructions pour ce champ"
-            >
-              <Volume2 className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <Textarea
+        <Label htmlFor="address">{translations.address}</Label>
+        <Input
           id="address"
+          name="address"
           placeholder={translations.addressPlaceholder}
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
+          value={formData.address}
+          onChange={handleChange}
         />
       </div>
     </div>

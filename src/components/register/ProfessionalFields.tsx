@@ -3,87 +3,85 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Volume2 } from "lucide-react";
-import { medicalSpecialties } from "@/data/medicalData";
 
 interface ProfessionalFieldsProps {
-  specialty: string;
-  setSpecialty: (specialty: string) => void;
-  license: string;
-  setLicense: (license: string) => void;
+  formData: {
+    specialty: string;
+    license: string;
+    [key: string]: any;
+  };
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   translations: {
     specialty: string;
     specialtyPlaceholder: string;
     license: string;
     licensePlaceholder: string;
   };
-  showVoiceHelp?: boolean;
-  onSpeakField?: (fieldName: string) => void;
 }
 
 const ProfessionalFields: React.FC<ProfessionalFieldsProps> = ({
-  specialty,
-  setSpecialty,
-  license,
-  setLicense,
-  translations,
-  showVoiceHelp = false,
-  onSpeakField
+  formData,
+  handleChange,
+  translations
 }) => {
+  // Mock data for specialties
+  const specialties = [
+    "Médecine générale",
+    "Cardiologie",
+    "Pédiatrie",
+    "Gynécologie",
+    "Dermatologie",
+    "Ophtalmologie",
+    "Psychiatrie",
+    "Neurologie",
+    "Orthopédie",
+    "Dentiste",
+    "Pharmacien",
+    "Infirmier",
+    "Sage-femme"
+  ];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-4">
+      <h3 className="text-md font-medium">Informations professionnelles</h3>
+      
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="specialty">{translations.specialty}</Label>
-          {showVoiceHelp && onSpeakField && (
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6" 
-              onClick={() => onSpeakField("specialty")}
-              title="Écouter les instructions pour ce champ"
-            >
-              <Volume2 className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <Select value={specialty} onValueChange={setSpecialty}>
+        <Label htmlFor="specialty">{translations.specialty}</Label>
+        <Select 
+          value={formData.specialty} 
+          onValueChange={(value) => {
+            // We'll need to simulate an event for handleChange to work with this
+            const mockEvent = { 
+              target: { 
+                name: "specialty", 
+                value 
+              } 
+            } as React.ChangeEvent<HTMLInputElement>;
+            
+            handleChange(mockEvent);
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder={translations.specialtyPlaceholder} />
           </SelectTrigger>
           <SelectContent>
-            {medicalSpecialties.map((specialtyName) => (
-              <SelectItem key={specialtyName} value={specialtyName}>
-                {specialtyName}
+            {specialties.map((specialty) => (
+              <SelectItem key={specialty} value={specialty}>
+                {specialty}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+      
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="license">{translations.license}</Label>
-          {showVoiceHelp && onSpeakField && (
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6" 
-              onClick={() => onSpeakField("license")}
-              title="Écouter les instructions pour ce champ"
-            >
-              <Volume2 className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        <Label htmlFor="license">{translations.license}</Label>
         <Input
           id="license"
+          name="license"
           placeholder={translations.licensePlaceholder}
-          value={license}
-          onChange={(e) => setLicense(e.target.value)}
-          required
+          value={formData.license}
+          onChange={handleChange}
         />
       </div>
     </div>

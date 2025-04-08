@@ -6,15 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Volume2 } from "lucide-react";
 
 interface AuthFieldsProps {
-  name: string;
-  setName: (name: string) => void;
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  confirmPassword: string;
-  setConfirmPassword: (confirmPassword: string) => void;
-  passwordMatch: boolean;
+  formData: {
+    fullName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    [key: string]: any;
+  };
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   translations: {
     fullName: string;
     email: string;
@@ -27,31 +26,26 @@ interface AuthFieldsProps {
 }
 
 const AuthFields: React.FC<AuthFieldsProps> = ({
-  name,
-  setName,
-  email,
-  setEmail,
-  password,
-  setPassword,
-  confirmPassword,
-  setConfirmPassword,
-  passwordMatch,
+  formData,
+  handleChange,
   translations,
   showVoiceHelp = false,
   onSpeakField
 }) => {
+  const passwordMatch = formData.password === formData.confirmPassword || formData.confirmPassword === '';
+  
   return (
     <>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="name">{translations.fullName}</Label>
+          <Label htmlFor="fullName">{translations.fullName}</Label>
           {showVoiceHelp && onSpeakField && (
             <Button 
               type="button" 
               variant="ghost" 
               size="icon" 
               className="h-6 w-6" 
-              onClick={() => onSpeakField("name")}
+              onClick={() => onSpeakField("fullName")}
               title="Écouter les instructions pour ce champ"
             >
               <Volume2 className="h-4 w-4" />
@@ -59,10 +53,11 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
           )}
         </div>
         <Input
-          id="name"
+          id="fullName"
+          name="fullName"
           placeholder="Jean Dupont"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={formData.fullName}
+          onChange={handleChange}
           required
         />
       </div>
@@ -84,10 +79,11 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
         </div>
         <Input
           id="email"
+          name="email"
           type="email"
           placeholder="votre@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
           required
         />
       </div>
@@ -110,9 +106,10 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
           </div>
           <Input
             id="password"
+            name="password"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={handleChange}
             required
           />
         </div>
@@ -134,11 +131,10 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
           </div>
           <Input
             id="confirmPassword"
+            name="confirmPassword"
             type="password"
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-            }}
+            value={formData.confirmPassword}
+            onChange={handleChange}
             required
             className={!passwordMatch ? "border-red-500" : ""}
           />
