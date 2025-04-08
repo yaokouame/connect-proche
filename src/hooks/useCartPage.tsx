@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CartItem } from "@/types/user";
 import { useUser } from "@/contexts/UserContext";
 
@@ -80,17 +80,27 @@ export const useCartPage = () => {
     
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    
+    // Afficher toast de confirmation pour la mise à jour
+    const item = cartItems.find(item => item.product.id === productId);
+    if (item) {
+      toast({
+        title: "Quantité mise à jour",
+        description: `${item.product.name}: ${newQuantity} ${newQuantity > 1 ? 'unités' : 'unité'}`,
+      });
+    }
   };
 
   // Remove item from cart
   const removeFromCart = (productId: string) => {
+    const itemToRemove = cartItems.find(item => item.product.id === productId);
     const updatedCart = cartItems.filter((item) => item.product.id !== productId);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     
     toast({
       title: "Produit retiré",
-      description: "Le produit a été retiré de votre panier",
+      description: itemToRemove ? `${itemToRemove.product.name} a été retiré de votre panier` : "Le produit a été retiré de votre panier",
     });
   };
 
@@ -98,9 +108,11 @@ export const useCartPage = () => {
   const applyCoupon = () => {
     if (couponCode === "SANTE10") {
       localStorage.setItem("couponCode", couponCode);
+      const discountAmount = Math.round(subtotal * 0.1);
       toast({
         title: "Code promo appliqué",
-        description: "10% de réduction sur votre commande",
+        description: `10% de réduction sur votre commande (-${discountAmount} F CFA)`,
+        variant: "success",
       });
     } else {
       toast({

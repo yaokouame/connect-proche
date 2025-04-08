@@ -1,5 +1,5 @@
 
-import { Toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const usePaymentValidation = () => {
   const validatePayment = (
@@ -10,7 +10,7 @@ export const usePaymentValidation = () => {
     cvv: string,
     insuranceProvider: string,
     policyNumber: string,
-    toast: Toast
+    toast: ReturnType<typeof useToast>
   ): boolean => {
     if (method === "card") {
       if (!cardNumber.trim() || cardNumber.replace(/\s/g, "").length < 16) {

@@ -82,6 +82,7 @@ const CartSummary = ({
             couponCode={couponCode}
             setCouponCode={setCouponCode}
             applyCoupon={applyCoupon}
+            discount={discount}
           />
         </div>
       </CardContent>
