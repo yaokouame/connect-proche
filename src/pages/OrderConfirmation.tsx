@@ -1,14 +1,13 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Printer, ChevronLeft, Map, Bell } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import OrderStatus from "@/components/orders/OrderStatus";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import OrderConfirmationHeader from "@/components/orders/OrderConfirmationHeader";
+import OrderDetailsCard from "@/components/orders/OrderDetailsCard";
+import OrderAddressCards from "@/components/orders/OrderAddressCards";
+import OrderItemsCard from "@/components/orders/OrderItemsCard";
+import OrderFooter from "@/components/orders/OrderFooter";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -38,23 +37,6 @@ const OrderConfirmation = () => {
   const handlePrint = () => {
     window.print();
   };
-  
-  const handleTrackingNotifications = () => {
-    setNotificationsEnabled(!notificationsEnabled);
-    toast({
-      title: notificationsEnabled ? "Notifications désactivées" : "Notifications activées",
-      description: notificationsEnabled 
-        ? "Vous ne recevrez plus de mises à jour sur cette commande" 
-        : "Vous recevrez des mises à jour sur le statut de votre commande",
-    });
-  };
-  
-  const handleViewOnMap = () => {
-    toast({
-      title: "Carte de livraison",
-      description: "Fonctionnalité de carte en cours de développement",
-    });
-  };
 
   if (!orderData) {
     return (
@@ -66,180 +48,55 @@ const OrderConfirmation = () => {
     );
   }
 
-  const { orderNumber, orderDate, total, shippingInfo, items, paymentMethod, estimatedDelivery } = orderData;
+  const { 
+    orderNumber, 
+    orderDate, 
+    total, 
+    shippingInfo, 
+    items, 
+    paymentMethod, 
+    estimatedDelivery,
+    subtotal = 0,
+    shippingCost = 0,
+    discount = 0,
+    lastFourDigits
+  } = orderData;
+  
   const trackingNumber = orderData.trackingNumber || `TRK${orderNumber.slice(-6)}`;
+  const email = orderData.email || shippingInfo.email || "votre adresse email";
 
   return (
     <Layout>
       <div className="max-w-3xl mx-auto my-10 p-4">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate("/")}
-          className="mb-4 print:hidden"
-        >
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Retour à l'accueil
-        </Button>
+        <OrderConfirmationHeader />
         
-        <div className="bg-green-50 p-6 rounded-lg border border-green-200 mb-8 flex items-center justify-center">
-          <CheckCircle className="text-green-500 h-10 w-10 mr-4" />
-          <div>
-            <h1 className="text-2xl font-bold text-green-700">Commande confirmée</h1>
-            <p className="text-green-600">Merci pour votre achat !</p>
-          </div>
-        </div>
+        <OrderDetailsCard 
+          orderNumber={orderNumber}
+          orderDate={orderDate}
+          paymentMethod={paymentMethod}
+          estimatedDelivery={estimatedDelivery}
+          total={total}
+          trackingNumber={trackingNumber}
+          notificationsEnabled={notificationsEnabled}
+          setNotificationsEnabled={setNotificationsEnabled}
+        />
         
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Détails de la commande</CardTitle>
-            <CardDescription>Commande #{orderNumber}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <OrderStatus 
-              currentStatus="confirmed" 
-              estimatedDelivery={estimatedDelivery}
-              trackingNumber={trackingNumber}
-            />
-            
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <div>
-                <p className="text-sm text-gray-500">Date de commande</p>
-                <p className="font-medium">{orderDate}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Paiement</p>
-                <p className="font-medium">{paymentMethod}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Livraison estimée</p>
-                <p className="font-medium">{estimatedDelivery}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Total</p>
-                <p className="font-bold">{total} F CFA</p>
-              </div>
-            </div>
-            
-            <div className="mt-4 flex flex-col space-y-2 print:hidden">
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  id="notifications" 
-                  checked={notificationsEnabled}
-                  onCheckedChange={handleTrackingNotifications}
-                />
-                <Label htmlFor="notifications" className="cursor-pointer">
-                  <div className="flex items-center">
-                    <Bell className="h-4 w-4 mr-2" />
-                    Recevoir des notifications de suivi
-                  </div>
-                </Label>
-              </div>
-              
-              <Button 
-                variant="outline" 
-                className="w-full mt-2" 
-                onClick={handleViewOnMap}
-              >
-                <Map className="h-4 w-4 mr-2" />
-                Voir le statut de livraison sur la carte
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <OrderAddressCards 
+          shippingInfo={shippingInfo}
+          paymentMethod={paymentMethod}
+          lastFourDigits={lastFourDigits}
+        />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Adresse de livraison</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium">{shippingInfo.fullName}</p>
-              <p>{shippingInfo.streetAddress}</p>
-              <p>{shippingInfo.postalCode} {shippingInfo.city}</p>
-              <p>{shippingInfo.country}</p>
-              <p className="mt-2 text-gray-500">{shippingInfo.phone}</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Méthode de paiement</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium">{paymentMethod}</p>
-              {paymentMethod === "Carte bancaire" && (
-                <p className="text-gray-500">**** **** **** {orderData.lastFourDigits || "1234"}</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        <OrderItemsCard 
+          items={items}
+          subtotal={subtotal}
+          shippingCost={shippingCost}
+          discount={discount}
+          total={total}
+          handlePrint={handlePrint}
+        />
         
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Articles ({items.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {items.map((item: any, index: number) => (
-                <div key={index} className="flex items-center py-3 border-b last:border-0">
-                  <div className="w-16 h-16 bg-gray-100 flex items-center justify-center rounded">
-                    <img src={item.product.imageUrl} alt={item.product.name} className="max-w-full max-h-full object-contain" />
-                  </div>
-                  <div className="ml-4 flex-grow">
-                    <h3 className="font-medium">{item.product.name}</h3>
-                    <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
-                  </div>
-                  <div className="text-right font-medium">
-                    {(item.product.price * item.quantity).toFixed(0)} F CFA
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <Separator className="my-4" />
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>Sous-total</span>
-                <span>{(orderData.subtotal || 0).toFixed(0)} F CFA</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Livraison</span>
-                <span>{(orderData.shippingCost || 0).toFixed(0)} F CFA</span>
-              </div>
-              {(orderData.discount || 0) > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>Réduction</span>
-                  <span>-{(orderData.discount || 0).toFixed(0)} F CFA</span>
-                </div>
-              )}
-              <Separator className="my-2" />
-              <div className="flex justify-between font-bold text-lg">
-                <span>Total</span>
-                <span>{total} F CFA</span>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="print:hidden">
-            <Button 
-              variant="outline" 
-              onClick={handlePrint}
-              className="w-full flex items-center justify-center"
-            >
-              <Printer className="mr-2 h-4 w-4" />
-              Imprimer la confirmation
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <div className="text-center space-y-4 print:hidden">
-          <Button onClick={() => navigate("/products")}>
-            Continuer mes achats
-          </Button>
-          <p className="text-sm text-gray-500">
-            Un email de confirmation a été envoyé à {orderData.email || shippingInfo.email || "votre adresse email"}
-          </p>
-        </div>
+        <OrderFooter email={email} />
       </div>
     </Layout>
   );
