@@ -20,4 +20,22 @@ export default {
   "chat.typing": "est en train d'écrire...",
   "chat.messageInput": "Écrivez votre message...",
   "chat.voiceRecording": "Enregistrement vocal en cours...",
+  
+  // Database related translations
+  "database.title": "Base de données",
+  "database.refresh": "Actualiser les données",
+  "database.loading": "Chargement...",
+  "database.professionals": "Professionnels",
+  "database.pharmacies": "Pharmacies",
+  "database.patients": "Patients",
+  "database.prescriptions": "Ordonnances",
+  "database.noData": "Aucune donnée disponible",
+  "database.professional.online": "En ligne",
+  "database.professional.offline": "Hors ligne",
+  "database.pharmacy.onDuty": "De garde",
+  "database.pharmacy.offDuty": "Pas de garde",
+  "database.prescription.active": "Active",
+  "database.prescription.expired": "Expirée",
+  "database.dataLoaded": "Les données ont été chargées avec succès.",
+  "database.error": "Erreur lors du chargement des données.",
 };
