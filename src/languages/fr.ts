@@ -19,6 +19,8 @@ export default {
   "nav.register": "S'inscrire",
   "nav.contact": "Contact",
   "nav.about": "À propos",
+  "nav.findProfessional": "Trouver un professionnel",
+  "nav.onlinePharmacy": "Pharmacie en ligne",
 
   // Button translations
   "btn.submit": "Soumettre",
@@ -123,6 +125,12 @@ export default {
   "dashboard.analytics": "Analytique",
   "dashboard.tasks": "Tâches",
   "dashboard.upcomingEvents": "Événements à Venir",
+
+  // Footer translations
+  "footer.description": "Votre santé à portée de main, n'importe où, n'importe quand.",
+  "footer.quickLinks": "Liens rapides",
+  "footer.contact": "Contact",
+  "footer.rights": "Tous droits réservés",
 
   // Generic translations
   "generic.loading": "Chargement...",
@@ -249,7 +257,6 @@ export default {
   "generic.low": "Bas",
   "generic.normal": "Normal",
   "generic.priority": "Priorité",
-  "generic.details": "Détails",
   "generic.viewAll": "Voir tout",
   "generic.clearAll": "Tout effacer",
   "generic.resetFilters": "Réinitialiser les filtres",
@@ -330,22 +337,5 @@ export default {
   "generic.locationUpdateTimeout": "Délai d'attente de la mise à jour de la localisation dépassé",
   "generic.locationUpdateError": "Erreur de la mise à jour de la localisation",
   "generic.locationUpdatePermissionDenied": "Permission de la mise à jour de la localisation refusée",
-  "generic.locationUpdateUnavailable": "Mise à jour de la localisation non disponible",
-  "generic.locationUpdateDisabled": "Mise à jour de la localisation désactivée",
-  "generic.locationUpdateNotSupported": "Mise à jour de la localisation non supportée",
-  "generic.locationUpdateNotAvailable": "Mise à jour de la localisation non disponible",
-  "generic.locationUpdateNotEnabled": "Mise à jour de la localisation non activée",
-  "generic.locationUpdateNotAuthorized": "Mise à jour de la localisation non autorisée",
-  "generic.locationUpdateNotAllowed": "Mise à jour de la localisation non autorisée",
-  "generic.locationUpdateNotPermitted": "Mise à jour de la localisation non autorisée",
-  "generic.locationUpdateNotGranted": "Mise à jour de la localisation non accordée",
-  "generic.locationUpdateNotProvided": "Mise à jour de la localisation non fournie",
-  "generic.locationUpdateNotSupportedByDevice": "Mise à jour de la localisation non supportée par l'appareil",
-  "generic.locationUpdateNotSupportedByPlatform": "Mise à jour de la localisation non supportée par la plateforme",
-  "generic.locationUpdateNotSupportedByBrowser": "Mise à jour de la localisation non supportée par le navigateur",
-  "generic.locationUpdateNotSupportedByApplication": "Mise à jour de la localisation non supportée par l'application",
-  "generic.locationUpdateNotSupportedBySystem": "Mise à jour de la localisation non supportée par le système",
-  "generic.locationUpdateNotSupportedByHardware": "Mise à jour de la localisation non supportée par le matériel",
-  "generic.locationUpdateNotSupportedBySoftware": "Mise à jour de la localisation non supportée par le logiciel",
-  "generic.locationUpdateNotSupportedByApi": "Mise à jour de la localisation non supportée par l'API"
+  "generic.locationUpdateNotAvailable": "Mise à jour de la localisation non disponible"
 }
