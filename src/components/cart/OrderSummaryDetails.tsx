@@ -43,6 +43,15 @@ const OrderSummaryDetails = ({
         <span>Total</span>
         <span>{total.toFixed(0)} F CFA</span>
       </div>
+      
+      {estimatedDelivery && (
+        <div className="mt-2 p-2 bg-green-50 rounded-md border border-green-100 flex items-center">
+          <CalendarCheck className="h-4 w-4 text-green-600 mr-2" />
+          <span className="text-sm text-green-700">
+            Livraison estimée: <strong>{estimatedDelivery}</strong>
+          </span>
+        </div>
+      )}
     </div>
   );
 };
