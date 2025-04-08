@@ -5,9 +5,11 @@ import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatMessages from "@/components/chat/ChatMessages";
 import ChatInput from "@/components/chat/ChatInput";
 import CallModal from "@/components/chat/CallModal";
+import OnlineProfessionals from "@/components/chat/OnlineProfessionals";
 import { useUser } from "@/contexts/UserContext";
 import LoginPrompt from "@/components/profile/LoginPrompt";
 import { Contact } from "@/types/chat";
+import { ProfessionalProfile } from "@/types/user";
 
 const ChatPage = () => {
   const { currentUser } = useUser();
@@ -52,6 +54,55 @@ const ChatPage = () => {
     }
   ];
 
+  // Mock online professionals data - in a real app, this would come from an API
+  const mockProfessionals: ProfessionalProfile[] = [
+    {
+      id: "prof-1",
+      name: "Dr. Sophie Martin",
+      email: "sophie.martin@example.com",
+      role: "professional",
+      specialty: "Médecin généraliste",
+      verified: true,
+      isOnline: true,
+    },
+    {
+      id: "prof-2",
+      name: "Dr. Thomas Dubois",
+      email: "thomas.dubois@example.com",
+      role: "professional",
+      specialty: "Cardiologue",
+      verified: true,
+      isOnline: true,
+    },
+    {
+      id: "prof-3",
+      name: "Dr. Claire Petit",
+      email: "claire.petit@example.com",
+      role: "professional",
+      specialty: "Pédiatre",
+      verified: true,
+      isOnline: false,
+    },
+    {
+      id: "prof-4",
+      name: "Dr. Pierre Lambert",
+      email: "pierre.lambert@example.com",
+      role: "professional",
+      specialty: "Dermatologue",
+      verified: false,
+      isOnline: true,
+    },
+    {
+      id: "prof-5",
+      name: "Pharmacie Centrale",
+      email: "pharmacie.centrale@example.com",
+      role: "professional",
+      specialty: "Pharmacie",
+      verified: true,
+      isOnline: true,
+    }
+  ];
+
   const handleStartCall = (type: "audio" | "video") => {
     if (!selectedContact) return;
     
@@ -64,6 +115,30 @@ const ChatPage = () => {
     setCallType(null);
   };
 
+  const handleSelectProfessional = (professional: ProfessionalProfile) => {
+    // Find if there's already a contact for this professional or create one
+    const existingContact = mockContacts.find(c => c.id === professional.id);
+    
+    if (existingContact) {
+      setSelectedContact(existingContact);
+    } else {
+      // Create a new contact based on the professional
+      const newContact: Contact = {
+        id: professional.id,
+        name: professional.name,
+        role: "professional",
+        avatar: "",
+        lastMessage: "Commencez une nouvelle conversation...",
+        lastMessageTime: "Maintenant",
+        unreadCount: 0,
+        isOnline: true,
+        specialty: professional.specialty
+      };
+      
+      setSelectedContact(newContact);
+    }
+  };
+
   if (!currentUser) {
     return (
       <Layout>
@@ -74,11 +149,17 @@ const ChatPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto h-[calc(100vh-12rem)]">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-health-dark">Messagerie</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full max-h-[calc(100vh-16rem)] bg-white rounded-lg shadow">
-          {/* Contacts sidebar */}
+        {/* Online Professionals Section */}
+        <OnlineProfessionals 
+          professionals={mockProfessionals} 
+          onSelectProfessional={handleSelectProfessional} 
+        />
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-16rem)] bg-white rounded-lg shadow">
+          {/* Chat sidebar */}
           <div className="md:col-span-1 border-r border-gray-200">
             <ChatSidebar 
               contacts={mockContacts} 

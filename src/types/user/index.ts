@@ -6,3 +6,6 @@ export * from './professionalTypes';
 export * from './prescriptionTypes';
 export * from './insuranceTypes';
 export * from './orderTypes';
+
+// Re-export the Pharmacy type from patientTypes as PharmacyLocation to avoid conflict
+export { Pharmacy as PharmacyLocation } from './patientTypes';

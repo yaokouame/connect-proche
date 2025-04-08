@@ -9,6 +9,7 @@ export interface ProfessionalProfile extends User {
   verified?: boolean;
   averageRating?: number;
   reviewCount?: number;
+  isOnline?: boolean;
   location?: {
     city: string;
     region: string;
