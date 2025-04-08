@@ -2,11 +2,31 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import { GoogleMapRef } from '@/types/map';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface GoogleMapProps {
   userLocation: { lat: number; lng: number } | null;
   places: (Pharmacy | HealthCenter)[];
   mapLoaded: boolean;
+}
+
+// Add the necessary type definitions for Google Maps
+declare global {
+  interface Window {
+    google: {
+      maps: {
+        Map: new (mapDiv: HTMLElement, options: google.maps.MapOptions) => google.maps.Map;
+        Marker: new (options: google.maps.MarkerOptions) => google.maps.Marker;
+        InfoWindow: new (options?: google.maps.InfoWindowOptions) => google.maps.InfoWindow;
+        SymbolPath: {
+          CIRCLE: number;
+        };
+        Animation: {
+          DROP: google.maps.Animation;
+        };
+      };
+    };
+  }
 }
 
 // Create a ref-forwarding component
@@ -15,6 +35,7 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
     const mapRef = useRef<HTMLDivElement>(null);
     const googleMapRef = useRef<google.maps.Map | null>(null);
     const markersRef = useRef<google.maps.Marker[]>([]);
+    const { t } = useLanguage();
 
     useEffect(() => {
       if (!mapRef.current || !userLocation || !mapLoaded) return;
@@ -38,7 +59,7 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
           strokeColor: "#FFFFFF",
           strokeWeight: 2,
         },
-        title: "Votre position",
+        title: t("map.yourPosition"),
       });
       
       // Add markers for places
@@ -51,7 +72,7 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
           markersRef.current = [];
         }
       };
-    }, [userLocation, places, mapLoaded]);
+    }, [userLocation, places, mapLoaded, t]);
 
     const addMarkersToMap = (places: (Pharmacy | HealthCenter)[]) => {
       if (!googleMapRef.current) return;
@@ -111,7 +132,7 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
       >
         {!mapLoaded && (
           <div className="flex items-center justify-center h-full bg-gray-100">
-            <p>Chargement de la carte...</p>
+            <p>{t("map.loadingMap")}</p>
           </div>
         )}
       </div>

@@ -11,7 +11,7 @@ import { useLanguage, Language } from "@/contexts/LanguageContext";
 
 const PreferencesSection = () => {
   const { toast } = useToast();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [notifEmail, setNotifEmail] = useState(true);
   const [notifSms, setNotifSms] = useState(true);
   const [shareProfile, setShareProfile] = useState(true);
@@ -21,8 +21,8 @@ const PreferencesSection = () => {
   const handleSavePreferences = () => {
     // In a real app, this would save to an API
     toast({
-      title: "Préférences mises à jour",
-      description: "Vos préférences ont été enregistrées avec succès.",
+      title: t("preferences.updatedSuccess"),
+      description: t("preferences.updatedDescription"),
     });
   };
 
@@ -30,25 +30,43 @@ const PreferencesSection = () => {
     setLanguage(value as Language);
   };
 
+  const languageNames: Record<Language, string> = {
+    fr: "Français",
+    en: "English",
+    es: "Español"
+  };
+
+  const reminderOptions = [
+    { value: "daily", label: t("preferences.reminderDaily") },
+    { value: "3-days", label: t("preferences.reminder3Days") },
+    { value: "weekly", label: t("preferences.reminderWeekly") }
+  ];
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Préférences</CardTitle>
+        <CardTitle>{t("preferences.title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Langue et région</h3>
+          <h3 className="text-lg font-medium">{t("preferences.language")}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="language">Langue</Label>
+              <Label htmlFor="language">{t("preferences.language")}</Label>
               <Select value={language} onValueChange={handleLanguageChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une langue" />
+                  <SelectValue placeholder={t("common.search")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr" className="flex items-center">
+                    <span className="mr-2">🇫🇷</span> Français
+                  </SelectItem>
+                  <SelectItem value="en" className="flex items-center">
+                    <span className="mr-2">🇬🇧</span> English
+                  </SelectItem>
+                  <SelectItem value="es" className="flex items-center">
+                    <span className="mr-2">🇪🇸</span> Español
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -56,11 +74,11 @@ const PreferencesSection = () => {
         </div>
         
         <div className="space-y-3 pt-2">
-          <h3 className="text-lg font-medium">Notifications</h3>
+          <h3 className="text-lg font-medium">{t("preferences.notifications")}</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label htmlFor="notif-email" className="flex-1">
-                Recevoir des emails pour les rappels de rendez-vous
+                {t("preferences.notifEmail")}
               </Label>
               <Switch 
                 id="notif-email" 
@@ -70,7 +88,7 @@ const PreferencesSection = () => {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="notif-sms" className="flex-1">
-                Recevoir des SMS pour les rappels de rendez-vous
+                {t("preferences.notifSms")}
               </Label>
               <Switch 
                 id="notif-sms" 
@@ -80,15 +98,17 @@ const PreferencesSection = () => {
             </div>
             
             <div className="space-y-2 pl-6">
-              <Label htmlFor="reminder-frequency">Fréquence des rappels</Label>
+              <Label htmlFor="reminder-frequency">{t("preferences.reminderFreq")}</Label>
               <Select value={reminderFrequency} onValueChange={setReminderFrequency}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Sélectionner une fréquence" />
+                  <SelectValue placeholder={t("common.search")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="daily">Quotidien</SelectItem>
-                  <SelectItem value="3-days">3 jours avant</SelectItem>
-                  <SelectItem value="weekly">Hebdomadaire</SelectItem>
+                  {reminderOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -96,17 +116,17 @@ const PreferencesSection = () => {
         </div>
         
         <div className="space-y-3 pt-2">
-          <h3 className="text-lg font-medium">Confidentialité</h3>
+          <h3 className="text-lg font-medium">{t("preferences.privacyTitle")}</h3>
           <div className="bg-blue-50 p-4 rounded-md mb-4 flex items-start">
             <Info className="w-5 h-5 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
             <p className="text-sm text-blue-700">
-              Ces paramètres déterminent comment vos informations médicales sont partagées avec les professionnels de santé.
+              {t("preferences.privacyInfo")}
             </p>
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label htmlFor="privacy-profile" className="flex-1">
-                Autoriser l'accès à mon profil pour mes professionnels de santé
+                {t("preferences.shareProfile")}
               </Label>
               <Switch 
                 id="privacy-profile" 
@@ -116,7 +136,7 @@ const PreferencesSection = () => {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="privacy-data" className="flex-1">
-                Partager mes données anonymisées pour améliorer la plateforme
+                {t("preferences.shareData")}
               </Label>
               <Switch 
                 id="privacy-data" 
@@ -127,7 +147,9 @@ const PreferencesSection = () => {
           </div>
         </div>
         
-        <Button onClick={handleSavePreferences} className="w-full">Enregistrer les préférences</Button>
+        <Button onClick={handleSavePreferences} className="w-full">
+          {t("preferences.saveButton")}
+        </Button>
       </CardContent>
     </Card>
   );

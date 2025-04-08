@@ -2,6 +2,7 @@
 import React from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import PlaceCard from './PlaceCard';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PlaceListProps {
   places: (Pharmacy | HealthCenter)[];
@@ -22,10 +23,12 @@ const PlaceList = ({
   userInsuranceProvider,
   viewOnMap
 }: PlaceListProps) => {
+  const { t } = useLanguage();
+
   if (loading) {
     return (
       <div className="text-center py-8">
-        <p>Chargement des établissements...</p>
+        <p>{t("map.loadingPlaces")}</p>
       </div>
     );
   }
@@ -35,8 +38,8 @@ const PlaceList = ({
       <div className="text-center py-8">
         <p className="text-gray-500">
           {filterByInsurance
-            ? `Aucun établissement trouvé pour "${searchTerm}" acceptant l'assurance ${filterByInsurance}`
-            : `Aucun établissement trouvé pour "${searchTerm}"`
+            ? t("map.noPlacesInsurance").replace("{0}", searchTerm).replace("{1}", filterByInsurance)
+            : t("map.noPlaces").replace("{0}", searchTerm)
           }
         </p>
       </div>
