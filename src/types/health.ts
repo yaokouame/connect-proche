@@ -107,44 +107,25 @@ export interface ExerciseVideo {
   description: string;
 }
 
-// New interfaces for insurance vouchers
+// Updated InsuranceVoucher interface with correct properties
 export interface InsuranceVoucher {
   id: string;
   userId: string;
-  insuranceProvider: string;
-  policyNumber: string;
-  coverageType: 'basic' | 'premium' | 'comprehensive';
+  provider: string;
+  voucherNumber: string;
+  coverageType: string;
   validFrom: string;
   validUntil: string;
-  coveragePercentage: number;
-  allowedPharmacies?: string[];
-  allowedHealthCenters?: string[];
-  status: 'active' | 'expired' | 'pending';
+  coverageAmount: number;
+  isPercentage?: boolean;
+  status: 'active' | 'expired' | 'used' | 'pending';
+  forService?: string;
+  forPharmacy?: string;
+  forHealthCenter?: string;
   qrCode?: string;
-  voucherCode: string;
-  coverageDetails?: CoverageDetail[];
-  additionalNotes?: string;
 }
 
-export interface CoverageDetail {
-  serviceType: 'consultation' | 'medication' | 'procedure' | 'test' | 'hospitalization';
-  coverageAmount: number; // in currency or percentage
-  isPercentage: boolean;
-  limit?: number; // max amount or count
-  deductible?: number;
-}
-
-export interface InsuranceProvider {
-  id: string;
-  name: string;
-  logoUrl?: string;
-  contactPhone: string;
-  contactEmail?: string;
-  website?: string;
-  availablePlans: string[];
-}
-
-// New interface for voice recognition
+// New interfaces for voice recognition
 export interface VoiceRecognitionProps {
   onResult: (text: string) => void;
   onListening?: (isListening: boolean) => void;

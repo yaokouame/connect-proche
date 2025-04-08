@@ -93,19 +93,18 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
       const voucher: InsuranceVoucher = {
         id: `voucher-${Date.now()}`,
         userId: 'user-123',
-        insuranceProvider: newVoucher.provider || "",
-        policyNumber: newVoucher.voucherNumber || "",
+        provider: newVoucher.provider || "",
+        voucherNumber: newVoucher.voucherNumber || "",
         coverageType: newVoucher.coverageType || "",
         validFrom: newVoucher.validFrom || "",
         validUntil: newVoucher.validUntil || "",
-        coveragePercentage: newVoucher.coverageAmount || 0,
-        allowedPharmacies: [],
-        allowedHealthCenters: [],
+        coverageAmount: newVoucher.coverageAmount || 0,
+        isPercentage: newVoucher.isPercentage,
         status: "active",
+        forService: newVoucher.forService,
+        forPharmacy: newVoucher.forPharmacy,
+        forHealthCenter: newVoucher.forHealthCenter,
         qrCode: `/placeholder.svg`,
-        voucherCode: newVoucher.voucherNumber || "",
-        coverageDetails: [],
-        additionalNotes: '',
       };
 
       setInsuranceVouchers([...(insuranceVouchers || []), voucher]);
@@ -256,8 +255,8 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
                 
                 <div className="flex items-start mb-2">
                   <div className="flex-1">
-                    <h5 className="font-medium">{voucher.insuranceProvider}</h5>
-                    <p className="text-sm text-gray-600">Bon n° {voucher.policyNumber}</p>
+                    <h5 className="font-medium">{voucher.provider}</h5>
+                    <p className="text-sm text-gray-600">Bon n° {voucher.voucherNumber}</p>
                   </div>
                   <div>
                     {getStatusBadge(voucher.status)}
@@ -280,21 +279,21 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
                   <div className="flex items-center">
                     <Percent className="h-4 w-4 mr-1 text-gray-500" />
                     <span>
-                      Couverture: {voucher.coveragePercentage}
+                      Couverture: {voucher.coverageAmount}
                       {voucher.isPercentage ? '%' : '€'}
                     </span>
                   </div>
                 </div>
                 
-                {(voucher.allowedPharmacies || voucher.allowedHealthCenters) && (
+                {(voucher.forPharmacy || voucher.forHealthCenter) && (
                   <div className="text-sm text-gray-600 mb-3">
                     <p className="font-medium mb-1">Valable pour:</p>
                     <ul className="list-disc list-inside">
-                      {voucher.allowedPharmacies && voucher.allowedPharmacies.length > 0 && (
-                        <li>Pharmacie: {voucher.allowedPharmacies.join(', ')}</li>
+                      {voucher.forPharmacy && (
+                        <li>Pharmacie: {voucher.forPharmacy}</li>
                       )}
-                      {voucher.allowedHealthCenters && voucher.allowedHealthCenters.length > 0 && (
-                        <li>Centre: {voucher.allowedHealthCenters.join(', ')}</li>
+                      {voucher.forHealthCenter && (
+                        <li>Centre: {voucher.forHealthCenter}</li>
                       )}
                     </ul>
                   </div>

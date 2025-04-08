@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
@@ -42,6 +42,7 @@ function App() {
             <Route path="/medications" element={<Medications />} />
             <Route path="/health-tracker" element={<HealthTracker />} />
             <Route path="/medical-tutorials" element={<MedicalTutorials />} />
+            <Route path="/tutorials" element={<Navigate to="/medical-tutorials" />} />
             <Route path="/wellness" element={<Wellness />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
