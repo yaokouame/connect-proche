@@ -29,3 +29,4 @@ export interface PlaceDetails {
   vicinity: string;
   types?: string[];
 }
+

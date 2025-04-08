@@ -12,6 +12,7 @@ import { useUser } from "@/contexts/UserContext";
 import GoogleMap from "@/components/map/GoogleMap";
 import MapFilters from "@/components/map/MapFilters";
 import PlaceList from "@/components/map/PlaceList";
+import { GoogleMapRef } from "@/types/map";
 import { calculateDistance, fetchNearbyPharmacies, fetchNearbyHealthCenters } from "@/utils/mapUtils";
 
 const Map = () => {
@@ -26,7 +27,7 @@ const Map = () => {
   const [showMap, setShowMap] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const googleMapRef = useRef(null);
+  const googleMapRef = useRef<GoogleMapRef>(null);
   const { t } = useLanguage();
   const { toast } = useToast();
   const { currentUser } = useUser();
@@ -214,7 +215,7 @@ const Map = () => {
     // Wait for map to be initialized
     setTimeout(() => {
       if (googleMapRef.current) {
-        (googleMapRef.current as any).centerMapOnLocation(location);
+        googleMapRef.current.centerMapOnLocation(location);
       }
     }, 100);
     
