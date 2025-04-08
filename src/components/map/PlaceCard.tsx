@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import {
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, Clock, Navigation, BadgeCheck, Wallet, Map as MapIcon } from "lucide-react";
 import { formatDistance, calculateDistance } from '@/utils/mapUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PlaceCardProps {
   place: Pharmacy | HealthCenter;
@@ -20,6 +22,7 @@ interface PlaceCardProps {
 }
 
 const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: PlaceCardProps) => {
+  const { t } = useLanguage();
   const distanceValue = userLocation ? calculateDistance(userLocation, place.location) : null;
   const distance = distanceValue !== null ? formatDistance(distanceValue) : '';
 
@@ -79,7 +82,7 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
           <div className="mb-4">
             <p className="text-sm font-medium flex items-center mb-2">
               <Wallet className="h-4 w-4 mr-1 text-gray-500" />
-              Assurances acceptées:
+              {t('map.insuranceAccepted')}:
             </p>
             <div className="flex flex-wrap gap-1">
               {place.acceptedInsuranceProviders.map((provider, idx) => {
@@ -106,7 +109,7 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
           className="flex items-center"
         >
           <MapIcon className="h-4 w-4 mr-2" />
-          Voir sur la carte
+          {t('map.viewOnMap')}
         </Button>
       </CardContent>
     </Card>

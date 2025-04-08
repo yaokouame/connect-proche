@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define available languages
@@ -74,6 +73,7 @@ const translations: Record<Language, Record<string, string>> = {
     "map.distance": "Distance",
     "map.loadingMap": "Chargement de la carte...",
     "map.yourPosition": "Votre position",
+    "map.insuranceAccepted": "Assurances acceptées",
     
     // Professionals page
     "professionals.title": "Professionnels de santé",
@@ -145,6 +145,9 @@ const translations: Record<Language, Record<string, string>> = {
     "preferences.saveButton": "Enregistrer les préférences",
     "preferences.updatedSuccess": "Préférences mises à jour",
     "preferences.updatedDescription": "Vos préférences ont été enregistrées avec succès.",
+    
+    // Currency related
+    "currency.format": "{0} F CFA",
   },
   en: {
     // Common elements
@@ -205,6 +208,7 @@ const translations: Record<Language, Record<string, string>> = {
     "map.distance": "Distance",
     "map.loadingMap": "Loading map...",
     "map.yourPosition": "Your position",
+    "map.insuranceAccepted": "Accepted insurances",
     
     // Professionals page
     "professionals.title": "Healthcare Professionals",
@@ -276,6 +280,9 @@ const translations: Record<Language, Record<string, string>> = {
     "preferences.saveButton": "Save preferences",
     "preferences.updatedSuccess": "Preferences updated",
     "preferences.updatedDescription": "Your preferences have been successfully saved.",
+    
+    // Currency related
+    "currency.format": "{0} CFA francs",
   },
   es: {
     // Common elements
@@ -336,6 +343,7 @@ const translations: Record<Language, Record<string, string>> = {
     "map.distance": "Distancia",
     "map.loadingMap": "Cargando mapa...",
     "map.yourPosition": "Tu posición",
+    "map.insuranceAccepted": "Seguros aceptados",
     
     // Professionals page
     "professionals.title": "Profesionales de la salud",
@@ -407,6 +415,9 @@ const translations: Record<Language, Record<string, string>> = {
     "preferences.saveButton": "Guardar preferencias",
     "preferences.updatedSuccess": "Preferencias actualizadas",
     "preferences.updatedDescription": "Tus preferencias se han guardado correctamente.",
+    
+    // Currency related
+    "currency.format": "{0} francos CFA",
   }
 };
 

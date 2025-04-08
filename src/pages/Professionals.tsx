@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/card";
 import { Professional } from "@/types/user";
 import { Star, MapPin, Clock, CheckCircle, Filter, Search } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ProfessionalsPage = () => {
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
@@ -23,113 +25,113 @@ const ProfessionalsPage = () => {
   const professionals: Professional[] = [
     {
       id: "1",
-      name: "Dr. Sophie Martin",
+      name: "Dr. Konan Kouassi",
       specialty: "Cardiologue",
       profileImage: "/placeholder.svg",
       verified: true,
       rating: 4.8,
       reviewCount: 124,
       experience: 12,
-      location: "Paris",
+      location: "Abidjan - Cocody",
       availableSlots: ["Lundi 10:00", "Mardi 14:00", "Jeudi 09:00"],
       fees: {
-        consultation: 60,
-        followUp: 40,
+        consultation: 15000,
+        followUp: 10000,
       },
-      acceptedInsuranceProviders: ["MGEN", "Harmonie Mutuelle", "AXA"],
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "CMU"],
       bio: "Spécialiste en cardiologie interventionnelle et préventive.",
-      education: ["Faculté de Médecine Paris Descartes", "CHU Pitié-Salpêtrière"],
-      languages: ["Français", "Anglais", "Espagnol"],
-      phone: "+33123456789",
-      email: "dr.martin@cardio.fr",
+      education: ["Université Félix Houphouët-Boigny", "CHU de Treichville"],
+      languages: ["Français", "Anglais", "Baoulé"],
+      phone: "+225 07 07 07 07 07",
+      email: "dr.konan@cardio.ci",
       consultationTypes: ["En personne", "Téléconsultation"]
     },
     {
       id: "2",
-      name: "Dr. Jean Dupont",
+      name: "Dr. Aya Brou",
       specialty: "Dermatologue",
       profileImage: "/placeholder.svg",
       verified: true,
       rating: 4.6,
       reviewCount: 98,
       experience: 8,
-      location: "Lyon",
+      location: "Abidjan - Plateau",
       availableSlots: ["Lundi 11:00", "Mercredi 14:00", "Vendredi 16:00"],
       fees: {
-        consultation: 65,
-        followUp: 45,
+        consultation: 12000,
+        followUp: 8000,
       },
-      acceptedInsuranceProviders: ["MGEN", "Harmonie Mutuelle"],
+      acceptedInsuranceProviders: ["MUGEFCI", "CMU"],
       bio: "Spécialiste en dermatologie esthétique et médicale.",
-      education: ["Faculté de Médecine Lyon Est", "CHU Lyon Sud"],
+      education: ["Université Félix Houphouët-Boigny", "CHU de Treichville"],
       languages: ["Français", "Anglais"],
       consultationTypes: ["En personne"]
     },
     {
       id: "3",
-      name: "Dr. Marie Lefevre",
+      name: "Dr. Marie Koffi",
       specialty: "Pédiatre",
       profileImage: "/placeholder.svg",
       verified: true,
       rating: 4.9,
       reviewCount: 156,
       experience: 15,
-      location: "Marseille",
+      location: "Abidjan - Yopougon",
       availableSlots: ["Mardi 09:00", "Jeudi 14:00", "Vendredi 10:00"],
       fees: {
-        consultation: 55,
-        followUp: 40,
+        consultation: 10000,
+        followUp: 7000,
       },
-      acceptedInsuranceProviders: ["MAIF", "AXA", "Allianz"],
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "CMU"],
       bio: "Spécialiste en pédiatrie générale et développement de l'enfant.",
-      education: ["Faculté de Médecine Aix-Marseille", "CHU Timone"],
-      languages: ["Français", "Anglais", "Italien"],
-      phone: "+33987654321",
+      education: ["Université Félix Houphouët-Boigny", "CHU de Yopougon"],
+      languages: ["Français", "Anglais", "Dioula"],
+      phone: "+225 05 05 05 05 05",
       consultationTypes: ["En personne", "Téléconsultation", "Visite à domicile"]
     },
     {
       id: "4",
-      name: "Dr. Thomas Dubois",
+      name: "Dr. Thomas N'Guessan",
       specialty: "Psychiatre",
       profileImage: "/placeholder.svg",
       verified: false,
       rating: 4.5,
       reviewCount: 87,
       experience: 6,
-      location: "Paris",
+      location: "Abidjan - Marcory",
       availableSlots: ["Lundi 16:00", "Mercredi 10:00", "Jeudi 17:00"],
       fees: {
-        consultation: 85,
-        followUp: 70,
+        consultation: 20000,
+        followUp: 15000,
       },
-      acceptedInsuranceProviders: ["MGEN", "AXA"],
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS"],
       bio: "Spécialiste en psychiatrie pour adultes et thérapie cognitive.",
-      education: ["Faculté de Médecine Paris Diderot", "Hôpital Saint-Anne"],
+      education: ["Université Félix Houphouët-Boigny", "CHU de Cocody"],
       languages: ["Français", "Anglais"],
-      email: "dr.dubois@psy.fr",
+      email: "dr.nguessan@psy.ci",
       consultationTypes: ["En personne", "Téléconsultation"]
     },
     {
       id: "5",
-      name: "Dr. Claire Moreau",
+      name: "Dr. Claire Yao",
       specialty: "Ophtalmologue",
       profileImage: "/placeholder.svg",
       verified: true,
       rating: 4.7,
       reviewCount: 110,
       experience: 10,
-      location: "Bordeaux",
+      location: "Abidjan - Treichville",
       availableSlots: ["Mardi 11:00", "Jeudi 09:00", "Vendredi 14:00"],
       fees: {
-        consultation: 70,
-        followUp: 50,
+        consultation: 15000,
+        followUp: 10000,
       },
-      acceptedInsuranceProviders: ["MAIF", "Harmonie Mutuelle", "Allianz"],
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "CMU"],
       bio: "Spécialiste en ophtalmologie pédiatrique et chirurgie réfractive.",
-      education: ["Faculté de Médecine Bordeaux", "CHU Pellegrin"],
-      languages: ["Français", "Espagnol"],
-      phone: "+33567891234",
-      email: "dr.moreau@ophtalmo.fr",
+      education: ["Université Félix Houphouët-Boigny", "CHU de Cocody"],
+      languages: ["Français", "Anglais"],
+      phone: "+225 01 01 01 01 01",
+      email: "dr.yao@ophtalmo.ci",
       consultationTypes: ["En personne"]
     }
   ];
@@ -171,21 +173,31 @@ const ProfessionalsPage = () => {
     return matchesSearch && matchesSpecialty && matchesLocation;
   });
 
+  // Fonction pour formater les prix en F CFA
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('fr-CI', { 
+      style: 'currency', 
+      currency: 'XOF',
+      maximumFractionDigits: 0,
+      currencyDisplay: 'code'
+    }).format(price).replace('XOF', 'F CFA');
+  };
+
   return (
     <Layout>
       <div className="max-w-screen-xl mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold mb-6">Trouver un professionnel de santé</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('professionals.title')}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-1 space-y-6">
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <Filter className="h-4 w-4" />
-                <h2 className="font-semibold">Filtres</h2>
+                <h2 className="font-semibold">{t('common.filter')}</h2>
               </div>
               
               <div className="mb-4">
-                <h3 className="text-sm font-medium mb-2">Spécialité</h3>
+                <h3 className="text-sm font-medium mb-2">{t('professionals.specialty')}</h3>
                 <div className="space-y-2">
                   {specialties.map((specialty) => (
                     <div key={specialty} className="flex items-center">
@@ -206,7 +218,7 @@ const ProfessionalsPage = () => {
               </div>
               
               <div>
-                <h3 className="text-sm font-medium mb-2">Localisation</h3>
+                <h3 className="text-sm font-medium mb-2">{t('professionals.location')}</h3>
                 <div className="space-y-2">
                   {locations.map((location) => (
                     <div key={location} className="flex items-center">
@@ -233,7 +245,7 @@ const ProfessionalsPage = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Rechercher par nom ou spécialité..."
+                  placeholder={t('professionals.search.placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -304,16 +316,16 @@ const ProfessionalsPage = () => {
                     <CardFooter className="flex justify-between border-t pt-4">
                       <div>
                         <p className="text-sm text-gray-500">
-                          Consultation: <span className="font-medium text-gray-900">{pro.fees?.consultation}€</span>
+                          Consultation: <span className="font-medium text-gray-900">{formatPrice(pro.fees?.consultation)}</span>
                         </p>
                       </div>
-                      <Button>Prendre rendez-vous</Button>
+                      <Button>{t('professionals.appointment')}</Button>
                     </CardFooter>
                   </Card>
                 ))
               ) : (
                 <div className="text-center py-12 bg-gray-50 rounded-lg">
-                  <p className="text-gray-500">Aucun professionnel ne correspond à votre recherche.</p>
+                  <p className="text-gray-500">{t('professionals.noResults')}</p>
                 </div>
               )}
             </div>

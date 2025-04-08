@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Search, PlusCircle } from "lucide-react";
 import ReviewForm from "./ReviewForm";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Doctor {
   id: string;
@@ -31,38 +32,39 @@ const DoctorReviews = () => {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  const { t } = useLanguage();
   
   // Mock data for doctors and reviews
   const mockDoctors: Doctor[] = [
     {
       id: "d1",
-      name: "Dr. Martin Dubois",
+      name: "Dr. Kouadio Koffi",
       specialty: "Cardiologie",
-      location: "Paris",
+      location: "Abidjan - Cocody",
       rating: 4.8,
       reviewCount: 23
     },
     {
       id: "d2",
-      name: "Dr. Sophie Laurent",
+      name: "Dr. Assa Marie",
       specialty: "Pédiatrie",
-      location: "Lyon",
+      location: "Abidjan - Plateau",
       rating: 4.5,
       reviewCount: 17
     },
     {
       id: "d3",
-      name: "Dr. Thomas Benoit",
+      name: "Dr. Koné Issouf",
       specialty: "Dermatologie",
-      location: "Marseille",
+      location: "Abidjan - Marcory",
       rating: 4.2,
       reviewCount: 14
     },
     {
       id: "d4",
-      name: "Dr. Claire Morel",
+      name: "Dr. Aké Florence",
       specialty: "Psychiatrie",
-      location: "Bordeaux",
+      location: "Abidjan - Yopougon",
       rating: 4.7,
       reviewCount: 19
     }
@@ -73,7 +75,7 @@ const DoctorReviews = () => {
       {
         id: "r1",
         doctorId: "d1",
-        userName: "Jean P.",
+        userName: "Traore P.",
         rating: 5,
         comment: "Excellent médecin, très à l'écoute et professionnel.",
         date: "2023-06-15"
@@ -81,7 +83,7 @@ const DoctorReviews = () => {
       {
         id: "r2",
         doctorId: "d1",
-        userName: "Marie L.",
+        userName: "Bamba L.",
         rating: 4,
         comment: "Bon suivi médical, mais parfois long pour obtenir un rendez-vous.",
         date: "2023-08-22"
@@ -91,7 +93,7 @@ const DoctorReviews = () => {
       {
         id: "r3",
         doctorId: "d2",
-        userName: "Fabien D.",
+        userName: "Konan D.",
         rating: 5,
         comment: "Géniale avec les enfants, ma fille adore ses visites!",
         date: "2023-07-05"
@@ -101,7 +103,7 @@ const DoctorReviews = () => {
       {
         id: "r4",
         doctorId: "d3",
-        userName: "Sophie T.",
+        userName: "Kouassi T.",
         rating: 4,
         comment: "Diagnostic précis et traitement efficace.",
         date: "2023-09-10"
@@ -111,7 +113,7 @@ const DoctorReviews = () => {
       {
         id: "r5",
         doctorId: "d4",
-        userName: "Paul B.",
+        userName: "Koffi B.",
         rating: 5,
         comment: "Excellente thérapeute, je la recommande vivement.",
         date: "2023-08-03"
@@ -256,7 +258,7 @@ const DoctorReviews = () => {
                         <div className="flex justify-between items-center mb-2">
                           <div className="font-medium">{review.userName}</div>
                           <div className="text-sm text-muted-foreground">
-                            {new Date(review.date).toLocaleDateString('fr-FR')}
+                            {new Date(review.date).toLocaleDateString('fr-CI')}
                           </div>
                         </div>
                         <div className="flex mb-3">
