@@ -80,6 +80,27 @@ export default {
   "home.description": "Ceci est la page d'accueil de notre application.",
   "home.getStarted": "Commencer",
 
+  // Map translations
+  "map.title": "Carte des établissements",
+  "map.searchPlaceholder": "Rechercher des pharmacies, cliniques...",
+  "map.locateMe": "Me localiser",
+  "map.pharmacies": "Pharmacies",
+  "map.healthCenters": "Centres de santé",
+  "map.loadingPlaces": "Chargement des établissements...",
+  "map.noPlacesFound": "Aucun établissement trouvé",
+  "map.fromYourLocation": "de votre position",
+  "map.showOnMap": "Voir sur la carte",
+  "map.locationError": "Erreur de localisation",
+  "map.updatingLocation": "Mise à jour de la localisation",
+  "map.findingYourLocation": "Recherche de votre position...",
+  "map.facilitiesPlaceholder": "Rechercher des pharmacies ou centres de santé",
+  "map.healthFacilities": "Établissements de santé",
+  "map.noResultsSearch": "Aucun résultat pour \"{0}\"",
+  "map.noResultsFilter": "Aucun résultat pour le filtre \"{0}\"",
+  "map.tryDifferentSearch": "Essayez une recherche différente ou modifiez les filtres",
+  "map.pharmaciesTab": "Liste des pharmacies",
+  "map.centersTab": "Centres de santé",
+
   // Contact page translations
   "contact.title": "Contactez-nous",
   "contact.description": "Envoyez-nous un message et nous vous répondrons dès que possible.",
@@ -102,49 +123,6 @@ export default {
   "dashboard.analytics": "Analytique",
   "dashboard.tasks": "Tâches",
   "dashboard.upcomingEvents": "Événements à Venir",
-
-  // Map translations
-  "map.pharmaciesTab": "Pharmacies",
-  "map.centersTab": "Centres de santé",
-  "map.healthFacilities": "Établissements de santé",
-  "map.facilitiesPlaceholder": "Rechercher pharmacies, centres de santé...",
-  "map.locateMe": "Me localiser",
-  "map.searchNearby": "Rechercher à proximité",
-  "map.showOnMap": "Afficher sur la carte",
-  "map.viewDetails": "Voir détails",
-  "map.loadingPlaces": "Chargement des établissements...",
-  "map.noPlacesFound": "Aucun établissement trouvé",
-  "map.noResultsSearch": "Aucun résultat pour '{0}'",
-  "map.noResultsFilter": "Aucun résultat avec l'assurance '{0}'",
-  "map.tryDifferentSearch": "Essayez une recherche différente ou modifiez les filtres",
-  "map.locationError": "Erreur de localisation",
-  "map.updatingLocation": "Mise à jour de la localisation",
-  "map.findingYourLocation": "Recherche de votre position en cours...",
-  "map.insurance": "Assurance",
-  "map.sortBy": "Trier par",
-  "map.yourPlan": "Votre plan",
-  "map.filterByInsurance": "Filtrer par assurance",
-  "map.sortDistance": "Distance",
-  "map.sortRating": "Évaluation",
-  "map.sortAlphabetical": "Alphabétique",
-  "map.all": "Tous",
-  "map.fromYourLocation": "de votre position",
-  
-  // Reviews translations
-  "reviews.giveReview": "Donner un avis sur",
-  "reviews.yourRating": "Votre évaluation",
-  "reviews.yourComment": "Votre commentaire",
-  "reviews.shareDoctorExperience": "Partagez votre expérience avec ce médecin...",
-  "reviews.publish": "Publier",
-  "reviews.ratingRequired": "L'évaluation est requise",
-
-  // Common translations
-  "common.cancel": "Annuler",
-  "common.save": "Enregistrer",
-  "common.delete": "Supprimer",
-  "common.edit": "Modifier",
-  "common.add": "Ajouter",
-  "common.language": "Langue",
 
   // Generic translations
   "generic.loading": "Chargement...",
@@ -369,5 +347,5 @@ export default {
   "generic.locationUpdateNotSupportedBySystem": "Mise à jour de la localisation non supportée par le système",
   "generic.locationUpdateNotSupportedByHardware": "Mise à jour de la localisation non supportée par le matériel",
   "generic.locationUpdateNotSupportedBySoftware": "Mise à jour de la localisation non supportée par le logiciel",
-  "generic.locationUpdateNotSupportedByApiAuthentication": "Mise à jour de la localisation non supportée par l'authentification de l'API"
+  "generic.locationUpdateNotSupportedByApi": "Mise à jour de la localisation non supportée par l'API"
 }

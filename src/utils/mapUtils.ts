@@ -20,11 +20,25 @@ export const calculateDistance = (
 };
 
 // Format distance for display
-export const formatDistance = (distance: number): string => {
-  if (distance < 1) {
-    return `${Math.round(distance * 1000)} m`;
+export const formatDistance = (
+  userLocation: { lat: number; lng: number },
+  placeLocation: { lat: number; lng: number }
+): string => {
+  try {
+    const distance = calculateDistance(userLocation, placeLocation);
+    
+    if (typeof distance !== 'number' || isNaN(distance)) {
+      return "Distance inconnue";
+    }
+    
+    if (distance < 1) {
+      return `${Math.round(distance * 1000)} m`;
+    }
+    return `${distance.toFixed(1)} km`;
+  } catch (error) {
+    console.error("Error formatting distance:", error);
+    return "Distance inconnue";
   }
-  return `${distance.toFixed(1)} km`;
 };
 
 // Function to fetch nearby pharmacies and health centers

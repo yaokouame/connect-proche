@@ -54,7 +54,9 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
           
           {userLocation && place.location && (
             <div className="flex items-center font-medium">
-              <span>{formatDistance(userLocation, place.location)} {t('map.fromYourLocation')}</span>
+              <span>
+                {formatDistance(userLocation, place.location)} {t('map.fromYourLocation')}
+              </span>
             </div>
           )}
         </div>
@@ -98,7 +100,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
           variant="outline" 
           size="sm" 
           className="w-full" 
-          onClick={() => viewOnMap(place.location)}
+          onClick={() => place.location && viewOnMap(place.location)}
         >
           {t('map.showOnMap')}
         </Button>
