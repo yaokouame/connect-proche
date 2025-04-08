@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import { format, addDays } from "date-fns";
 import { CartItem } from "@/types/user";
 import { useToast } from "@/components/ui/use-toast";
+import { OrderStatusType } from "@/types/user/orderTypes";
 
 type PaymentMethod = "card" | "insurance" | "paypal" | "mobile" | "transfer" | "cod";
 
@@ -41,7 +41,6 @@ export const usePaymentProcessing = (
   
   const simulate3DSecure = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      // Create a simple 3D Secure modal
       const modal = document.createElement('div');
       modal.style.position = 'fixed';
       modal.style.top = '0';
@@ -89,7 +88,6 @@ export const usePaymentProcessing = (
       modal.appendChild(content);
       document.body.appendChild(modal);
       
-      // Add event listeners
       const cancelButton = document.getElementById('cancel-3ds');
       const confirmButton = document.getElementById('confirm-3ds');
       
@@ -109,7 +107,6 @@ export const usePaymentProcessing = (
     setIsProcessing(true);
     
     try {
-      // Handle 3D Secure for card payments if enabled
       if (method === "card" && formData.is3DSecureEnabled) {
         const confirmed = await simulate3DSecure();
         if (!confirmed) {
@@ -123,30 +120,49 @@ export const usePaymentProcessing = (
         }
       }
       
-      // For mobile money, simulate a confirmation code
       if (method === "mobile") {
         toast({
           title: "Code envoyé",
           description: `Un code de confirmation a été envoyé à ${formData.mobileNumber}`,
         });
         
-        // Simulate a delay for the user to enter the code
         await new Promise(resolve => setTimeout(resolve, 1500));
       }
       
-      // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Generate order number
       const orderNumber = `ORD-${Date.now().toString().slice(-8)}`;
       const trackingNumber = `TRK${Date.now().toString().slice(-10)}`;
       
-      // Calculate estimated delivery based on shipping method
       const isExpress = localStorage.getItem("shippingMethod") === "express";
       const deliveryDays = isExpress ? 2 : 5;
       const estimatedDelivery = format(addDays(new Date(), deliveryDays), "dd/MM/yyyy");
       
-      // Get payment method display name
+      const getCarrier = () => {
+        const country = shippingInfo?.country || "";
+        
+        if (isExpress) {
+          return "DHL Express";
+        } else if (country === "Sénégal") {
+          return "Senegal Post";
+        } else if (country === "Côte d'Ivoire") {
+          return "La Poste de Côte d'Ivoire";
+        } else {
+          return "Africa Logistics";
+        }
+      };
+      
+      const getTrackingUrl = (carrier: string, trackingNumber: string) => {
+        if (carrier === "DHL Express") {
+          return `https://www.dhl.com/tracking/shipments?tracking-id=${trackingNumber}`;
+        } else {
+          return `https://tracking.example.com?number=${trackingNumber}&carrier=${encodeURIComponent(carrier)}`;
+        }
+      };
+      
+      const carrier = getCarrier();
+      const trackingUrl = getTrackingUrl(carrier, trackingNumber);
+      
       const getPaymentMethodName = () => {
         switch (method) {
           case "card": return "Carte bancaire";
@@ -159,10 +175,17 @@ export const usePaymentProcessing = (
         }
       };
       
-      // Prepare order data for summary
+      const getInitialStatus = (): OrderStatusType => {
+        if (method === 'transfer') return "pending";
+        if (method === 'cod') return "confirmed";
+        return "processing";
+      };
+      
       const orderData = {
         orderNumber,
         trackingNumber,
+        trackingUrl,
+        carrier,
         orderDate: format(new Date(), "dd/MM/yyyy"),
         estimatedDelivery,
         total: total.toFixed(0),
@@ -174,13 +197,11 @@ export const usePaymentProcessing = (
         paymentMethod: getPaymentMethodName(),
         lastFourDigits: method === 'card' && formData.cardNumber ? formData.cardNumber.replace(/\s/g, "").slice(-4) : null,
         email: shippingInfo?.email || "",
-        status: method === 'transfer' ? "pending" : "confirmed"
+        status: getInitialStatus()
       };
       
-      // Save order data to localStorage
       localStorage.setItem("latestOrder", JSON.stringify(orderData));
       
-      // Clear cart and related information
       localStorage.removeItem("cart");
       localStorage.removeItem("shippingInfo");
       localStorage.removeItem("shippingMethod");
@@ -188,7 +209,6 @@ export const usePaymentProcessing = (
       
       setIsProcessing(false);
       
-      // Show custom message for bank transfer
       if (method === 'transfer') {
         toast({
           title: "Virement bancaire enregistré",
@@ -196,7 +216,6 @@ export const usePaymentProcessing = (
         });
       }
       
-      // Show success dialog
       setIsSuccessDialogOpen(true);
     } catch (error) {
       setIsProcessing(false);

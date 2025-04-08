@@ -14,7 +14,10 @@ interface OrderDetailsCardProps {
   paymentMethod: string;
   estimatedDelivery: string;
   total: string;
-  trackingNumber: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  carrier?: string;
+  orderStatus: "confirmed" | "processing" | "shipped" | "delivered" | "delayed";
   notificationsEnabled: boolean;
   setNotificationsEnabled: (enabled: boolean) => void;
 }
@@ -26,6 +29,9 @@ const OrderDetailsCard = ({
   estimatedDelivery,
   total,
   trackingNumber,
+  trackingUrl,
+  carrier,
+  orderStatus = "confirmed",
   notificationsEnabled,
   setNotificationsEnabled
 }: OrderDetailsCardProps) => {
@@ -56,9 +62,11 @@ const OrderDetailsCard = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <OrderStatus 
-          currentStatus="confirmed" 
+          currentStatus={orderStatus}
           estimatedDelivery={estimatedDelivery}
           trackingNumber={trackingNumber}
+          trackingUrl={trackingUrl}
+          carrier={carrier}
         />
         
         <div className="grid grid-cols-2 gap-4 mt-6">

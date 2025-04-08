@@ -59,10 +59,14 @@ const OrderConfirmation = () => {
     subtotal = 0,
     shippingCost = 0,
     discount = 0,
-    lastFourDigits
+    lastFourDigits,
+    status = "confirmed",
+    trackingNumber,
+    trackingUrl,
+    carrier
   } = orderData;
   
-  const trackingNumber = orderData.trackingNumber || `TRK${orderNumber.slice(-6)}`;
+  const generatedTrackingNumber = trackingNumber || `TRK${orderNumber.slice(-6)}`;
   const email = orderData.email || shippingInfo.email || "votre adresse email";
 
   return (
@@ -76,7 +80,10 @@ const OrderConfirmation = () => {
           paymentMethod={paymentMethod}
           estimatedDelivery={estimatedDelivery}
           total={total}
-          trackingNumber={trackingNumber}
+          trackingNumber={generatedTrackingNumber}
+          trackingUrl={trackingUrl}
+          carrier={carrier}
+          orderStatus={status}
           notificationsEnabled={notificationsEnabled}
           setNotificationsEnabled={setNotificationsEnabled}
         />

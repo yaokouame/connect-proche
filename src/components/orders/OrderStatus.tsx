@@ -1,6 +1,6 @@
 
 import React from "react";
-import { CheckCircle, Truck, Package, Home, Clock } from "lucide-react";
+import { CheckCircle, Truck, Package, Home, Clock, ExternalLink } from "lucide-react";
 
 type OrderStatusType = "confirmed" | "processing" | "shipped" | "delivered" | "delayed";
 
@@ -8,9 +8,17 @@ interface OrderStatusProps {
   currentStatus: OrderStatusType;
   estimatedDelivery?: string;
   trackingNumber?: string;
+  trackingUrl?: string;
+  carrier?: string;
 }
 
-const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: OrderStatusProps) => {
+const OrderStatus = ({ 
+  currentStatus, 
+  estimatedDelivery, 
+  trackingNumber, 
+  trackingUrl,
+  carrier 
+}: OrderStatusProps) => {
   const statuses = [
     { id: "confirmed", label: "Confirmée", icon: CheckCircle, color: "green" },
     { id: "processing", label: "En préparation", icon: Package, color: "blue" },
@@ -33,6 +41,27 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
   
   const currentIndex = getStatusIndex(currentStatus);
   
+  // Get the default tracking URL if none is provided
+  const getTrackingUrl = () => {
+    if (trackingUrl) return trackingUrl;
+    
+    if (carrier && trackingNumber) {
+      // Standard tracking URLs for common carriers
+      switch(carrier.toLowerCase()) {
+        case "dhl":
+          return `https://www.dhl.com/tracking/shipments?tracking-id=${trackingNumber}`;
+        case "ups":
+          return `https://www.ups.com/track?tracknum=${trackingNumber}`;
+        case "fedex":
+          return `https://www.fedex.com/fedextrack/?trknbr=${trackingNumber}`;
+        default:
+          return `https://tracking.example.com?number=${trackingNumber}`;
+      }
+    }
+    
+    return trackingNumber ? `https://tracking.example.com?number=${trackingNumber}` : "#";
+  };
+  
   return (
     <div className="py-4">
       <div className="flex justify-between">
@@ -40,11 +69,6 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
           const isActive = index <= currentIndex;
           const isCurrentStep = index === currentIndex;
           const StatusIcon = status.icon;
-          const statusColorClass = isActive 
-            ? (currentStatus === "delayed" && index === currentIndex) 
-              ? "text-amber-600 bg-amber-100" 
-              : `text-${status.color}-600 bg-${status.color}-100`
-            : "text-gray-400 bg-gray-100";
           
           return (
             <div key={status.id} className="flex flex-col items-center">
@@ -100,20 +124,46 @@ const OrderStatus = ({ currentStatus, estimatedDelivery, trackingNumber }: Order
           </div>
         )}
         
-        {currentStatus === "shipped" && (
+        {carrier && (
+          <div className="flex justify-between items-center px-3 py-2 bg-purple-50 rounded-md">
+            <span className="font-medium">Transporteur:</span>
+            <span>{carrier}</span>
+          </div>
+        )}
+        
+        {(currentStatus === "shipped" || currentStatus === "delayed") && trackingNumber && (
           <div className="flex justify-center mt-3">
             <a 
-              href={trackingNumber ? `https://tracking.example.com?number=${trackingNumber}` : "#"}
+              href={getTrackingUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline text-sm flex items-center"
+              className="text-blue-600 hover:underline text-sm flex items-center bg-blue-50 px-4 py-2 rounded-md"
             >
-              <Truck className="h-4 w-4 mr-1" />
+              <Truck className="h-4 w-4 mr-2" />
               Suivre votre colis
+              <ExternalLink className="h-3 w-3 ml-1" />
             </a>
           </div>
         )}
       </div>
+      
+      {currentStatus === "processing" && (
+        <div className="mt-4 p-3 bg-blue-50 rounded-md text-blue-700 text-sm">
+          <p className="flex items-start">
+            <Package className="h-4 w-4 mr-2 mt-0.5" />
+            <span>Votre commande est en cours de préparation dans notre entrepôt. Elle sera expédiée prochainement.</span>
+          </p>
+        </div>
+      )}
+      
+      {currentStatus === "delayed" && (
+        <div className="mt-4 p-3 bg-amber-50 rounded-md text-amber-700 text-sm">
+          <p className="flex items-start">
+            <Clock className="h-4 w-4 mr-2 mt-0.5" />
+            <span>Votre commande connaît un léger retard. Notre service client vous contactera si le délai se prolonge.</span>
+          </p>
+        </div>
+      )}
     </div>
   );
 };
