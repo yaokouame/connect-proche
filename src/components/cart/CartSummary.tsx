@@ -34,17 +34,34 @@ const CartSummary = ({
   discount,
   total
 }: CartSummaryProps) => {
+  // Calculate estimated delivery date based on shipping method
+  const getEstimatedDelivery = () => {
+    const today = new Date();
+    if (shippingMethod === "express") {
+      // 1-2 days for express shipping
+      const deliveryDate = new Date(today);
+      deliveryDate.setDate(today.getDate() + 2);
+      return deliveryDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    } else {
+      // 3-5 days for standard shipping
+      const deliveryDate = new Date(today);
+      deliveryDate.setDate(today.getDate() + 5);
+      return deliveryDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
+    <Card className="shadow-sm">
+      <CardHeader className="bg-gray-50">
         <CardTitle>Récapitulatif</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         <OrderSummaryDetails 
           subtotal={subtotal}
           shippingCost={shippingCost}
           discount={discount}
           total={total}
+          estimatedDelivery={getEstimatedDelivery()}
         />
 
         <ShippingMethodSelector 
@@ -60,7 +77,7 @@ const CartSummary = ({
           />
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="bg-gray-50">
         <Button className="w-full" onClick={nextStep}>Passer à la livraison</Button>
       </CardFooter>
     </Card>

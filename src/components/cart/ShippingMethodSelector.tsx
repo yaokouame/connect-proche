@@ -24,13 +24,13 @@ const ShippingMethodSelector = ({
           <SelectItem value="standard">
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4 text-blue-500" />
-              <span>Standard (3-5 jours) - 3.999 F CFA</span>
+              <span>Standard (3-5 jours) - 3 999 F CFA</span>
             </div>
           </SelectItem>
           <SelectItem value="express">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-green-500" />
-              <span>Express (1-2 jours) - 7.999 F CFA</span>
+              <span>Express (1-2 jours) - 7 999 F CFA</span>
             </div>
           </SelectItem>
         </SelectContent>

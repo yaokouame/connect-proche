@@ -43,8 +43,8 @@ const CartItems = ({ cartItems, updateQuantity, removeFromCart }: CartItemsProps
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
-            <div className="w-20 text-right font-medium">
-              {(item.product.price * item.quantity).toFixed(2)} €
+            <div className="w-24 text-right font-medium">
+              {(item.product.price * item.quantity).toFixed(0)} F CFA
             </div>
             <Button variant="ghost" size="icon" className="ml-2" onClick={() => removeFromCart(item.product.id)}>
               <Trash2 className="h-4 w-4 text-red-500" />

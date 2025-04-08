@@ -41,7 +41,11 @@ export const useCartPage = () => {
     return savedMethod || "standard";
   });
   
-  const [couponCode, setCouponCode] = useState("");
+  const [couponCode, setCouponCode] = useState(() => {
+    const savedCoupon = localStorage.getItem("couponCode");
+    return savedCoupon || "";
+  });
+  
   const [step, setStep] = useState<"cart" | "shipping" | "payment">("cart");
   
   const [shippingInfo, setShippingInfo] = useState({
@@ -49,7 +53,7 @@ export const useCartPage = () => {
     streetAddress: "",
     city: "",
     postalCode: "",
-    country: "France",
+    country: "Sénégal",
     phone: "",
   });
 
@@ -60,12 +64,15 @@ export const useCartPage = () => {
   );
   
   const shippingCost = shippingMethod === "express" ? 7999 : 3999;
-  const discount = couponCode === "SANTE10" ? subtotal * 0.1 : 0;
+  const discount = couponCode === "SANTE10" ? Math.round(subtotal * 0.1) : 0;
   const total = subtotal + shippingCost - discount;
 
   // Update cart item quantity
   const updateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
+    if (newQuantity < 1) {
+      removeFromCart(productId);
+      return;
+    }
     
     const updatedCart = cartItems.map((item) =>
       item.product.id === productId ? { ...item, quantity: newQuantity } : item
@@ -149,6 +156,14 @@ export const useCartPage = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  // Load saved coupon code on mount
+  useEffect(() => {
+    const savedCoupon = localStorage.getItem("couponCode");
+    if (savedCoupon) {
+      setCouponCode(savedCoupon);
+    }
+  }, []);
 
   return {
     cartItems,
