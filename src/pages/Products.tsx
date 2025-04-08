@@ -1,152 +1,81 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
-import { useUser } from "@/contexts/UserContext";
-
-// Import our components
-import ProductSearch from "@/components/products/ProductSearch";
 import ProductList from "@/components/products/ProductList";
+import ProductSearch from "@/components/products/ProductSearch";
 import ProductInfoBanner from "@/components/products/ProductInfoBanner";
-import PrescriptionDialog from "@/components/products/PrescriptionDialog";
-import CartHeader from "@/components/products/CartHeader";
-import ErrorBoundary from "@/components/cart/ErrorBoundary";
-import VoiceAssistant from "@/components/voice/VoiceAssistant";
-
-// Import our custom hooks
-import { useCachedProductsData } from "@/hooks/useCachedProductsData";
+import { useProductsData } from "@/hooks/useProductsData";
 import { useShoppingCart } from "@/hooks/useShoppingCart";
-import { usePrescriptionData } from "@/components/products/usePrescriptionData";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
-
-const pageDescription = `Bienvenue sur la page des produits pharmaceutiques et de santé. 
-Vous pouvez rechercher des produits en utilisant la barre de recherche en haut, ou filtrer par catégorie. 
-Chaque produit affiche son nom, sa description, son prix et un bouton pour l'ajouter au panier. 
-Si un produit nécessite une ordonnance, vous devrez en télécharger une avant de l'ajouter au panier. 
-Votre panier est accessible en haut à droite de la page.`;
+import { Product } from "@/types/user";
+import PageVoiceHelp from "@/components/voice/PageVoiceHelp";
 
 const Products = () => {
-  const { currentUser } = useUser();
-  
-  // Products data and filtering with cache
-  const {
-    filteredProducts,
-    loading,
-    error: productsError,
-    searchTerm,
-    setSearchTerm,
-    categoryFilter,
-    setCategoryFilter,
-    categories,
-    forceRefresh
-  } = useCachedProductsData();
+  const { products, loading, categories } = useProductsData();
+  const { addToCart } = useShoppingCart();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [enableVoiceHelp, setEnableVoiceHelp] = useState(false);
 
-  // Shopping cart management with error handling
-  const {
-    cart,
-    error: cartError,
-    loading: cartLoading,
-    selectedProduct,
-    isPrescriptionUploadOpen,
-    setIsPrescriptionUploadOpen,
-    addToCart,
-    handlePrescriptionSelect,
-    cartItemCount,
-    retryLoadCart
-  } = useShoppingCart();
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
 
-  // Prescription data
-  const {
-    userPrescriptions,
-    isUploading,
-    setIsUploading
-  } = usePrescriptionData();
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+  };
 
-  // Combinaison des erreurs potentielles
-  const hasError = productsError || cartError;
+  const pageDescription = "Page des produits médicaux. Vous pouvez rechercher des produits par nom ou description, filtrer par catégorie, et ajouter des produits à votre panier. Utilisez la fonction de recherche vocale pour une expérience plus accessible.";
 
-  // Fonction pour rafraîchir les données
-  const handleRefresh = () => {
-    if (productsError) {
-      forceRefresh();
-    }
-    if (cartError) {
-      retryLoadCart();
-    }
+  const featureInstructions = {
+    search: "Pour rechercher un produit, tapez son nom ou sa description dans la barre de recherche. Vous pouvez aussi utiliser la fonction de recherche vocale en cliquant sur l'icône du microphone.",
+    filter: "Pour filtrer les produits par catégorie, utilisez le menu déroulant de sélection de catégorie.",
+    addToCart: "Pour ajouter un produit à votre panier, cliquez sur le bouton Ajouter au panier sur la carte du produit."
+  };
+
+  const toggleVoiceHelp = () => {
+    setEnableVoiceHelp(!enableVoiceHelp);
   };
 
   return (
     <Layout>
-      <ErrorBoundary>
-        <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-center mb-4">
-            <CartHeader cartItemCount={cartItemCount} />
-            <VoiceAssistant pageDescription={pageDescription} className="ml-2" />
-          </div>
-
-          {hasError ? (
-            <div className="my-8 p-4 bg-red-50 border border-red-200 rounded-md">
-              <h2 className="text-lg font-semibold text-red-700 mb-2">
-                Une erreur est survenue
-              </h2>
-              <p className="text-red-600 mb-4">
-                {productsError || cartError}
-              </p>
-              <Button 
-                onClick={handleRefresh}
-                className="flex items-center"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Réessayer
-              </Button>
-            </div>
-          ) : (
-            <>
-              <ProductSearch 
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                categoryFilter={categoryFilter}
-                setCategoryFilter={setCategoryFilter}
-                categories={categories}
-              />
-
-              <div className="flex justify-end my-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={forceRefresh}
-                  className="text-xs flex items-center"
-                  disabled={loading}
-                >
-                  <RefreshCw className="w-3 h-3 mr-1" />
-                  Actualiser les produits
-                </Button>
-              </div>
-
-              <ProductInfoBanner />
-
-              <ProductList 
-                products={filteredProducts}
-                loading={loading}
-                searchTerm={searchTerm}
-                onAddToCart={addToCart}
-                enableVoiceHelp={true}
-              />
-            </>
-          )}
+      <div className="container px-4 py-6 md:px-6">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Produits médicaux</h1>
+          <button
+            onClick={toggleVoiceHelp}
+            className="text-sm text-health-blue hover:text-health-teal underline"
+          >
+            {enableVoiceHelp ? "Désactiver l'assistance vocale" : "Activer l'assistance vocale"}
+          </button>
         </div>
+
+        <ProductInfoBanner />
         
-        <PrescriptionDialog 
-          isOpen={isPrescriptionUploadOpen}
-          onClose={() => setIsPrescriptionUploadOpen(false)}
-          userPrescriptions={userPrescriptions}
-          onPrescriptionSelect={handlePrescriptionSelect}
-          selectedPrescription={null}
-          isUploading={isUploading}
-          setIsUploading={setIsUploading}
-          currentUserId={currentUser?.id || "guest"}
+        <ProductSearch
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          categories={categories}
         />
-      </ErrorBoundary>
+        
+        <ProductList
+          products={filteredProducts}
+          loading={loading}
+          searchTerm={searchTerm}
+          onAddToCart={handleAddToCart}
+          enableVoiceHelp={enableVoiceHelp}
+        />
+      </div>
+      
+      <PageVoiceHelp 
+        pageDescription={pageDescription}
+        instructions={featureInstructions}
+        position="bottom-right"
+      />
     </Layout>
   );
 };

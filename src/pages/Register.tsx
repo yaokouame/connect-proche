@@ -1,251 +1,173 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useUser } from "@/contexts/UserContext";
-import { UserRole } from "@/types/user";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Layout from "@/components/Layout";
-import AuthFields from "@/components/register/AuthFields";
 import LocationSelect from "@/components/register/LocationSelect";
 import ProfessionalFields from "@/components/register/ProfessionalFields";
+import AuthFields from "@/components/register/AuthFields";
 import { useRegisterTranslation } from "@/hooks/useRegisterTranslation";
-import VoiceAssistant from "@/components/voice/VoiceAssistant";
-import { Volume2, VolumeX } from "lucide-react";
+import PageVoiceHelp from "@/components/voice/PageVoiceHelp";
 
 const Register = () => {
-  const t = useRegisterTranslation();
-  
-  // User state
+  const { t } = useRegisterTranslation();
+  const [accountType, setAccountType] = useState("patient");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMatch, setPasswordMatch] = useState(true);
-  const [role, setRole] = useState<UserRole>("patient");
-  const [loading, setLoading] = useState(false);
-  
-  // Professional specific fields
-  const [specialty, setSpecialty] = useState("");
-  const [license, setLicense] = useState("");
-  
-  // Location fields
   const [region, setRegion] = useState("");
   const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
-  
-  // Voice guidance state
+  const [specialty, setSpecialty] = useState("");
+  const [license, setLicense] = useState("");
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
-  
-  const { register } = useUser();
-  const navigate = useNavigate();
 
-  // Check if passwords match whenever password or confirmPassword change
+  // Instructions vocales pour chaque champ
+  const fieldInstructions = {
+    name: "Veuillez entrer votre nom complet.",
+    email: "Veuillez entrer votre adresse email. Cette adresse sera utilisée pour vous connecter et pour les communications importantes.",
+    password: "Choisissez un mot de passe sécurisé d'au moins 8 caractères, contenant des lettres majuscules, minuscules et des chiffres.",
+    confirmPassword: "Veuillez confirmer votre mot de passe en le saisissant une seconde fois pour éviter les erreurs.",
+    specialty: "Si vous êtes professionnel de santé, veuillez sélectionner votre spécialité dans la liste déroulante.",
+    license: "Veuillez entrer votre numéro de licence ou d'identification professionnelle."
+  };
+
+  // Vérifier si les mots de passe correspondent
   useEffect(() => {
-    setPasswordMatch(password === confirmPassword || confirmPassword === "");
+    if (confirmPassword) {
+      setPasswordMatch(password === confirmPassword);
+    } else {
+      setPasswordMatch(true);
+    }
   }, [password, confirmPassword]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setPasswordMatch(false);
+    if (!passwordMatch) {
       return;
     }
-    setPasswordMatch(true);
-    setLoading(true);
+    
+    console.log({
+      accountType,
+      name,
+      email,
+      password,
+      region,
+      city,
+      specialty,
+      license,
+    });
+    
+    // Dans une véritable application, cela enverrait les données au serveur
+  };
 
-    try {
-      const userData = {
-        name,
-        email,
-        role,
-        location: {
-          city,
-          region,
-          address
-        },
-        ...(role === "professional" && { specialty, license }),
-      };
-      await register(userData, password, role);
-      navigate("/");
-    } catch (error) {
-      console.error("Registration error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const speakFormInstructions = () => {
-    if ('speechSynthesis' in window) {
-      let instructions = '';
-      
-      if (role === "patient") {
-        instructions = `Bienvenue sur la page d'inscription pour les patients. 
-          Pour vous inscrire, vous devez renseigner votre nom complet, votre email, 
-          votre mot de passe, le confirmer, puis indiquer votre région, votre ville et votre adresse. 
-          Une fois les informations saisies, cliquez sur le bouton s'inscrire en bas du formulaire.`;
-      } else {
-        instructions = `Bienvenue sur la page d'inscription pour les professionnels de santé. 
-          En plus des informations personnelles, vous devez également renseigner votre spécialité et 
-          votre numéro de licence professionnelle. Remplissez tous les champs obligatoires puis 
-          cliquez sur le bouton s'inscrire en bas du formulaire.`;
+  const handleSpeakField = (fieldName: string) => {
+    if (fieldInstructions[fieldName as keyof typeof fieldInstructions]) {
+      const text = fieldInstructions[fieldName as keyof typeof fieldInstructions];
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fr-FR';
+        window.speechSynthesis.speak(utterance);
       }
-      
-      const utterance = new SpeechSynthesisUtterance(instructions);
-      utterance.lang = 'fr-FR';
-      utterance.rate = 0.9;
-      window.speechSynthesis.speak(utterance);
     }
   };
-  
-  const speakFieldInstructions = (fieldName: string) => {
-    if ('speechSynthesis' in window) {
-      let fieldText = "";
-      
-      switch(fieldName) {
-        case "name":
-          fieldText = "Veuillez saisir votre nom complet, par exemple Jean Dupont";
-          break;
-        case "email":
-          fieldText = "Veuillez saisir votre adresse email, par exemple jean.dupont@example.com";
-          break;
-        case "password":
-          fieldText = "Veuillez choisir un mot de passe sécurisé. Il est recommandé d'utiliser des lettres majuscules, minuscules, des chiffres et des caractères spéciaux";
-          break;
-        case "confirmPassword":
-          fieldText = "Veuillez saisir à nouveau votre mot de passe pour confirmation";
-          break;
-        case "region":
-          fieldText = "Veuillez sélectionner votre région";
-          break;
-        case "city":
-          fieldText = "Veuillez sélectionner votre ville";
-          break;
-        case "address":
-          fieldText = "Veuillez saisir votre adresse complète";
-          break;
-        case "specialty":
-          fieldText = "Veuillez sélectionner votre spécialité médicale";
-          break;
-        case "license":
-          fieldText = "Veuillez saisir votre numéro de licence professionnelle";
-          break;
-        default:
-          fieldText = "Veuillez remplir ce champ";
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(fieldText);
-      utterance.lang = 'fr-FR';
-      window.speechSynthesis.speak(utterance);
-    }
+
+  const toggleVoiceHelp = () => {
+    setShowVoiceHelp(!showVoiceHelp);
   };
+
+  const pageDescription = "Page d'inscription. Ici, vous pouvez créer un compte en tant que patient ou professionnel de santé. Remplissez les champs obligatoires comme votre nom, email et mot de passe. Si vous êtes un professionnel de santé, vous devrez également indiquer votre spécialité et votre numéro de licence.";
 
   return (
-    <Layout>
-      <div className="flex justify-center items-center py-8">
-        <Card className="w-full max-w-lg">
-          <CardHeader className="text-center relative">
-            <div className="absolute right-2 top-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setShowVoiceHelp(!showVoiceHelp)}
-                title={showVoiceHelp ? "Désactiver l'assistance vocale" : "Activer l'assistance vocale"}
-              >
-                {showVoiceHelp ? (
-                  <Volume2 className="h-5 w-5 text-health-blue" />
-                ) : (
-                  <VolumeX className="h-5 w-5" />
-                )}
-              </Button>
-            </div>
-            <CardTitle className="text-2xl font-bold text-health-blue">{t.register}</CardTitle>
-            <CardDescription>
-              {t.createAccount}
-            </CardDescription>
-            {showVoiceHelp && (
-              <div className="mt-2 flex justify-center">
-                <Button 
-                  onClick={() => speakFormInstructions()} 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-sm flex items-center gap-2"
-                >
-                  <Volume2 className="h-4 w-4" /> 
-                  Écouter les instructions
-                </Button>
-              </div>
-            )}
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="patient" className="w-full" onValueChange={(val) => setRole(val as UserRole)}>
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="patient">{t.patient}</TabsTrigger>
-                <TabsTrigger value="professional">{t.professional}</TabsTrigger>
-              </TabsList>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <AuthFields
-                  name={name}
-                  setName={setName}
-                  email={email}
-                  setEmail={setEmail}
-                  password={password}
-                  setPassword={setPassword}
-                  confirmPassword={confirmPassword}
-                  setConfirmPassword={setConfirmPassword}
-                  passwordMatch={passwordMatch}
-                  translations={t}
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>{t.title}</CardTitle>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={toggleVoiceHelp}
+              className="text-health-blue"
+            >
+              {showVoiceHelp ? "Désactiver l'aide vocale" : "Activer l'aide vocale"}
+            </Button>
+          </div>
+          <CardDescription>{t.description}</CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <Tabs value={accountType} onValueChange={setAccountType}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="patient">{t.patientTab}</TabsTrigger>
+              <TabsTrigger value="professional">{t.professionalTab}</TabsTrigger>
+            </TabsList>
+
+            <CardContent className="space-y-4 mt-4">
+              <AuthFields
+                name={name}
+                setName={setName}
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                confirmPassword={confirmPassword}
+                setConfirmPassword={setConfirmPassword}
+                passwordMatch={passwordMatch}
+                translations={t.auth}
+                showVoiceHelp={showVoiceHelp}
+                onSpeakField={handleSpeakField}
+              />
+
+              <LocationSelect
+                region={region}
+                setRegion={setRegion}
+                city={city}
+                setCity={setCity}
+                translations={t.location}
+              />
+
+              {accountType === "professional" && (
+                <ProfessionalFields
+                  specialty={specialty}
+                  setSpecialty={setSpecialty}
+                  license={license}
+                  setLicense={setLicense}
+                  translations={t.professional}
                   showVoiceHelp={showVoiceHelp}
-                  onSpeakField={speakFieldInstructions}
+                  onSpeakField={handleSpeakField}
                 />
-                
-                <LocationSelect
-                  region={region}
-                  setRegion={setRegion}
-                  city={city}
-                  setCity={setCity}
-                  address={address}
-                  setAddress={setAddress}
-                  translations={t}
-                  showVoiceHelp={showVoiceHelp}
-                  onSpeakField={speakFieldInstructions}
-                />
-                
-                <TabsContent value="professional">
-                  <ProfessionalFields
-                    specialty={specialty}
-                    setSpecialty={setSpecialty}
-                    license={license}
-                    setLicense={setLicense}
-                    translations={t}
-                    showVoiceHelp={showVoiceHelp}
-                    onSpeakField={speakFieldInstructions}
-                  />
-                </TabsContent>
-                
-                <Button
-                  type="submit"
-                  className="w-full bg-health-blue hover:bg-health-teal"
-                  disabled={loading}
-                >
-                  {loading ? t.creatingAccount : t.signUp}
-                </Button>
-              </form>
-            </Tabs>
-          </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-500">
-              {t.alreadyRegistered}{" "}
-              <Link to="/login" className="text-health-blue hover:underline">
-                {t.logIn}
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
-      </div>
-    </Layout>
+              )}
+            </CardContent>
+
+            <CardFooter className="flex flex-col">
+              <Button type="submit" className="w-full mb-4">{t.submitButton}</Button>
+              <p className="text-sm text-center text-gray-500">
+                {t.alreadyHaveAccount}{" "}
+                <Link to="/login" className="text-health-blue hover:underline">
+                  {t.loginLink}
+                </Link>
+              </p>
+            </CardFooter>
+          </Tabs>
+        </form>
+      </Card>
+      
+      <PageVoiceHelp 
+        pageDescription={pageDescription}
+        instructions={fieldInstructions}
+        position="bottom-right"
+        className="hidden md:block"
+      />
+    </div>
   );
 };
 
