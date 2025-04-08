@@ -9,7 +9,7 @@ export interface User {
   medications?: string[];
   medicalHistory?: string[];
   vaccinations?: Vaccination[];
-  emergencyContacts?: EmergencyContact[];
+  emergencyContact?: EmergencyContact;
   insuranceInfo?: InsuranceInfo;
   bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'unknown';
   preferences?: {
@@ -35,7 +35,7 @@ export interface PatientProfile extends User {
   medications?: string[];
   medicalHistory?: string[];
   vaccinations?: Vaccination[];
-  emergencyContacts?: EmergencyContact[];
+  emergencyContact?: EmergencyContact;
   insuranceInfo?: InsuranceInfo;
   bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'unknown';
 }

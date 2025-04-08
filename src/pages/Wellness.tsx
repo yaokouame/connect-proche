@@ -1,181 +1,105 @@
 
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/contexts/UserContext";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { wellnessService } from "@/services/wellnessService";
+import { WellnessGoal } from "@/types/health";
 
-// Import wellness components
+// Wellness Components
 import ActivityTracker from "@/components/wellness/ActivityTracker";
-import NutritionJournal from "@/components/wellness/NutritionJournal";
 import HydrationTracker from "@/components/wellness/HydrationTracker";
 import SleepTracker from "@/components/wellness/SleepTracker";
+import NutritionJournal from "@/components/wellness/NutritionJournal";
 import WellnessGoals from "@/components/wellness/WellnessGoals";
 import WellnessRecommendations from "@/components/wellness/WellnessRecommendations";
 import ExerciseVideos from "@/components/wellness/ExerciseVideos";
 import FitnessAppConnect from "@/components/wellness/FitnessAppConnect";
+import VoiceRecognition from "@/components/voice/VoiceRecognition";
 
-import {
-  getUserActivities,
-  getUserNutrition,
-  getUserHydration,
-  getUserSleep,
-  getUserWellnessGoals,
-  getWellnessRecommendations
-} from "@/services/wellnessService";
-
-const Wellness = () => {
-  const { currentUser } = useUser();
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("overview");
+const WellnessPage = () => {
+  const [activeTab, setActiveTab] = useState("activity");
+  const [isLoading, setIsLoading] = useState(true);
+  const [wellnessGoals, setWellnessGoals] = useState<WellnessGoal[]>([]);
   
-  // Fetch wellness data
-  const { data: activities, isLoading: loadingActivities } = useQuery({
-    queryKey: ["activities", currentUser?.id],
-    queryFn: () => getUserActivities(currentUser?.id || ""),
-    enabled: !!currentUser,
-  });
+  useEffect(() => {
+    const fetchWellnessData = async () => {
+      try {
+        const goalsData = await wellnessService.getWellnessGoals();
+        setWellnessGoals(goalsData);
+      } catch (error) {
+        console.error("Error fetching wellness data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchWellnessData();
+  }, []);
   
-  const { data: nutrition, isLoading: loadingNutrition } = useQuery({
-    queryKey: ["nutrition", currentUser?.id],
-    queryFn: () => getUserNutrition(currentUser?.id || ""),
-    enabled: !!currentUser,
-  });
-  
-  const { data: hydration, isLoading: loadingHydration } = useQuery({
-    queryKey: ["hydration", currentUser?.id],
-    queryFn: () => getUserHydration(currentUser?.id || ""),
-    enabled: !!currentUser,
-  });
-  
-  const { data: sleep, isLoading: loadingSleep } = useQuery({
-    queryKey: ["sleep", currentUser?.id],
-    queryFn: () => getUserSleep(currentUser?.id || ""),
-    enabled: !!currentUser,
-  });
-  
-  const { data: goals, isLoading: loadingGoals } = useQuery({
-    queryKey: ["wellnessGoals", currentUser?.id],
-    queryFn: () => getUserWellnessGoals(currentUser?.id || ""),
-    enabled: !!currentUser,
-  });
-  
-  const { data: recommendations, isLoading: loadingRecommendations } = useQuery({
-    queryKey: ["recommendations"],
-    queryFn: () => getWellnessRecommendations(),
-  });
-  
-  if (!currentUser) {
-    return (
-      <Layout>
-        <div className="max-w-4xl mx-auto text-center py-12">
-          <h1 className="text-3xl font-bold mb-4">Connectez-vous pour accéder à votre espace bien-être</h1>
-          <p className="mb-8 text-gray-600">
-            Vous devez être connecté pour accéder à cette page.
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Link to="/login">
-              <Button>Se connecter</Button>
-            </Link>
-            <Link to="/register">
-              <Button variant="outline">S'inscrire</Button>
-            </Link>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
-      <div className="container mx-auto py-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h1 className="text-3xl font-bold">Bien-être & Prévention</h1>
-          <FitnessAppConnect />
-        </div>
+      <div className="max-w-screen-xl mx-auto px-4 py-6">
+        <h1 className="text-3xl font-bold mb-2">Bien-être et activité physique</h1>
+        <p className="text-gray-600 mb-6">
+          Suivez votre activité physique, votre sommeil et vos habitudes alimentaires pour améliorer votre bien-être.
+        </p>
         
-        <WellnessGoals isLoading={loadingGoals} goals={goals || []} />
-        
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="w-full mt-8"
-        >
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6">
-            <TabsTrigger value="overview">Aperçu</TabsTrigger>
-            <TabsTrigger value="activity">Activité physique</TabsTrigger>
-            <TabsTrigger value="nutrition">Nutrition & Hydratation</TabsTrigger>
-            <TabsTrigger value="sleep">Sommeil</TabsTrigger>
-            <TabsTrigger value="videos">Vidéos d'exercices</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ActivityTracker 
-                isLoading={loadingActivities} 
-                activities={activities || []} 
-                preview 
-              />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4 mb-6">
+                <TabsTrigger value="activity">Activité</TabsTrigger>
+                <TabsTrigger value="sleep">Sommeil</TabsTrigger>
+                <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
+                <TabsTrigger value="hydration">Hydratation</TabsTrigger>
+              </TabsList>
               
-              <div className="space-y-6">
-                <HydrationTracker 
-                  isLoading={loadingHydration} 
-                  hydrationData={hydration || []} 
-                  preview 
-                />
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <TabsContent value="activity" className="space-y-4">
+                  <ActivityTracker />
+                </TabsContent>
                 
-                <SleepTracker 
-                  isLoading={loadingSleep} 
-                  sleepData={sleep || []} 
-                  preview 
-                />
+                <TabsContent value="sleep" className="space-y-4">
+                  <SleepTracker />
+                </TabsContent>
+                
+                <TabsContent value="nutrition" className="space-y-4">
+                  <NutritionJournal />
+                </TabsContent>
+                
+                <TabsContent value="hydration" className="space-y-4">
+                  <HydrationTracker />
+                </TabsContent>
               </div>
+            </Tabs>
+            
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold mb-4">Programmes d'exercices recommandés</h2>
+              <ExerciseVideos />
+            </div>
+          </div>
+          
+          <div className="space-y-6">
+            <WellnessGoals goals={wellnessGoals} />
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Recommandations personnalisées</h2>
+              <WellnessRecommendations />
             </div>
             
-            <WellnessRecommendations 
-              isLoading={loadingRecommendations} 
-              recommendations={recommendations || []} 
-            />
-          </TabsContent>
-
-          <TabsContent value="activity">
-            <ActivityTracker 
-              isLoading={loadingActivities} 
-              activities={activities || []} 
-            />
-          </TabsContent>
-
-          <TabsContent value="nutrition">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <NutritionJournal 
-                isLoading={loadingNutrition} 
-                nutritionData={nutrition || []} 
-              />
-              
-              <HydrationTracker 
-                isLoading={loadingHydration} 
-                hydrationData={hydration || []} 
-              />
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Connecter vos applications</h2>
+              <FitnessAppConnect />
             </div>
-          </TabsContent>
-
-          <TabsContent value="sleep">
-            <SleepTracker 
-              isLoading={loadingSleep} 
-              sleepData={sleep || []} 
-            />
-          </TabsContent>
-
-          <TabsContent value="videos">
-            <ExerciseVideos />
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
+        
+        <div className="mt-8">
+          <VoiceRecognition />
+        </div>
       </div>
     </Layout>
   );
 };
 
-export default Wellness;
+export default WellnessPage;
