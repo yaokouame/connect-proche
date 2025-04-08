@@ -11,7 +11,7 @@ export default {
   "professionals.location": "Localisation",
   "professionals.search.placeholder": "Rechercher un professionnel...",
   "professionals.noResults": "Aucun professionnel trouvé avec ces critères",
-  "professionals.appointment": "Impossible de prendre un rendez-vous",
+  "professionals.appointment": "Prendre un rendez-vous",
   
   "medications.title": "Mes Médicaments",
   "medications.prescriptions": "Mes Prescriptions",
