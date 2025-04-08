@@ -1,3 +1,4 @@
+
 export interface VitalSign {
   id: string;
   userId: string;
@@ -110,7 +111,7 @@ export interface ExerciseVideo {
 // Updated InsuranceVoucher interface with correct properties
 export interface InsuranceVoucher {
   id: string;
-  userId: string;
+  userId?: string;
   provider: string;
   voucherNumber: string;
   coverageType: string;
@@ -132,4 +133,15 @@ export interface VoiceRecognitionProps {
   language?: string;
   continuous?: boolean;
   className?: string;
+}
+
+// Added for InsuranceProvider reference in dataService
+export interface InsuranceProvider {
+  id: string;
+  name: string;
+  logoUrl: string;
+  contactPhone: string;
+  contactEmail: string;
+  website: string;
+  availablePlans: string[];
 }

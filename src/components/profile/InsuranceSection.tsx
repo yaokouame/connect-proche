@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { FileText, Plus, AlertCircle, BadgeCheck, Calendar, Percent, X, QrCode } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { saveInsuranceVoucher } from "@/services/storageService";
 
 interface InsuranceSectionProps {
   insuranceInfo?: InsuranceInfo;
@@ -24,6 +26,7 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
 }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { currentUser } = useUser();
   const [openInsuranceDialog, setOpenInsuranceDialog] = useState(false);
   const [openVoucherDialog, setOpenVoucherDialog] = useState(false);
   const [newInsuranceInfo, setNewInsuranceInfo] = useState<InsuranceInfo>(
@@ -72,7 +75,7 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
     }
   };
 
-  const handleSaveVoucher = () => {
+  const handleSaveVoucher = async () => {
     if (
       !newVoucher.provider ||
       !newVoucher.voucherNumber ||
@@ -90,9 +93,10 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
     }
 
     if (setInsuranceVouchers) {
+      const voucherId = `voucher-${Date.now()}`;
       const voucher: InsuranceVoucher = {
-        id: `voucher-${Date.now()}`,
-        userId: 'user-123',
+        id: voucherId,
+        userId: currentUser?.id,
         provider: newVoucher.provider || "",
         voucherNumber: newVoucher.voucherNumber || "",
         coverageType: newVoucher.coverageType || "",
@@ -107,25 +111,38 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
         qrCode: `/placeholder.svg`,
       };
 
-      setInsuranceVouchers([...(insuranceVouchers || []), voucher]);
-      toast({
-        title: "Bon d'assurance ajouté",
-        description: "Votre bon d'assurance a été ajouté avec succès.",
-      });
-      
-      // Reset form
-      setNewVoucher({
-        provider: "",
-        voucherNumber: "",
-        validFrom: "",
-        validUntil: "",
-        coverageType: "",
-        coverageAmount: 0,
-        isPercentage: true,
-        status: "active"
-      });
-      
-      setOpenVoucherDialog(false);
+      try {
+        if (currentUser?.id) {
+          await saveInsuranceVoucher(voucher);
+        }
+        
+        setInsuranceVouchers([...(insuranceVouchers || []), voucher]);
+        
+        toast({
+          title: "Bon d'assurance ajouté",
+          description: "Votre bon d'assurance a été ajouté avec succès.",
+        });
+        
+        setNewVoucher({
+          provider: "",
+          voucherNumber: "",
+          validFrom: "",
+          validUntil: "",
+          coverageType: "",
+          coverageAmount: 0,
+          isPercentage: true,
+          status: "active"
+        });
+        
+        setOpenVoucherDialog(false);
+      } catch (error) {
+        console.error("Error saving voucher:", error);
+        toast({
+          title: "Erreur",
+          description: "Une erreur s'est produite lors de l'enregistrement du bon d'assurance.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
