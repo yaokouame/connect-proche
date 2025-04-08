@@ -1,3 +1,4 @@
+
 import { InsuranceVoucher, InsuranceProvider } from "@/types/health";
 import { Pharmacy, HealthCenter, Product, Appointment } from "@/types/user";
 
@@ -89,7 +90,7 @@ export const getProducts = async (): Promise<Product[]> => {
       id: "prod-1",
       name: "Doliprane 1000mg",
       category: "Analgésique",
-      price: 3.50,
+      price: 2500,
       description: "Paracétamol pour le soulagement de la douleur et de la fièvre.",
       imageUrl: "/placeholder.svg",
       inStock: true,
@@ -104,7 +105,7 @@ export const getProducts = async (): Promise<Product[]> => {
       id: "prod-2",
       name: "Advil 400mg",
       category: "Anti-inflammatoire",
-      price: 4.95,
+      price: 3250,
       description: "Ibuprofène pour soulager la douleur et réduire l'inflammation.",
       imageUrl: "/placeholder.svg",
       inStock: true,
@@ -119,7 +120,7 @@ export const getProducts = async (): Promise<Product[]> => {
       id: "prod-3",
       name: "Amoxicilline 500mg",
       category: "Antibiotique",
-      price: 8.25,
+      price: 5450,
       description: "Antibiotique pour traiter diverses infections bactériennes.",
       imageUrl: "/placeholder.svg",
       inStock: true,
@@ -134,7 +135,7 @@ export const getProducts = async (): Promise<Product[]> => {
       id: "prod-4",
       name: "Ventoline 100µg",
       category: "Respiratoire",
-      price: 5.65,
+      price: 3700,
       description: "Bronchodilatateur pour le traitement de l'asthme et d'autres problèmes respiratoires.",
       imageUrl: "/placeholder.svg",
       inStock: false,
@@ -149,7 +150,7 @@ export const getProducts = async (): Promise<Product[]> => {
       id: "prod-5",
       name: "Smecta",
       category: "Digestif",
-      price: 4.80,
+      price: 3150,
       description: "Traitement symptomatique des diarrhées aiguës et chroniques.",
       imageUrl: "/placeholder.svg",
       inStock: true,

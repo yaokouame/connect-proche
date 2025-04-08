@@ -44,7 +44,7 @@ const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-gray-500 mb-2">{product.description}</p>
-        <p className="font-bold text-health-dark">{product.price.toFixed(2)} €</p>
+        <p className="font-bold text-health-dark">{product.price.toFixed(0)} F CFA</p>
         {product.insuranceCoverage?.eligible && (
           <div className="mt-1">
             <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
