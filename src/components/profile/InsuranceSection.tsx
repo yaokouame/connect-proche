@@ -7,6 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, X } from "lucide-react";
 
+// Updated interface for temporary vouchers that are being edited
+interface EditableVoucher {
+  id: string;
+  provider: string;
+  voucherNumber: string;
+  validUntil: string;
+}
+
 export interface InsuranceSectionProps {
   insuranceInfo: InsuranceInfo;
   setInsuranceInfo: React.Dispatch<React.SetStateAction<InsuranceInfo>>;
@@ -23,7 +31,18 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
   const handleAddVoucher = () => {
     setInsuranceVouchers([
       ...insuranceVouchers,
-      { id: `voucher-${Date.now()}`, name: "", code: "", expiryDate: "" }
+      { 
+        id: `voucher-${Date.now()}`,
+        userId: "",
+        provider: "",
+        voucherNumber: "",
+        validFrom: new Date().toISOString().split('T')[0],
+        validUntil: "",
+        coverageType: "",
+        coverageAmount: 0,
+        isPercentage: false,
+        status: "active"
+      }
     ]);
   };
 
@@ -33,7 +52,7 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
     setInsuranceVouchers(newVouchers);
   };
 
-  const handleVoucherChange = (index: number, field: keyof InsuranceVoucher, value: string) => {
+  const handleVoucherChange = (index: number, field: keyof InsuranceVoucher, value: string | number | boolean) => {
     const newVouchers = [...insuranceVouchers];
     newVouchers[index] = { ...newVouchers[index], [field]: value };
     setInsuranceVouchers(newVouchers);
@@ -66,11 +85,11 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="coverageDetails">Coverage Details</Label>
+          <Label htmlFor="coverageType">Coverage Type</Label>
           <Input
-            id="coverageDetails"
-            value={insuranceInfo.coverageDetails || ""}
-            onChange={(e) => setInsuranceInfo({ ...insuranceInfo, coverageDetails: e.target.value })}
+            id="coverageType"
+            value={insuranceInfo.coverageType || ""}
+            onChange={(e) => setInsuranceInfo({ ...insuranceInfo, coverageType: e.target.value })}
             placeholder="e.g., 80% coverage for consultations"
           />
         </div>
@@ -91,21 +110,21 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
                 <div key={voucher.id} className="flex items-start space-x-2">
                   <div className="grid grid-cols-3 gap-2 flex-1">
                     <Input
-                      value={voucher.name}
-                      onChange={(e) => handleVoucherChange(index, "name", e.target.value)}
-                      placeholder="Voucher name"
+                      value={voucher.provider}
+                      onChange={(e) => handleVoucherChange(index, "provider", e.target.value)}
+                      placeholder="Provider name"
                       className="col-span-1"
                     />
                     <Input
-                      value={voucher.code}
-                      onChange={(e) => handleVoucherChange(index, "code", e.target.value)}
-                      placeholder="Code"
+                      value={voucher.voucherNumber}
+                      onChange={(e) => handleVoucherChange(index, "voucherNumber", e.target.value)}
+                      placeholder="Voucher number"
                       className="col-span-1"
                     />
                     <Input
                       type="date"
-                      value={voucher.expiryDate}
-                      onChange={(e) => handleVoucherChange(index, "expiryDate", e.target.value)}
+                      value={voucher.validUntil}
+                      onChange={(e) => handleVoucherChange(index, "validUntil", e.target.value)}
                       className="col-span-1"
                     />
                   </div>
