@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Card,
@@ -19,29 +18,40 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
-  // Map product categories to appropriate images
-  const getCategoryImage = (category: string): string => {
-    switch(category.toLowerCase()) {
-      case "analgésique":
-        return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
-      case "anti-inflammatoire":
-        return "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9";
-      case "antibiotique":
-        return "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1";
-      case "respiratoire":
-        return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
-      case "digestif":
-        return "https://images.unsplash.com/photo-1501286353178-1ec871214838";
-      default:
-        return product.imageUrl || "/placeholder.svg";
+  // Helper function to get medication images
+  const getMedicationImage = (medicationName: string): string => {
+    const medicationImages: Record<string, string> = {
+      "Amoxicilline": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+      "Doliprane": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
+      "Ventoline": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+      "Advil": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
+      "Augmentin": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+      "Smecta": "https://images.unsplash.com/photo-1501286353178-1ec871214838",
+      "Imodium": "https://images.unsplash.com/photo-1501286353178-1ec871214838",
+      "Aspirine": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9"
+    };
+    
+    // Try to find an exact match first
+    if (medicationImages[medicationName]) {
+      return medicationImages[medicationName];
     }
+    
+    // Otherwise, try to find a partial match
+    for (const [key, url] of Object.entries(medicationImages)) {
+      if (medicationName.toLowerCase().includes(key.toLowerCase())) {
+        return url;
+      }
+    }
+    
+    // Default image if no match is found
+    return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
   };
 
   return (
     <Card key={product.id} className="overflow-hidden">
       <div className="aspect-square relative bg-gray-100">
         <img
-          src={getCategoryImage(product.category)}
+          src={getMedicationImage(product.name)}
           alt={product.name}
           className="object-cover w-full h-full"
         />
