@@ -18,7 +18,7 @@ const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => {
           href="/premium" 
           className="bg-white text-health-blue text-xs font-medium px-3 py-1 rounded flex items-center hover:bg-gray-100 transition-colors"
         >
-          Essayer <ExternalLink className="h-3 w-3 ml-1" />
+          Configurer <ExternalLink className="h-3 w-3 ml-1" />
         </a>
       </div>
     </div>
