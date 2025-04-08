@@ -7,12 +7,17 @@ import { useToast } from "@/components/ui/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { CartItem } from "@/types/user";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ChevronLeft, Check, Loader2 } from "lucide-react";
+import { format } from "date-fns";
 import PaymentMethodSelector from "@/components/payment/PaymentMethodSelector";
 import CardPaymentForm from "@/components/payment/CardPaymentForm";
 import InsurancePaymentForm from "@/components/payment/InsurancePaymentForm";
 import OrderSummary from "@/components/payment/OrderSummary";
-import { ChevronLeft, CreditCard, Check, Loader2 } from "lucide-react";
-import { format } from "date-fns";
+import ShippingInfoDisplay from "@/components/payment/ShippingInfoDisplay";
+import PaymentProcessingIndicator from "@/components/payment/PaymentProcessingIndicator";
+import PaymentSuccessDialog from "@/components/payment/PaymentSuccessDialog";
+import { usePaymentData } from "@/hooks/usePaymentData";
+import { usePaymentProcessing } from "@/hooks/usePaymentProcessing";
 
 type PaymentMethod = "card" | "insurance" | "paypal";
 
@@ -21,202 +26,73 @@ const Payment = () => {
   const { toast } = useToast();
   const { currentUser } = useUser();
   
-  // Récupérer les données du panier du localStorage
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [shippingInfo, setShippingInfo] = useState<any>(null);
-  const [shippingCost, setShippingCost] = useState(3.99);
-  const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [subtotal, setSubtotal] = useState(0);
+  // Use custom hooks for payment data and processing
+  const { 
+    cartItems, 
+    shippingInfo, 
+    shippingCost, 
+    couponCode, 
+    discount, 
+    total, 
+    subtotal 
+  } = usePaymentData();
   
-  // État du formulaire de paiement
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const {
+    processPayment,
+    isProcessing,
+    isSuccessDialogOpen,
+    setIsSuccessDialogOpen,
+    paymentMethod,
+    setPaymentMethod,
+    validatePayment,
+  } = usePaymentProcessing(total, cartItems, shippingInfo, subtotal, discount, shippingCost);
   
-  // État pour le formulaire de carte
+  // Card form state
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolder, setCardHolder] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   
-  // État pour le formulaire d'assurance
+  // Insurance form state
   const [insuranceProvider, setInsuranceProvider] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [hasVoucher, setHasVoucher] = useState(false);
   
-  // États pour le paiement
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
-  
-  // Calculer le total
-  useEffect(() => {
-    // Récupérer les données du panier et de la livraison du localStorage
-    const savedCart = localStorage.getItem("cart");
-    const savedShippingInfo = localStorage.getItem("shippingInfo");
-    const savedShippingMethod = localStorage.getItem("shippingMethod");
-    const savedCouponCode = localStorage.getItem("couponCode");
-    
-    if (savedCart) {
-      const cart = JSON.parse(savedCart);
-      setCartItems(cart);
-    }
-    
-    if (savedShippingInfo) {
-      setShippingInfo(JSON.parse(savedShippingInfo));
-    }
-    
-    if (savedShippingMethod) {
-      setShippingCost(savedShippingMethod === "express" ? 7.99 : 3.99);
-    }
-    
-    if (savedCouponCode && savedCouponCode === "SANTE10") {
-      setCouponCode(savedCouponCode);
-      
-      // Calculer la réduction
-      if (savedCart) {
-        const cart = JSON.parse(savedCart);
-        const calculatedSubtotal = cart.reduce(
-          (sum: number, item: CartItem) => sum + item.product.price * item.quantity,
-          0
-        );
-        setDiscount(calculatedSubtotal * 0.1);
-      }
-    }
-  }, []);
-  
-  // Calculer le total
-  useEffect(() => {
-    const calculatedSubtotal = cartItems.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
-      0
-    );
-    setSubtotal(calculatedSubtotal);
-    setTotal(calculatedSubtotal + shippingCost - discount);
-  }, [cartItems, shippingCost, discount]);
-  
-  // Rediriger vers le panier si celui-ci est vide
+  // Redirect to cart if no shipping info is available
   useEffect(() => {
     if (cartItems.length === 0) {
       navigate("/cart");
     }
   }, [cartItems, navigate]);
   
-  // Remplir les informations du titulaire de carte avec le nom de l'utilisateur
+  // Auto-fill cardholder name from user data
   useEffect(() => {
     if (currentUser?.name && cardHolder === "") {
       setCardHolder(currentUser.name);
     }
   }, [currentUser, cardHolder]);
   
-  const validatePayment = () => {
-    if (paymentMethod === "card") {
-      if (!cardNumber.trim() || cardNumber.replace(/\s/g, "").length < 16) {
-        toast({
-          variant: "destructive",
-          title: "Numéro de carte invalide",
-          description: "Veuillez saisir un numéro de carte valide",
-        });
-        return false;
-      }
-      
-      if (!cardHolder.trim()) {
-        toast({
-          variant: "destructive",
-          title: "Titulaire de la carte manquant",
-          description: "Veuillez saisir le nom du titulaire de la carte",
-        });
-        return false;
-      }
-      
-      if (!expiryDate.trim() || !expiryDate.includes("/") || expiryDate.length < 5) {
-        toast({
-          variant: "destructive",
-          title: "Date d'expiration invalide",
-          description: "Veuillez saisir une date d'expiration valide (MM/YY)",
-        });
-        return false;
-      }
-      
-      if (!cvv.trim() || cvv.length < 3) {
-        toast({
-          variant: "destructive",
-          title: "CVV invalide",
-          description: "Veuillez saisir un code de sécurité valide",
-        });
-        return false;
-      }
-    } else if (paymentMethod === "insurance") {
-      if (!insuranceProvider) {
-        toast({
-          variant: "destructive",
-          title: "Assureur manquant",
-          description: "Veuillez sélectionner votre assureur",
-        });
-        return false;
-      }
-      
-      if (!policyNumber.trim()) {
-        toast({
-          variant: "destructive",
-          title: "Numéro de police manquant",
-          description: "Veuillez saisir votre numéro de police d'assurance",
-        });
-        return false;
-      }
-    }
-    
-    return true;
-  };
-  
-  const processPayment = () => {
-    if (!validatePayment()) return;
-    
-    setIsProcessing(true);
-    
-    // Simuler un traitement de paiement
-    setTimeout(() => {
-      // Générer un numéro de commande
-      const orderNumber = `ORD-${Date.now().toString().slice(-8)}`;
-      
-      // Préparer les données de la commande pour le récapitulatif
-      const orderData = {
-        orderNumber,
-        orderDate: format(new Date(), "dd/MM/yyyy"),
-        estimatedDelivery: format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), "dd/MM/yyyy"),
-        total: total.toFixed(2),
-        subtotal: subtotal,
-        discount: discount,
-        shippingCost: shippingCost,
-        items: cartItems,
-        shippingInfo: shippingInfo,
-        paymentMethod: paymentMethod === "card" 
-          ? "Carte bancaire" 
-          : paymentMethod === "insurance" 
-            ? "Assurance santé" 
-            : "PayPal",
-        lastFourDigits: cardNumber ? cardNumber.replace(/\s/g, "").slice(-4) : null,
-        email: currentUser?.email || shippingInfo?.email || ""
-      };
-      
-      // Enregistrer les données de la commande dans le localStorage
-      localStorage.setItem("latestOrder", JSON.stringify(orderData));
-      
-      // Vider le panier et les informations connexes
-      localStorage.removeItem("cart");
-      localStorage.removeItem("shippingInfo");
-      localStorage.removeItem("shippingMethod");
-      localStorage.removeItem("couponCode");
-      
-      setIsProcessing(false);
-      
-      // Afficher le dialogue de confirmation
-      setIsSuccessDialogOpen(true);
-    }, 2000);
-  };
-  
   const handleSuccessClose = () => {
     setIsSuccessDialogOpen(false);
     navigate("/order-confirmation");
+  };
+  
+  const handlePayButtonClick = () => {
+    if (!validatePayment(paymentMethod, cardNumber, cardHolder, expiryDate, cvv, insuranceProvider, policyNumber, toast)) {
+      return;
+    }
+    
+    processPayment(
+      paymentMethod, 
+      {
+        cardNumber,
+        cardHolder,
+        expiryDate,
+        cvv,
+        insuranceProvider,
+        policyNumber
+      }
+    );
   };
   
   if (!shippingInfo) {
@@ -255,13 +131,13 @@ const Payment = () => {
           <div className="lg:col-span-2 space-y-6">
             <h2 className="text-xl font-semibold mb-4">Choisissez votre mode de paiement</h2>
             
-            {/* Sélecteur de méthode de paiement */}
+            {/* Payment method selector */}
             <PaymentMethodSelector
               selectedMethod={paymentMethod}
               onMethodChange={setPaymentMethod}
             />
             
-            {/* Formulaire de paiement par carte */}
+            {/* Card payment form */}
             {paymentMethod === "card" && (
               <CardPaymentForm
                 cardNumber={cardNumber}
@@ -275,7 +151,7 @@ const Payment = () => {
               />
             )}
             
-            {/* Formulaire de paiement par assurance */}
+            {/* Insurance payment form */}
             {paymentMethod === "insurance" && (
               <InsurancePaymentForm
                 insuranceProvider={insuranceProvider}
@@ -287,7 +163,7 @@ const Payment = () => {
               />
             )}
             
-            {/* Formulaire PayPal */}
+            {/* PayPal payment option */}
             {paymentMethod === "paypal" && (
               <div className="p-4 border rounded-lg">
                 <p className="text-center mb-4">
@@ -303,16 +179,11 @@ const Payment = () => {
               </div>
             )}
             
-            <div className="flex items-center mt-6">
-              <CreditCard className="h-5 w-5 text-gray-500 mr-2" />
-              <p className="text-sm text-gray-500">
-                Paiement sécurisé - Toutes vos informations sont chiffrées
-              </p>
-            </div>
+            <PaymentProcessingIndicator />
             
             <div className="mt-6">
               <Button 
-                onClick={processPayment} 
+                onClick={handlePayButtonClick} 
                 className="w-full py-6 text-lg"
                 disabled={isProcessing}
               >
@@ -329,7 +200,7 @@ const Payment = () => {
           </div>
           
           <div>
-            {/* Récapitulatif de la commande */}
+            {/* Order summary */}
             <OrderSummary
               cartItems={cartItems}
               shippingCost={shippingCost}
@@ -337,40 +208,19 @@ const Payment = () => {
               total={total}
             />
             
-            {/* Informations de livraison */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-lg font-medium mb-2">Adresse de livraison</h3>
-              <p>{shippingInfo.fullName}</p>
-              <p>{shippingInfo.streetAddress}</p>
-              <p>{shippingInfo.postalCode} {shippingInfo.city}</p>
-              <p>{shippingInfo.country}</p>
-              <p className="text-gray-500 mt-2">{shippingInfo.phone}</p>
-            </div>
+            {/* Shipping information */}
+            <ShippingInfoDisplay shippingInfo={shippingInfo} />
           </div>
         </div>
       </div>
       
-      {/* Dialogue de confirmation */}
-      <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center text-green-600">
-              <Check className="mr-2 h-6 w-6" />
-              Paiement réussi
-            </DialogTitle>
-            <DialogDescription>
-              Votre commande a été confirmée et sera traitée dans les plus brefs délais.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="mb-2">Numéro de commande: <span className="font-medium">{`ORD-${Date.now().toString().slice(-8)}`}</span></p>
-            <p>Un e-mail de confirmation vous a été envoyé.</p>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleSuccessClose}>Voir les détails de ma commande</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Success dialog */}
+      <PaymentSuccessDialog 
+        isOpen={isSuccessDialogOpen} 
+        onOpenChange={setIsSuccessDialogOpen}
+        onClose={handleSuccessClose}
+        orderNumber={`ORD-${Date.now().toString().slice(-8)}`}
+      />
     </Layout>
   );
 };
