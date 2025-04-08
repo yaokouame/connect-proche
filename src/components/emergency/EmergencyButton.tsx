@@ -11,7 +11,7 @@ const EmergencyButton = () => {
   const { currentUser } = useUser();
   const { t } = useLanguage();
   
-  const emergencyNumber = "112"; // European emergency number
+  const emergencyNumber = "185"; // SAMU emergency number
 
   const handleEmergencyCall = () => {
     // Open the phone app with the emergency number

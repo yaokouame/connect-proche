@@ -57,7 +57,7 @@ export const EmergencyDrawer = ({ open, onOpenChange, onCallEmergency }: Emergen
             className="w-full py-6 text-lg" 
             onClick={onCallEmergency}
           >
-            <Phone className="mr-2 h-5 w-5" /> Appeler les urgences (112)
+            <Phone className="mr-2 h-5 w-5" /> Appeler le SAMU (185)
           </Button>
           
           {currentUser ? (
