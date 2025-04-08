@@ -28,4 +28,6 @@ export default {
   "map.sortRating": "Évaluation",
   "map.sortAlphabetical": "Alphabétique",
   "map.insurance": "Assurance",
+  "map.onDuty": "De garde", // Add translation for on duty
+  "map.offDuty": "Pas de garde", // Add translation for off duty
 }

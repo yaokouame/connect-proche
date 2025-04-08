@@ -13,6 +13,7 @@ import AdminUsers from "@/components/admin/AdminUsers";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminStats from "@/components/admin/AdminStats";
+import AdminPharmacies from "@/components/admin/AdminPharmacies"; // Add new component
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Admin = () => {
@@ -32,11 +33,12 @@ const Admin = () => {
         <h1 className="text-3xl font-bold mb-6 text-health-blue">Tableau de bord administrateur</h1>
         
         <Tabs defaultValue="stats" className="w-full">
-          <TabsList className="grid grid-cols-4 mb-8">
+          <TabsList className="grid grid-cols-5 mb-8"> {/* Updated to 5 columns */}
             <TabsTrigger value="stats">Statistiques</TabsTrigger>
             <TabsTrigger value="users">Utilisateurs</TabsTrigger>
             <TabsTrigger value="products">Produits</TabsTrigger>
             <TabsTrigger value="orders">Commandes</TabsTrigger>
+            <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger> {/* New tab */}
           </TabsList>
           
           <TabsContent value="stats" className="mt-6">
@@ -53,6 +55,10 @@ const Admin = () => {
           
           <TabsContent value="orders" className="mt-6">
             <AdminOrders />
+          </TabsContent>
+          
+          <TabsContent value="pharmacies" className="mt-6">
+            <AdminPharmacies />
           </TabsContent>
         </Tabs>
       </div>

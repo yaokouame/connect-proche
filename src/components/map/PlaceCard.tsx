@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistance } from "@/utils/mapUtils";
-import { MapPin, Phone, Clock, Activity, Shield } from "lucide-react";
+import { MapPin, Phone, Clock, Activity, Shield, Circle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PlaceCardProps {
@@ -29,14 +29,43 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
     place.acceptedInsuranceProviders && 
     place.acceptedInsuranceProviders.includes(userInsuranceProvider);
   
+  // Check if this is a pharmacy and if it has onDuty status
+  const isPharmacy = !('services' in place);
+  const dutyStatus = isPharmacy && 'onDuty' in place ? place.onDuty : null;
+  
+  // Determine border color based on duty status (only for pharmacies)
+  const borderColor = isPharmacy 
+    ? dutyStatus 
+      ? "border-l-green-500" 
+      : "border-l-red-500"
+    : "border-l-primary";
+  
   return (
-    <Card className="mb-4 overflow-hidden border-l-4 border-l-primary">
+    <Card className={`mb-4 overflow-hidden border-l-4 ${borderColor}`}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-semibold">{place.name}</CardTitle>
+        <CardTitle className="text-xl font-semibold flex items-center">
+          {place.name}
+          {isPharmacy && (
+            dutyStatus ? (
+              <Circle className="ml-2 h-4 w-4 text-green-500 fill-green-500" />
+            ) : (
+              <Circle className="ml-2 h-4 w-4 text-red-500 fill-red-500" />
+            )
+          )}
+        </CardTitle>
         <div className="flex items-center text-sm text-muted-foreground">
           <MapPin className="mr-1 h-4 w-4" />
           <span>{place.address}</span>
         </div>
+        
+        {/* Add duty status label for pharmacies */}
+        {isPharmacy && (
+          <div className="mt-1">
+            <Badge variant={dutyStatus ? "success" : "destructive"}>
+              {dutyStatus ? t('map.onDuty') : t('map.offDuty')}
+            </Badge>
+          </div>
+        )}
       </CardHeader>
       
       <CardContent className="pb-2 pt-0">

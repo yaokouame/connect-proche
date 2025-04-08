@@ -1,4 +1,3 @@
-
 import { EmergencyContact, InsuranceInfo, Vaccination } from './insuranceTypes';
 import { User } from './userTypes';
 
@@ -25,4 +24,17 @@ export interface Medication {
   instructions?: string;
   startDate?: string;
   endDate?: string;
+}
+
+export interface Pharmacy {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  hours: string;
+  location: { lat: number; lng: number };
+  acceptedInsuranceProviders?: string[];
+  rating?: number;
+  placeId?: string;
+  onDuty?: boolean;
 }

@@ -1,4 +1,3 @@
-
 import { Pharmacy, HealthCenter } from '@/types/user';
 
 // Mock data for pharmacies
@@ -12,7 +11,8 @@ export const getMockPharmacies = (): Pharmacy[] => [
     location: { lat: 48.873792, lng: 2.295028 },
     acceptedInsuranceProviders: ['CMU', 'Assurance Nationale', 'MutuelSanté'],
     rating: 4.5,
-    placeId: 'ChIJxxxxxxxxxxxxxx1'
+    placeId: 'ChIJxxxxxxxxxxxxxx1',
+    onDuty: true
   },
   {
     id: 'ph-2',
@@ -23,7 +23,8 @@ export const getMockPharmacies = (): Pharmacy[] => [
     location: { lat: 48.856613, lng: 2.352222 },
     acceptedInsuranceProviders: ['MutuelSanté', 'AssurTous'],
     rating: 4.2,
-    placeId: 'ChIJxxxxxxxxxxxxxx2'
+    placeId: 'ChIJxxxxxxxxxxxxxx2',
+    onDuty: false
   }
 ];
 

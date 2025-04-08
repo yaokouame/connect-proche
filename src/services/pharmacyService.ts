@@ -14,7 +14,8 @@ export const getPharmacies = async (): Promise<Pharmacy[]> => {
       phone: "+225 27 22 44 56 78",
       hours: "Lun-Sam: 8h-20h, Dim: 10h-18h",
       location: { lat: 5.3471, lng: -4.0082 },
-      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "IPS-CGRAE", "CMU"]
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "IPS-CGRAE", "CMU"],
+      onDuty: true // This pharmacy is on duty
     },
     {
       id: "pharm-2",
@@ -23,7 +24,8 @@ export const getPharmacies = async (): Promise<Pharmacy[]> => {
       phone: "+225 27 22 41 73 22",
       hours: "Lun-Ven: 8h30-20h30, Sam-Dim: 9h-19h",
       location: { lat: 5.3500, lng: -4.0144 },
-      acceptedInsuranceProviders: ["MUGEFCI", "CMU", "SUNU Assurances"]
+      acceptedInsuranceProviders: ["MUGEFCI", "CMU", "SUNU Assurances"],
+      onDuty: false // This pharmacy is not on duty
     },
     {
       id: "pharm-3",
@@ -32,7 +34,8 @@ export const getPharmacies = async (): Promise<Pharmacy[]> => {
       phone: "+225 27 21 24 52 65",
       hours: "Lun-Sam: 9h-19h30, Fermé le dimanche",
       location: { lat: 5.2919, lng: -4.0128 },
-      acceptedInsuranceProviders: ["CMU", "CNPS", "Saham Assurance"]
+      acceptedInsuranceProviders: ["CMU", "CNPS", "Saham Assurance"],
+      onDuty: true // This pharmacy is on duty
     },
   ];
 };
