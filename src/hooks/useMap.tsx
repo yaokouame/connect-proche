@@ -1,9 +1,9 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Pharmacy, HealthCenter } from "@/types/user";
-import { calculateDistance, fetchNearbyPharmacies, fetchNearbyHealthCenters } from "@/utils/mapUtils";
+import { calculateDistance } from "@/utils/mapUtils";
 import { getPharmacies, getHealthCenters } from "@/services/dataService";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export function useMap() {
   const [activeTab, setActiveTab] = useState<"pharmacies" | "centers">("pharmacies");
@@ -16,9 +16,11 @@ export function useMap() {
   const [filterByInsurance, setFilterByInsurance] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
+  // Get location function
+  const getLocation = useCallback(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -28,34 +30,42 @@ export function useMap() {
           };
           setUserLocation(location);
           
-          if (location) {
-            loadNearbyPharmacies(location);
-            loadNearbyHealthCenters(location);
-          }
-          
           toast({
-            title: "Localisation activée",
-            description: "Les établissements sont maintenant triés par proximité.",
+            title: "Location enabled",
+            description: "Nearby establishments will be sorted by proximity.",
           });
         },
         (error) => {
           console.error("Geolocation error:", error);
+          setError("Unable to access your location. Please check your privacy settings.");
+          
           toast({
             variant: "destructive",
-            title: "Localisation non disponible",
-            description: "Impossible d'accéder à votre position. Vérifiez vos paramètres de confidentialité.",
+            title: "Location unavailable",
+            description: "Unable to access your location. Please check your privacy settings.",
           });
           
+          // Default to Abidjan location
           const abidjianLocation = { lat: 5.3599, lng: -4.0083 };
           setUserLocation(abidjianLocation);
-          loadNearbyPharmacies(abidjianLocation);
-          loadNearbyHealthCenters(abidjianLocation);
         }
       );
     }
+  }, [toast]);
+
+  // Search nearby function
+  const searchNearby = useCallback((term: string) => {
+    setSearchTerm(term);
+  }, []);
+
+  useEffect(() => {
+    // Get user location on component mount
+    getLocation();
     
+    // Fetch data
     const fetchData = async () => {
       try {
+        setLoading(true);
         const pharmaciesData = await getPharmacies();
         setPharmacies(pharmaciesData);
         
@@ -63,6 +73,7 @@ export function useMap() {
         setHealthCenters(centersData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch nearby establishments.");
       } finally {
         setLoading(false);
       }
@@ -70,6 +81,7 @@ export function useMap() {
     
     fetchData();
     
+    // Load Google Maps script
     const loadGoogleMapsScript = () => {
       if (window.google && window.google.maps) {
         setMapLoaded(true);
@@ -87,54 +99,14 @@ export function useMap() {
     };
     
     loadGoogleMapsScript();
-  }, [toast]);
+  }, [getLocation]);
 
-  const loadNearbyPharmacies = async (location: {lat: number, lng: number}) => {
-    setLoading(true);
-    try {
-      const nearbyPharmacies = await fetchNearbyPharmacies(location);
-      
-      setPharmacies(prev => {
-        const combinedList = [...nearbyPharmacies];
-        prev.forEach(pharmacy => {
-          if (!nearbyPharmacies.some(p => p.name === pharmacy.name)) {
-            combinedList.push(pharmacy);
-          }
-        });
-        return combinedList;
-      });
-    } catch (error) {
-      console.error("Error loading nearby pharmacies:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadNearbyHealthCenters = async (location: {lat: number, lng: number}) => {
-    setLoading(true);
-    try {
-      const nearbyHealthCenters = await fetchNearbyHealthCenters(location);
-      
-      setHealthCenters(prev => {
-        const combinedList = [...nearbyHealthCenters];
-        prev.forEach(center => {
-          if (!nearbyHealthCenters.some(c => c.name === center.name)) {
-            combinedList.push(center);
-          }
-        });
-        return combinedList;
-      });
-    } catch (error) {
-      console.error("Error loading nearby health centers:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getFilteredPharmacies = () => {
+  const getFilteredPharmacies = useCallback(() => {
     return pharmacies.filter(pharmacy => {
-      const matchesSearch = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = searchTerm ? 
+        pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase())
+        : true;
       
       const matchesInsurance = !filterByInsurance || 
         (pharmacy.acceptedInsuranceProviders && 
@@ -144,13 +116,15 @@ export function useMap() {
       
       return matchesSearch && matchesInsurance;
     });
-  };
+  }, [pharmacies, searchTerm, filterByInsurance]);
 
-  const getFilteredHealthCenters = () => {
+  const getFilteredHealthCenters = useCallback(() => {
     return healthCenters.filter(center => {
-      const matchesSearch = center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch = searchTerm ?
+        center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         center.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        center.services.some(service => service.toLowerCase().includes(searchTerm.toLowerCase()));
+        center.services.some(service => service.toLowerCase().includes(searchTerm.toLowerCase()))
+        : true;
       
       const matchesInsurance = !filterByInsurance || 
         (center.acceptedInsuranceProviders && 
@@ -160,33 +134,31 @@ export function useMap() {
       
       return matchesSearch && matchesInsurance;
     });
-  };
+  }, [healthCenters, searchTerm, filterByInsurance]);
 
-  const getSortedPharmacies = () => {
+  const getSortedPharmacies = useCallback(() => {
     return [...getFilteredPharmacies()].sort((a, b) => {
       if (sortBy === "distance" && userLocation) {
         return calculateDistance(userLocation, a.location) - calculateDistance(userLocation, b.location);
-      } else if (sortBy === "rating" && a.rating && b.rating) {
-        return (b.rating || 0) - (a.rating || 0);
-      } else if (sortBy === "alphabetical") {
+      } else if (sortBy === "rating") {
+        return ((b.rating || 0) - (a.rating || 0));
+      } else {
         return a.name.localeCompare(b.name);
       }
-      return 0;
     });
-  };
+  }, [getFilteredPharmacies, sortBy, userLocation]);
 
-  const getSortedHealthCenters = () => {
+  const getSortedHealthCenters = useCallback(() => {
     return [...getFilteredHealthCenters()].sort((a, b) => {
       if (sortBy === "distance" && userLocation) {
         return calculateDistance(userLocation, a.location) - calculateDistance(userLocation, b.location);
-      } else if (sortBy === "rating" && a.rating && b.rating) {
-        return (b.rating || 0) - (a.rating || 0);
-      } else if (sortBy === "alphabetical") {
+      } else if (sortBy === "rating") {
+        return ((b.rating || 0) - (a.rating || 0));
+      } else {
         return a.name.localeCompare(b.name);
       }
-      return 0;
     });
-  };
+  }, [getFilteredHealthCenters, sortBy, userLocation]);
 
   return {
     activeTab,
@@ -202,6 +174,9 @@ export function useMap() {
     showMap,
     setShowMap,
     mapLoaded,
+    error,
+    getLocation,
+    searchNearby,
     sortedPharmacies: getSortedPharmacies(),
     sortedHealthCenters: getSortedHealthCenters(),
   };

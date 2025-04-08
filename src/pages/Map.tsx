@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from "react";
-import { Layout } from "@/components/Layout";
+import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,18 +37,25 @@ const Map = () => {
   
   const {
     userLocation,
-    nearbyPharmacies,
-    nearbyHealthCenters,
     loading,
     error,
     mapLoaded,
-    getLocation,
-    searchNearby,
+    sortedPharmacies,
+    sortedHealthCenters,
+    setSearchTerm: setMapSearchTerm,
+    setFilterByInsurance: setMapFilterByInsurance,
+    setSortBy,
   } = useMap();
 
+  // Update search term when it changes
   useEffect(() => {
-    getLocation();
-  }, [getLocation]);
+    setMapSearchTerm(searchTerm);
+  }, [searchTerm, setMapSearchTerm]);
+
+  // Update insurance filter when it changes
+  useEffect(() => {
+    setMapFilterByInsurance(filterByInsurance);
+  }, [filterByInsurance, setMapFilterByInsurance]);
 
   useEffect(() => {
     if (error) {
@@ -58,30 +66,6 @@ const Map = () => {
       });
     }
   }, [error, toast, t]);
-
-  useEffect(() => {
-    searchNearby(searchTerm);
-  }, [searchTerm, searchNearby]);
-
-  const filterPlacesByInsurance = (
-    places: (Pharmacy | HealthCenter)[],
-    insurance: string | null
-  ): (Pharmacy | HealthCenter)[] => {
-    if (!insurance) return places;
-    return places.filter(place =>
-      place.acceptedInsuranceProviders && place.acceptedInsuranceProviders.includes(insurance)
-    );
-  };
-
-  const sortPlacesByName = (places: (Pharmacy | HealthCenter)[]): (Pharmacy | HealthCenter)[] => {
-    return [...places].sort((a, b) => a.name.localeCompare(b.name));
-  };
-
-  const filteredPharmacies = filterPlacesByInsurance(nearbyPharmacies, filterByInsurance);
-  const filteredHealthCenters = filterPlacesByInsurance(nearbyHealthCenters, filterByInsurance);
-
-  const sortedPharmacies = sortPlacesByName(filteredPharmacies);
-  const sortedHealthCenters = sortPlacesByName(filteredHealthCenters);
 
   const viewOnMap = (location: { lat: number; lng: number }) => {
     googleMapRef.current?.centerMapOnLocation(location);
@@ -108,8 +92,7 @@ const Map = () => {
                   />
                 </div>
                 <Button 
-                  className="flex-shrink-0" 
-                  onClick={getLocation}
+                  className="flex-shrink-0"
                 >
                   <MapPin className="mr-2 h-4 w-4" /> {t('map.useMyLocation')}
                 </Button>
@@ -121,6 +104,10 @@ const Map = () => {
                   filterByInsurance={filterByInsurance}
                   setFilterByInsurance={setFilterByInsurance}
                   userInsuranceProvider={userInsuranceProvider}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  sortBy="distance" 
+                  setSortBy={setSortBy}
                 />
               </div>
             </div>
