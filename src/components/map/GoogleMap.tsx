@@ -1,7 +1,6 @@
 
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { Pharmacy, HealthCenter } from "@/types/user";
-import { Marker } from "@/types/map";
 import { Info } from "lucide-react";
 
 interface GoogleMapProps {
@@ -19,7 +18,7 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
   ({ userLocation, places, onMarkerClick, className = "w-full h-full" }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
     const [map, setMap] = useState<google.maps.Map | null>(null);
-    const [markers, setMarkers] = useState<Marker[]>([]);
+    const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
     
     // Create the map
     useEffect(() => {
@@ -51,12 +50,8 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
         position: userLocation,
         map,
         icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "#4285F4",
-          fillOpacity: 1,
-          strokeColor: "#ffffff",
-          strokeWeight: 2,
-          scale: 8,
+          url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+          scaledSize: new google.maps.Size(32, 32)
         },
         title: "Your Location",
       });
@@ -71,13 +66,15 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
       
       // Create new markers
       const newMarkers = places.map(place => {
+        const isPharmacy = 'type' in place && place.type === "pharmacy";
+        
         const marker = new google.maps.Marker({
           position: place.location,
           map,
           animation: google.maps.Animation.DROP,
           title: place.name,
           icon: {
-            url: place.type === "pharmacy" 
+            url: isPharmacy
               ? "/images/pharmacy-marker.png" 
               : "/images/hospital-marker.png",
             scaledSize: new google.maps.Size(32, 32),

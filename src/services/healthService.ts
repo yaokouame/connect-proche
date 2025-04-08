@@ -99,17 +99,15 @@ export const addVitalSign = (
   return newVitalSign;
 };
 
-// Alias for addVitalSign to match what's imported in HealthTracker.tsx
-export const addVitalSignReading = (reading: Omit<VitalSign, "id">) => {
-  const newReading = addVitalSign(reading.userId, {
+// Export addVitalSignReading to match what's imported in HealthTracker.tsx
+export const addVitalSignReading = (reading: Omit<VitalSign, "id">): Promise<VitalSign> => {
+  return Promise.resolve(addVitalSign(reading.userId, {
     type: reading.type,
     value: reading.value,
     unit: reading.unit,
     notes: reading.notes,
     device: reading.device
-  });
-  
-  return newReading;
+  }));
 };
 
 // Mock user connected devices
@@ -139,8 +137,8 @@ export const getUserConnectedDevices = (userId: string): ConnectedDevice[] => {
   ];
 };
 
-// Connect a new device
-export const connectDevice = async (deviceInfo: { name: string; type: string }) => {
+// Connect a new device - make it return a Promise for compatibility with useMutation
+export const connectDevice = async (deviceInfo: { name: string; type: string }): Promise<ConnectedDevice> => {
   // In a real app, this would register the device with the user account
   const newDevice: ConnectedDevice = {
     id: `dev-${Date.now()}`,
