@@ -43,7 +43,9 @@ export const useGoogleMap = ({
 
     loadGoogleMapsApi(initMap);
     
-    return cleanupGoogleMapsCallback;
+    return () => {
+      cleanupGoogleMapsCallback();
+    };
   }, []);
   
   // Create map instance when Google Maps is loaded
@@ -115,7 +117,7 @@ export const useGoogleMap = ({
     } catch (error) {
       console.error("Error adding place markers:", error);
     }
-  }, [map, places, onMarkerClick, googleMapsLoaded, markers, compact]);
+  }, [map, places, onMarkerClick, googleMapsLoaded, compact]);
   
   // Function to center map on a location
   const centerMapOnLocation = useCallback((location: { lat: number; lng: number }) => {

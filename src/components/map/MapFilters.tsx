@@ -34,7 +34,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
   const { t } = useLanguage();
   
   const insuranceOptions = [
-    { label: t("map.showAll"), value: null },
+    { label: t("map.all"), value: null },
     { label: "CNAM", value: "CNAM" },
     { label: "MUGEFCI", value: "MUGEFCI" },
     { label: "CNPS", value: "CNPS" },

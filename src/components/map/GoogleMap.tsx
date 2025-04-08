@@ -1,5 +1,5 @@
 
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { useGoogleMap } from "@/hooks/useGoogleMap";
 import MapLoading from "./MapLoading";
@@ -28,6 +28,8 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
     height = "h-full", 
     compact = false 
   }, ref) => {
+    const mapContainerRef = useRef<HTMLDivElement>(null);
+    
     const {
       mapRef,
       googleMapsLoaded,

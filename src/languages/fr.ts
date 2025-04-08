@@ -1,5 +1,5 @@
 
-// French translations
+// Traductions françaises
 const fr = {
   // Common elements
   "common.loading": "Chargement...",
@@ -11,7 +11,7 @@ const fr = {
   "common.search": "Rechercher",
   "common.filter": "Filtrer",
   "common.noResults": "Aucun résultat trouvé",
-  "common.tryAgain": "Essayez à nouveau",
+  "common.tryAgain": "Réessayer",
   "common.continue": "Continuer",
   "common.back": "Retour",
   "common.send": "Envoyer",
@@ -37,18 +37,20 @@ const fr = {
   "footer.description": "Votre plateforme de santé connectée pour prendre soin de vous et de vos proches.",
   
   // Map page
-  "map.title": "Trouvez des établissements de santé à proximité",
+  "map.title": "Trouver des établissements de santé à proximité",
   "map.pharmacies": "Pharmacies",
   "map.healthCenters": "Centres de santé",
   "map.healthFacilities": "Trouver des établissements de santé",
   "map.facilitiesPlaceholder": "Rechercher un établissement de santé...",
   "map.locateMe": "Ma position",
-  "map.sort.distance": "Distance",
-  "map.sort.rating": "Évaluation",
-  "map.sort.alphabetical": "Alphabétique",
-  "map.filters.insurance": "Filtrer par assurance",
-  "map.filters.yourInsurance": "Votre assurance",
-  "map.filters.allInsurances": "Toutes les assurances",
+  "map.sortDistance": "Distance",
+  "map.sortRating": "Évaluation",
+  "map.sortAlphabetical": "Alphabétique",
+  "map.insurance": "Assurance",
+  "map.all": "Toutes",
+  "map.filterByInsurance": "Filtrer par assurance",
+  "map.yourPlan": "Votre plan",
+  "map.sortBy": "Trier par",
   "map.locationEnabled": "Localisation activée",
   "map.locationEnabledMessage": "Les établissements sont maintenant triés par proximité.",
   "map.locationError": "Localisation non disponible",
@@ -57,13 +59,19 @@ const fr = {
   "map.loadingPlaces": "Chargement des établissements...",
   "map.noPlacesInsurance": "Aucun établissement trouvé pour \"{0}\" acceptant l'assurance {1}",
   "map.noPlaces": "Aucun établissement trouvé pour \"{0}\"",
+  "map.noPlacesFound": "Aucun établissement trouvé",
+  "map.noResultsSearch": "Aucun résultat pour \"{0}\"",
+  "map.noResultsFilter": "Aucun résultat pour l'assurance \"{0}\"",
+  "map.tryDifferentSearch": "Essayez une recherche différente ou modifiez vos filtres",
   "map.viewOnMap": "Voir sur la carte",
   "map.distance": "Distance",
   "map.loadingMap": "Chargement de la carte...",
   "map.yourPosition": "Votre position",
   "map.insuranceAccepted": "Assurances acceptées",
+  "map.fromYourLocation": "de votre position",
   "map.updatingLocation": "Mise à jour de la position",
-  "map.findingYourLocation": "Recherche de votre position en cours...",
+  "map.findingYourLocation": "Recherche de votre position...",
+  "map.services": "Services",
   
   // Professionals page
   "professionals.title": "Professionnels de santé",
@@ -72,7 +80,7 @@ const fr = {
   "professionals.filters.specialties": "Spécialités",
   "professionals.filters.consultationTypes": "Types de consultation",
   "professionals.filters.languages": "Langues parlées",
-  "professionals.filters.inPerson": "Présentiel",
+  "professionals.filters.inPerson": "En personne",
   "professionals.filters.video": "Vidéo",
   "professionals.filters.phone": "Téléphone",
   "professionals.contact": "Contacter",
@@ -102,13 +110,13 @@ const fr = {
   "medical.vaccineBatch": "Numéro de lot",
   "medical.vaccineNotes": "Notes",
   "medical.emergencyContact": "Contact d'urgence",
-  "medical.contactName": "Nom et prénom",
+  "medical.contactName": "Nom complet",
   "medical.contactRelationship": "Relation",
   "medical.contactPhone": "Téléphone",
   "medical.contactEmail": "Email",
-  "medical.shareSecure": "Partage sécurisé du dossier",
-  "medical.shareDescription": "Partagez votre dossier médical de manière sécurisée avec un professionnel de santé via un QR code ou un lien temporaire.",
-  "medical.shareGenerate": "Générer le partage",
+  "medical.shareSecure": "Partage sécurisé du dossier médical",
+  "medical.shareDescription": "Partagez votre dossier médical en toute sécurité avec un professionnel de la santé via un code QR ou un lien temporaire.",
+  "medical.shareGenerate": "Générer un partage",
   
   // Profile page and preferences
   "profile.title": "Profil",
@@ -129,7 +137,7 @@ const fr = {
   "preferences.reminder3Days": "3 jours avant",
   "preferences.reminderWeekly": "Hebdomadaire",
   "preferences.privacyTitle": "Confidentialité",
-  "preferences.privacyInfo": "Ces paramètres déterminent comment vos informations médicales sont partagées avec les professionnels de santé.",
+  "preferences.privacyInfo": "Ces paramètres déterminent comment vos informations médicales sont partagées avec les professionnels de la santé.",
   "preferences.shareProfile": "Autoriser l'accès à mon profil pour mes professionnels de santé",
   "preferences.shareData": "Partager mes données anonymisées pour améliorer la plateforme",
   "preferences.saveButton": "Enregistrer les préférences",
@@ -137,7 +145,7 @@ const fr = {
   "preferences.updatedDescription": "Vos préférences ont été enregistrées avec succès.",
   
   // Currency related
-  "currency.format": "{0} F CFA",
+  "currency.format": "{0} francs CFA",
 };
 
 export default fr;
