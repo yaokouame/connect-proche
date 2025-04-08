@@ -102,6 +102,13 @@ export default {
   "map.tryDifferentSearch": "Essayez une recherche différente ou modifiez les filtres",
   "map.pharmaciesTab": "Liste des pharmacies",
   "map.centersTab": "Centres de santé",
+  "map.all": "Tous",
+  "map.filterByInsurance": "Filtrer par assurance",
+  "map.yourPlan": "Votre plan",
+  "map.sortBy": "Trier par",
+  "map.sortDistance": "Distance",
+  "map.sortRating": "Évaluation",
+  "map.sortAlphabetical": "Alphabétique",
 
   // Contact page translations
   "contact.title": "Contactez-nous",
