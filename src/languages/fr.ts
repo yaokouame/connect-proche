@@ -1,4 +1,3 @@
-
 export default {
   // General translations
   "app.name": "Mon Application",
@@ -21,6 +20,11 @@ export default {
   "nav.about": "À propos",
   "nav.findProfessional": "Trouver un professionnel",
   "nav.onlinePharmacy": "Pharmacie en ligne",
+  "nav.map": "Carte",
+  "nav.products": "Produits",
+  "nav.tutorials": "Tutoriels",
+  "nav.appointments": "Rendez-vous",
+  "nav.messaging": "Messagerie",
 
   // Button translations
   "btn.submit": "Soumettre",
@@ -109,6 +113,7 @@ export default {
   "map.sortDistance": "Distance",
   "map.sortRating": "Évaluation",
   "map.sortAlphabetical": "Alphabétique",
+  "map.insurance": "Assurance",
 
   // Contact page translations
   "contact.title": "Contactez-nous",
