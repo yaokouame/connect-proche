@@ -1,12 +1,14 @@
 
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { User, PatientProfile } from "@/types/user";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+// Import the new form components
+import PersonalDetailsForm from "./form/PersonalDetailsForm";
+import ProfessionalDetailsForm from "./form/ProfessionalDetailsForm";
+import LocationDetailsForm from "./form/LocationDetailsForm";
 
 interface PersonalInfoFormProps {
   currentUser: User;
@@ -97,6 +99,8 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
   };
 
   const translations = getTranslations();
+  const isPatient = currentUser?.role === "patient";
+  const isProfessional = currentUser?.role === "professional";
 
   return (
     <Card>
@@ -105,92 +109,34 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSaveProfile} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">{translations.fullName}</Label>
-            <Input 
-              id="name" 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-            />
-          </div>
+          <PersonalDetailsForm 
+            name={name}
+            setName={setName}
+            email={email}
+            setEmail={setEmail}
+            cmuCardNumber={cmuCardNumber}
+            setCmuCardNumber={setCmuCardNumber}
+            isPatient={isPatient}
+            translations={translations}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input 
-              id="email" 
-              type="email"
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+          {isProfessional && (
+            <ProfessionalDetailsForm 
+              specialty={(currentUser as any).specialty || ""}
+              license={(currentUser as any).license || ""}
+              translations={translations}
             />
-          </div>
-          
-          {currentUser?.role === "patient" && (
-            <div className="space-y-2">
-              <Label htmlFor="cmuCardNumber">{translations.cmuCardNumber}</Label>
-              <Input 
-                id="cmuCardNumber" 
-                value={cmuCardNumber} 
-                onChange={(e) => setCmuCardNumber(e.target.value)} 
-                placeholder="123-456-789"
-              />
-            </div>
           )}
           
-          {currentUser?.role === "professional" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="specialty">{translations.specialty}</Label>
-                <Input 
-                  id="specialty" 
-                  value={(currentUser as any).specialty || ""}
-                  disabled
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="license">{translations.license}</Label>
-                <Input 
-                  id="license" 
-                  value={(currentUser as any).license || ""}
-                  disabled
-                />
-              </div>
-            </>
-          )}
-          
-          {/* Location information section */}
-          <div className="space-y-2 pt-4 border-t">
-            <h3 className="font-medium mb-2">{translations.location}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city">{translations.city}</Label>
-                <Input 
-                  id="city" 
-                  value={city} 
-                  onChange={(e) => setCity(e.target.value)} 
-                  placeholder="Abidjan"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="region">{translations.region}</Label>
-                <Input 
-                  id="region" 
-                  value={region} 
-                  onChange={(e) => setRegion(e.target.value)} 
-                  placeholder="Cocody"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">{translations.address}</Label>
-              <Textarea 
-                id="address" 
-                value={address} 
-                onChange={(e) => setAddress(e.target.value)} 
-                placeholder="Rue des Jardins 123"
-              />
-            </div>
-          </div>
+          <LocationDetailsForm 
+            city={city}
+            setCity={setCity}
+            region={region}
+            setRegion={setRegion}
+            address={address}
+            setAddress={setAddress}
+            translations={translations}
+          />
           
           <Button type="submit" className="mt-6" disabled={isSaving}>
             {isSaving ? translations.saving : translations.save}
