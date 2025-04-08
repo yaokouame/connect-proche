@@ -9,7 +9,7 @@ interface LanguageSelectorProps {
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className }) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   const languageNames: Record<Language, string> = {
     fr: "Français",
@@ -21,7 +21,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className }) => {
     <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
       <SelectTrigger className={`flex items-center ${className}`}>
         <Languages className="h-4 w-4 mr-2" />
-        <SelectValue placeholder="Language">
+        <SelectValue placeholder={t('common.language')}>
           {languageNames[language]}
         </SelectValue>
       </SelectTrigger>

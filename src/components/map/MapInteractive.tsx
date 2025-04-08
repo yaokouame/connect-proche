@@ -1,8 +1,9 @@
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import GoogleMap from './GoogleMap';
 import { GoogleMapRef } from '@/types/map';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MapInteractiveProps {
   showMap: boolean;
@@ -21,6 +22,8 @@ const MapInteractive = ({
   mapRef,
   googleMapRef
 }: MapInteractiveProps) => {
+  const { t } = useLanguage();
+  
   if (!showMap) return null;
 
   return (

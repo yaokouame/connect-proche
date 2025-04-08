@@ -49,6 +49,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.quickLinks": "Liens rapides",
     "footer.contact": "Contact",
     "footer.rights": "Tous droits réservés",
+    "footer.description": "Votre plateforme de santé connectée pour prendre soin de vous et de vos proches.",
     
     // Map page
     "map.title": "Trouvez des établissements de santé à proximité",
@@ -179,6 +180,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.quickLinks": "Quick Links",
     "footer.contact": "Contact",
     "footer.rights": "All rights reserved",
+    "footer.description": "Your connected health platform for taking care of you and your loved ones.",
     
     // Map page
     "map.title": "Find healthcare facilities nearby",
@@ -309,6 +311,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.quickLinks": "Enlaces rápidos",
     "footer.contact": "Contacto",
     "footer.rights": "Todos los derechos reservados",
+    "footer.description": "Tu plataforma de salud conectada para cuidar de ti y de tus seres queridos.",
     
     // Map page
     "map.title": "Encuentra establecimientos de salud cercanos",

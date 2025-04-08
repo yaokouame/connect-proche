@@ -3,6 +3,7 @@ import React from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PlaceList from './PlaceList';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MapTabContentProps {
   activeTab: "pharmacies" | "centers";
@@ -29,6 +30,8 @@ const MapTabContent = ({
   userInsuranceProvider,
   viewOnMap
 }: MapTabContentProps) => {
+  const { t } = useLanguage();
+  
   return (
     <Tabs 
       defaultValue="pharmacies" 
@@ -37,8 +40,8 @@ const MapTabContent = ({
       onValueChange={(val) => setActiveTab(val as "pharmacies" | "centers")}
     >
       <TabsList className="grid w-full grid-cols-2 mb-6">
-        <TabsTrigger value="pharmacies">Pharmacies</TabsTrigger>
-        <TabsTrigger value="centers">Centres de santé</TabsTrigger>
+        <TabsTrigger value="pharmacies">{t('map.pharmacies')}</TabsTrigger>
+        <TabsTrigger value="centers">{t('map.healthCenters')}</TabsTrigger>
       </TabsList>
       
       <TabsContent value="pharmacies" className="mt-0">

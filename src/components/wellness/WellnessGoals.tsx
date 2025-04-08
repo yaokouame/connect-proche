@@ -11,75 +11,16 @@ interface WellnessGoalsProps {
 }
 
 const WellnessGoals: React.FC<WellnessGoalsProps> = ({ goals, isLoading = false }) => {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   
-  const getTranslation = () => {
-    if (language === 'fr') {
-      return {
-        title: 'Mes Objectifs Bien-être',
-        noGoals: 'Aucun objectif défini. Ajoutez un objectif pour commencer à suivre votre progression.',
-        loading: 'Chargement des objectifs...',
-        step: 'Pas',
-        water: 'Eau',
-        sleep: 'Sommeil',
-        nutrition: 'Nutrition',
-        activity: 'Activité',
-        goal: 'Objectif',
-        progress: 'Progression',
-        completed: 'Complété'
-      };
-    } else if (language === 'es') {
-      return {
-        title: 'Mis Objetivos de Bienestar',
-        noGoals: 'No hay objetivos definidos. Agrega un objetivo para comenzar a seguir tu progreso.',
-        loading: 'Cargando objetivos...',
-        step: 'Pasos',
-        water: 'Agua',
-        sleep: 'Sueño',
-        nutrition: 'Nutrición',
-        activity: 'Actividad',
-        goal: 'Meta',
-        progress: 'Progreso',
-        completed: 'Completado'
-      };
-    } else {
-      return {
-        title: 'My Wellness Goals',
-        noGoals: 'No goals set. Add a goal to start tracking your progress.',
-        loading: 'Loading goals...',
-        step: 'Steps',
-        water: 'Water',
-        sleep: 'Sleep',
-        nutrition: 'Nutrition',
-        activity: 'Activity',
-        goal: 'Goal',
-        progress: 'Progress',
-        completed: 'Completed'
-      };
-    }
-  };
-  
-  const t = getTranslation();
-  
-  const getGoalTypeLabel = (type: string) => {
-    switch (type) {
-      case 'steps': return t.step;
-      case 'water': return t.water;
-      case 'sleep': return t.sleep;
-      case 'nutrition': return t.nutrition;
-      case 'activity': return t.activity;
-      default: return type;
-    }
-  };
-
   if (isLoading) {
     return (
       <Card className="col-span-1 md:col-span-2">
         <CardHeader>
-          <CardTitle>{t.title}</CardTitle>
+          <CardTitle>{t('wellness.goals.title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-center py-6 text-gray-500">{t.loading}</p>
+          <p className="text-center py-6 text-gray-500">{t('common.loading')}</p>
         </CardContent>
       </Card>
     );
@@ -89,10 +30,10 @@ const WellnessGoals: React.FC<WellnessGoalsProps> = ({ goals, isLoading = false 
     return (
       <Card className="col-span-1 md:col-span-2">
         <CardHeader>
-          <CardTitle>{t.title}</CardTitle>
+          <CardTitle>{t('wellness.goals.title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-center py-6 text-gray-500">{t.noGoals}</p>
+          <p className="text-center py-6 text-gray-500">{t('wellness.goals.noGoals')}</p>
         </CardContent>
       </Card>
     );
@@ -101,7 +42,7 @@ const WellnessGoals: React.FC<WellnessGoalsProps> = ({ goals, isLoading = false 
   return (
     <Card className="col-span-1 md:col-span-2">
       <CardHeader>
-        <CardTitle>{t.title}</CardTitle>
+        <CardTitle>{t('wellness.goals.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -111,9 +52,9 @@ const WellnessGoals: React.FC<WellnessGoalsProps> = ({ goals, isLoading = false 
               <div key={goal.id} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-medium">{getGoalTypeLabel(goal.type)}</h3>
+                    <h3 className="font-medium">{t(`wellness.goals.types.${goal.type}`)}</h3>
                     <p className="text-sm text-gray-500">
-                      {t.goal}: {goal.target} {goal.unit}
+                      {t('wellness.goals.goal')}: {goal.target} {goal.unit}
                     </p>
                   </div>
                   <div className="text-right">
@@ -125,7 +66,7 @@ const WellnessGoals: React.FC<WellnessGoalsProps> = ({ goals, isLoading = false 
                 </div>
                 <Progress value={percentage} className="h-2" />
                 {goal.completed && (
-                  <p className="text-xs text-green-600 font-medium">{t.completed}</p>
+                  <p className="text-xs text-green-600 font-medium">{t('wellness.goals.completed')}</p>
                 )}
               </div>
             );

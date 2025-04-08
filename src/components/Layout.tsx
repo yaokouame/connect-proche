@@ -40,40 +40,40 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navItems = [
     {
-      label: "Accueil",
+      label: t("nav.home"),
       path: "/",
       icon: <Home className="h-5 w-5 mr-2" />,
     },
     {
-      label: "Profil",
+      label: t("nav.profile"),
       path: "/profile",
       icon: <User className="h-5 w-5 mr-2" />,
       requiresAuth: true,
     },
     {
-      label: "Rendez-vous",
+      label: t("nav.appointments"),
       path: "/appointments",
       icon: <CalendarClock className="h-5 w-5 mr-2" />,
       requiresAuth: true,
     },
     {
-      label: "Messagerie",
+      label: t("nav.messaging"),
       path: "/chat",
       icon: <MessageCircle className="h-5 w-5 mr-2" />,
       requiresAuth: true,
     },
     {
-      label: "Carte",
+      label: t("nav.map"),
       path: "/map",
       icon: <Map className="h-5 w-5 mr-2" />,
     },
     {
-      label: "Produits",
+      label: t("nav.products"),
       path: "/products",
       icon: <ShoppingBag className="h-5 w-5 mr-2" />,
     },
     {
-      label: "Tutoriels",
+      label: t("nav.tutorials"),
       path: "/tutorials",
       icon: <BookOpen className="h-5 w-5 mr-2" />,
     },
@@ -110,7 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             })}
             
             {/* Voice Search */}
-            <GlobalVoiceSearch className="mx-4" placeholder="Recherche ou commande vocale..." />
+            <GlobalVoiceSearch className="mx-4" placeholder={t("common.search")} />
             
             <LanguageSelector className="w-32" />
             {currentUser ? (
@@ -120,15 +120,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 onClick={handleLogout}
               >
                 <LogOut className="h-5 w-5 mr-2" />
-                Déconnexion
+                {t("nav.logout")}
               </Button>
             ) : (
               <div className="flex items-center space-x-2">
                 <Link to="/login">
-                  <Button variant="outline">Connexion</Button>
+                  <Button variant="outline">{t("nav.login")}</Button>
                 </Link>
                 <Link to="/register">
-                  <Button>Inscription</Button>
+                  <Button>{t("nav.register")}</Button>
                 </Link>
               </div>
             )}
@@ -136,7 +136,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           {/* Mobile Navigation */}
           <div className="flex items-center space-x-2 md:hidden">
-            <GlobalVoiceSearch className="w-full max-w-[180px]" placeholder="Recherche..." />
+            <GlobalVoiceSearch className="w-full max-w-[180px]" placeholder={t("common.search")} />
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
@@ -180,19 +180,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           onClick={handleLogout}
                         >
                           <LogOut className="h-5 w-5 mr-2" />
-                          Déconnexion
+                          {t("nav.logout")}
                         </Button>
                       </SheetClose>
                     ) : (
                       <div className="space-y-2">
                         <SheetClose asChild>
                           <Link to="/login">
-                            <Button variant="outline" className="w-full">Connexion</Button>
+                            <Button variant="outline" className="w-full">{t("nav.login")}</Button>
                           </Link>
                         </SheetClose>
                         <SheetClose asChild>
                           <Link to="/register">
-                            <Button className="w-full">Inscription</Button>
+                            <Button className="w-full">{t("nav.register")}</Button>
                           </Link>
                         </SheetClose>
                       </div>
@@ -220,31 +220,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div>
               <h3 className="text-lg font-semibold mb-4">ConnectProche</h3>
               <p className="text-gray-300">
-                Votre plateforme de santé connectée pour prendre soin de vous et de vos proches.
+                {t("footer.description")}
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Liens rapides</h3>
+              <h3 className="text-lg font-semibold mb-4">{t("footer.quickLinks")}</h3>
               <ul className="space-y-2">
                 <li>
                   <Link to="/" className="text-gray-300 hover:text-white">
-                    Accueil
+                    {t("nav.home")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/map" className="text-gray-300 hover:text-white">
-                    Trouver un professionnel
+                    {t("nav.findProfessional")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/products" className="text-gray-300 hover:text-white">
-                    Pharmacie en ligne
+                    {t("nav.onlinePharmacy")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Contact</h3>
+              <h3 className="text-lg font-semibold mb-4">{t("footer.contact")}</h3>
               <address className="not-italic text-gray-300">
                 <p>2 PLTX Garage CFA</p>
                 <p>Abidjan, Cocody</p>
@@ -255,7 +255,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="border-t border-gray-700 mt-8 pt-4">
             <p className="text-center text-gray-400">
-              © {new Date().getFullYear()} ConnectProche. Tous droits réservés.
+              © {new Date().getFullYear()} ConnectProche. {t("footer.rights")}
             </p>
           </div>
         </div>

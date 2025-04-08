@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Map as MapIcon } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MapToggleProps {
   showMap: boolean;
@@ -9,6 +10,8 @@ interface MapToggleProps {
 }
 
 const MapToggle = ({ showMap, setShowMap }: MapToggleProps) => {
+  const { t } = useLanguage();
+  
   if (showMap) return null;
   
   return (
@@ -18,7 +21,7 @@ const MapToggle = ({ showMap, setShowMap }: MapToggleProps) => {
         className="flex items-center mx-auto"
       >
         <MapIcon className="h-4 w-4 mr-2" />
-        Afficher la carte interactive
+        {t('map.showMap')}
       </Button>
     </div>
   );

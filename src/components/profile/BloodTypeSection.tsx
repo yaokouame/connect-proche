@@ -17,17 +17,17 @@ const BloodTypeSection = ({ bloodType, setBloodType }: BloodTypeSectionProps) =>
     <div className="space-y-2 border-b pb-4">
       <div className="flex items-center gap-2">
         <Droplet className="h-5 w-5 text-red-500" />
-        <h3 className="text-lg font-medium">{t('profile.bloodType.title')}</h3>
+        <h3 className="text-lg font-medium">{t('medical.bloodType')}</h3>
       </div>
       <div className="max-w-xs">
         <Select value={bloodType || "unknown"} onValueChange={setBloodType}>
           <SelectTrigger>
-            <SelectValue placeholder={t('profile.bloodType.select')} />
+            <SelectValue placeholder={t('common.select')} />
           </SelectTrigger>
           <SelectContent>
             {bloodTypes.map((type) => (
               <SelectItem key={type} value={type}>
-                {type === "unknown" ? t('profile.bloodType.unknown') : type}
+                {type === "unknown" ? t('common.unknown') : type}
               </SelectItem>
             ))}
           </SelectContent>
