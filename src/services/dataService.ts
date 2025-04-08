@@ -1,4 +1,3 @@
-
 import { InsuranceVoucher, InsuranceProvider } from "@/types/health";
 import { Pharmacy, HealthCenter, Product, Appointment } from "@/types/user";
 
@@ -10,30 +9,30 @@ export const getPharmacies = async (): Promise<Pharmacy[]> => {
   return [
     {
       id: "pharm-1",
-      name: "Pharmacie Centrale",
-      address: "12 rue de la Paix, 75001 Paris",
-      phone: "+33 1 42 68 50 00",
+      name: "Pharmacie Saint Jean",
+      address: "Boulevard Latrille, Cocody, Abidjan",
+      phone: "+225 27 22 44 56 78",
       hours: "Lun-Sam: 8h-20h, Dim: 10h-18h",
-      location: { lat: 48.8711, lng: 2.3322 },
-      acceptedInsuranceProviders: ["CPAM", "MGEN", "Allianz", "AXA"]
+      location: { lat: 5.3471, lng: -4.0082 },
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "IPS-CGRAE", "CMU"]
     },
     {
       id: "pharm-2",
-      name: "Grande Pharmacie de la Ville",
-      address: "45 avenue des Champs-Élysées, 75008 Paris",
-      phone: "+33 1 53 89 25 10",
+      name: "Pharmacie Les Rosiers",
+      address: "Rue des Jardins, II Plateaux, Abidjan",
+      phone: "+225 27 22 41 73 22",
       hours: "Lun-Ven: 8h30-20h30, Sam-Dim: 9h-19h",
-      location: { lat: 48.8724, lng: 2.3015 },
-      acceptedInsuranceProviders: ["CPAM", "Harmonie Mutuelle", "Swiss Life"]
+      location: { lat: 5.3500, lng: -4.0144 },
+      acceptedInsuranceProviders: ["MUGEFCI", "CMU", "SUNU Assurances"]
     },
     {
       id: "pharm-3",
-      name: "Pharmacie du Marché",
-      address: "73 rue Mouffetard, 75005 Paris",
-      phone: "+33 1 45 35 82 21",
+      name: "Pharmacie de Treichville",
+      address: "Avenue 16, Treichville, Abidjan",
+      phone: "+225 27 21 24 52 65",
       hours: "Lun-Sam: 9h-19h30, Fermé le dimanche",
-      location: { lat: 48.8422, lng: 2.3508 },
-      acceptedInsuranceProviders: ["CPAM", "MGEN", "Malakoff Médéric"]
+      location: { lat: 5.2919, lng: -4.0128 },
+      acceptedInsuranceProviders: ["CMU", "CNPS", "Saham Assurance"]
     },
   ];
 };
@@ -46,36 +45,36 @@ export const getHealthCenters = async (): Promise<HealthCenter[]> => {
   return [
     {
       id: "center-1",
-      name: "Centre Médical Saint-Louis",
-      type: "Clinique générale",
+      name: "Centre Hospitalier Universitaire (CHU) de Cocody",
+      type: "Hôpital universitaire",
       services: ["Médecine générale", "Cardiologie", "Pédiatrie", "Gynécologie"],
-      address: "42 boulevard Saint-Michel, 75006 Paris",
-      phone: "+33 1 46 33 45 70",
-      hours: "Lun-Ven: 8h-20h, Sam: 9h-17h, Fermé le dimanche",
-      location: { lat: 48.8518, lng: 2.3408 },
-      acceptedInsuranceProviders: ["CPAM", "MGEN", "AXA", "AG2R La Mondiale"]
+      address: "Boulevard de l'Université, Cocody, Abidjan",
+      phone: "+225 27 22 48 10 00",
+      hours: "24h/24, 7j/7",
+      location: { lat: 5.3442, lng: -3.9996 },
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "IPS-CGRAE", "CMU"]
     },
     {
       id: "center-2",
-      name: "Hôpital Hôtel-Dieu",
-      type: "Hôpital universitaire",
+      name: "Polyclinique Internationale Sainte Anne-Marie (PISAM)",
+      type: "Clinique privée",
       services: ["Urgences", "Chirurgie", "Radiologie", "Laboratoire d'analyses"],
-      address: "1 Parvis Notre-Dame, 75004 Paris",
-      phone: "+33 1 42 34 82 34",
+      address: "Boulevard de la Corniche, Cocody, Abidjan",
+      phone: "+225 27 22 48 31 31",
       hours: "24h/24, 7j/7",
-      location: { lat: 48.8542, lng: 2.3480 },
-      acceptedInsuranceProviders: ["CPAM", "Toutes mutuelles"]
+      location: { lat: 5.3326, lng: -4.0167 },
+      acceptedInsuranceProviders: ["MUGEFCI", "CNPS", "Allianz", "AXA", "Toutes assurances"]
     },
     {
       id: "center-3",
-      name: "Centre de Santé Belleville",
-      type: "Centre de santé communautaire",
-      services: ["Médecine générale", "Dentisterie", "Psychologie", "Services sociaux"],
-      address: "18 rue des Pyrénées, 75020 Paris",
-      phone: "+33 1 43 66 90 45",
-      hours: "Lun-Ven: 9h-19h, Sam: 9h-12h, Fermé le dimanche",
-      location: { lat: 48.8725, lng: 2.3887 },
-      acceptedInsuranceProviders: ["CPAM", "CMU", "AME", "MGEN"]
+      name: "Centre Médical de Marcory",
+      type: "Centre de santé",
+      services: ["Médecine générale", "Dentisterie", "Maternité", "Services sociaux"],
+      address: "Boulevard Valéry Giscard d'Estaing, Marcory, Abidjan",
+      phone: "+225 27 21 21 64 64",
+      hours: "Lun-Ven: 8h-18h, Sam: 9h-13h, Fermé le dimanche",
+      location: { lat: 5.3019, lng: -4.0151 },
+      acceptedInsuranceProviders: ["CMU", "CNPS", "MUGEFCI"]
     },
   ];
 };
@@ -185,7 +184,7 @@ export const getUserAppointments = async (userId: string): Promise<Appointment[]
       date: "2023-09-25",
       time: "10:00",
       status: "completed",
-      notes: "Suivi traitement cardiaque",
+      notes: "Suivi traitement paludisme",
     },
   ];
 };
@@ -217,39 +216,39 @@ export const getInsuranceProviders = async (): Promise<InsuranceProvider[]> => {
   return [
     {
       id: "ins-1",
-      name: "CPAM (Assurance Maladie)",
+      name: "CMU (Couverture Maladie Universelle)",
       logoUrl: "/placeholder.svg",
-      contactPhone: "+33 3646",
-      contactEmail: "contact@ameli.fr",
-      website: "https://www.ameli.fr",
-      availablePlans: ["Régime général", "ALD", "CMU-C"]
+      contactPhone: "+225 27 22 52 78 00",
+      contactEmail: "contact@cmu.ci",
+      website: "https://www.cmu.ci",
+      availablePlans: ["Régime général", "Régime indigent", "Régime étudiant"]
     },
     {
       id: "ins-2",
-      name: "MGEN",
+      name: "MUGEFCI",
       logoUrl: "/placeholder.svg",
-      contactPhone: "+33 3676",
-      contactEmail: "contact@mgen.fr",
-      website: "https://www.mgen.fr",
-      availablePlans: ["ÉCO", "RÉFÉRENCE", "ÉQUILIBRE", "INTÉGRALE"]
+      contactPhone: "+225 27 22 52 63 80",
+      contactEmail: "contact@mugefci.ci",
+      website: "https://www.mugefci.ci",
+      availablePlans: ["Base", "Complémentaire", "Familial"]
     },
     {
       id: "ins-3",
-      name: "AXA Santé",
+      name: "CNPS",
       logoUrl: "/placeholder.svg",
-      contactPhone: "+33 1 40 75 48 00",
-      contactEmail: "contact@axa.fr",
-      website: "https://www.axa.fr",
-      availablePlans: ["Ma Santé Basique", "Ma Santé Évolution", "Ma Santé Intégrale"]
+      contactPhone: "+225 27 20 25 21 00",
+      contactEmail: "contact@cnps.ci",
+      website: "https://www.cnps.ci",
+      availablePlans: ["Assurance maladie", "Retraite", "Prestations familiales"]
     },
     {
       id: "ins-4",
-      name: "Harmonie Mutuelle",
+      name: "SUNU Assurances",
       logoUrl: "/placeholder.svg",
-      contactPhone: "+33 9 80 98 09 80",
-      contactEmail: "contact@harmonie-mutuelle.fr",
-      website: "https://www.harmonie-mutuelle.fr",
-      availablePlans: ["Essentielle", "Equilibre", "Confort", "Plénitude"]
+      contactPhone: "+225 27 20 31 02 03",
+      contactEmail: "contact@sunu-ci.com",
+      website: "https://www.sunu-group.com",
+      availablePlans: ["Essentiel", "Confort", "Prestige", "Excellence"]
     },
   ];
 };
