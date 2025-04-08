@@ -11,6 +11,7 @@ import {
 import Layout from "@/components/Layout";
 import AdBanner from "@/components/ads/AdBanner";
 import AwarenessBanner from "@/components/ads/AwarenessBanner";
+import VisitorCounter from "@/components/analytics/VisitorCounter";
 import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight, UserRound, Activity } from "lucide-react";
 
 const Home = () => {
@@ -51,6 +52,11 @@ const Home = () => {
               Rechercher un professionnel de santé
             </Button>
           </div>
+          
+          {/* Visitor Counter - positioned at the bottom of hero section */}
+          <div className="absolute bottom-4 right-4">
+            <VisitorCounter variant="home" />
+          </div>
         </div>
       </section>
 
@@ -63,6 +69,8 @@ const Home = () => {
             et celle de vos proches.
           </p>
         </div>
+        
+        {/* Services cards - keep existing content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
