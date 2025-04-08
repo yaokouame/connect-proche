@@ -8,9 +8,11 @@ import {
   CardFooter 
 } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 import ProfileHeader from "./ProfileHeader";
 import ExperienceInfo from "./ExperienceInfo";
 import AvailabilitySlots from "./AvailabilitySlots";
+import { toast } from "@/components/ui/use-toast";
 
 interface ProfessionalCardProps {
   professional: Professional;
@@ -18,6 +20,7 @@ interface ProfessionalCardProps {
 
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   // Function to format prices in F CFA
   const formatPrice = (price: number) => {
@@ -27,6 +30,21 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => 
       maximumFractionDigits: 0,
       currencyDisplay: 'code'
     }).format(price).replace('XOF', 'F CFA');
+  };
+
+  const handleAppointment = () => {
+    // Store the professional ID for the appointment page
+    localStorage.setItem('selectedProfessionalId', professional.id);
+    
+    // Show success toast
+    toast({
+      title: t('professionals.appointment'),
+      description: `Rendez-vous avec ${professional.name}`,
+      duration: 3000,
+    });
+    
+    // Navigate to appointments page
+    navigate('/appointments');
   };
 
   return (
@@ -43,7 +61,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => 
             Consultation: <span className="font-medium text-gray-900">{formatPrice(professional.fees?.consultation)}</span>
           </p>
         </div>
-        <Button>{t('professionals.appointment')}</Button>
+        <Button onClick={handleAppointment}>{t('professionals.appointment')}</Button>
       </CardFooter>
     </Card>
   );
