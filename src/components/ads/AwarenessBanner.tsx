@@ -34,8 +34,10 @@ const AwarenessBanner: React.FC<AwarenessBannerProps> = ({
   
   return (
     <div className={cn(
-      'text-white p-3 rounded-lg shadow-md overflow-hidden',
-      variant === 'info' ? 'bg-health-blue/90' : 'bg-amber-600/90',
+      'p-3 rounded-lg shadow-md overflow-hidden',
+      variant === 'info' 
+        ? 'bg-health-blue/90 text-white' 
+        : 'bg-amber-600/90 text-white',
       className
     )}>
       <div className="flex items-center relative whitespace-nowrap">
