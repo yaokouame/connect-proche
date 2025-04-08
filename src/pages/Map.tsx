@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ import GoogleMap from "@/components/map/GoogleMap";
 import MapFilters from "@/components/map/MapFilters";
 import PlaceList from "@/components/map/PlaceList";
 import { GoogleMapRef } from "@/types/map";
-import { calculateDistance, fetchNearbyPharmacies, fetchNearbyHealthCenters } from "@/utils/mapUtils";
+import { calculateDistance, fetchNearbyPlaces, fetchNearbyPharmacies, fetchNearbyHealthCenters } from "@/utils/mapUtils";
 
 const Map = () => {
   const [activeTab, setActiveTab] = useState<"pharmacies" | "centers">("pharmacies");
@@ -34,7 +33,6 @@ const Map = () => {
   const patientUser = currentUser?.role === "patient" ? currentUser : null;
 
   useEffect(() => {
-    // Try to get user's location first
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -44,7 +42,6 @@ const Map = () => {
           };
           setUserLocation(location);
           
-          // Initialize search for nearby places once we have location
           if (location) {
             loadNearbyPharmacies(location);
             loadNearbyHealthCenters(location);
@@ -63,7 +60,6 @@ const Map = () => {
             description: "Impossible d'accéder à votre position. Vérifiez vos paramètres de confidentialité.",
           });
           
-          // Set a default location (Abidjan)
           const abidjianLocation = { lat: 5.3599, lng: -4.0083 };
           setUserLocation(abidjianLocation);
           loadNearbyPharmacies(abidjianLocation);
@@ -72,7 +68,6 @@ const Map = () => {
       );
     }
     
-    // Also load the backup data from our mock service
     const fetchData = async () => {
       try {
         const pharmaciesData = await getPharmacies();
@@ -89,7 +84,6 @@ const Map = () => {
     
     fetchData();
     
-    // Load Google Maps API script
     const loadGoogleMapsScript = () => {
       if (window.google && window.google.maps) {
         setMapLoaded(true);
@@ -114,10 +108,8 @@ const Map = () => {
     try {
       const nearbyPharmacies = await fetchNearbyPharmacies(location);
       
-      // Combine Google Places results with our existing data
       setPharmacies(prev => {
         const combinedList = [...nearbyPharmacies];
-        // Add our existing pharmacies that aren't duplicates
         prev.forEach(pharmacy => {
           if (!nearbyPharmacies.some(p => p.name === pharmacy.name)) {
             combinedList.push(pharmacy);
@@ -137,10 +129,8 @@ const Map = () => {
     try {
       const nearbyHealthCenters = await fetchNearbyHealthCenters(location);
       
-      // Combine Google Places results with our existing data
       setHealthCenters(prev => {
         const combinedList = [...nearbyHealthCenters];
-        // Add our existing health centers that aren't duplicates
         prev.forEach(center => {
           if (!nearbyHealthCenters.some(c => c.name === center.name)) {
             combinedList.push(center);
@@ -155,7 +145,6 @@ const Map = () => {
     }
   };
 
-  // Filter pharmacies by search term and insurance provider
   const filteredPharmacies = pharmacies.filter(pharmacy => {
     const matchesSearch = pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pharmacy.address.toLowerCase().includes(searchTerm.toLowerCase());
@@ -169,7 +158,6 @@ const Map = () => {
     return matchesSearch && matchesInsurance;
   });
 
-  // Filter health centers by search term and insurance provider
   const filteredHealthCenters = healthCenters.filter(center => {
     const matchesSearch = center.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       center.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -206,20 +194,17 @@ const Map = () => {
     return 0;
   });
 
-  // Get the user's insurance provider if available
   const userInsuranceProvider = patientUser?.insuranceInfo?.provider || null;
 
   const viewOnMap = (location: {lat: number, lng: number}) => {
     setShowMap(true);
     
-    // Wait for map to be initialized
     setTimeout(() => {
       if (googleMapRef.current) {
         googleMapRef.current.centerMapOnLocation(location);
       }
     }, 100);
     
-    // Scroll to map
     mapRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 

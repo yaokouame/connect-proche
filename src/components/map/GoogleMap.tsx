@@ -10,25 +10,6 @@ interface GoogleMapProps {
   mapLoaded: boolean;
 }
 
-// Add the necessary type definitions for Google Maps
-declare global {
-  interface Window {
-    google: {
-      maps: {
-        Map: new (mapDiv: HTMLElement, options: google.maps.MapOptions) => google.maps.Map;
-        Marker: new (options: google.maps.MarkerOptions) => google.maps.Marker;
-        InfoWindow: new (options?: google.maps.InfoWindowOptions) => google.maps.InfoWindow;
-        SymbolPath: {
-          CIRCLE: number;
-        };
-        Animation: {
-          DROP: google.maps.Animation;
-        };
-      };
-    };
-  }
-}
-
 // Create a ref-forwarding component
 const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
   ({ userLocation, places, mapLoaded }, ref) => {
@@ -42,22 +23,18 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
       
       // Initialize the map
       googleMapRef.current = new window.google.maps.Map(mapRef.current, {
-        center: userLocation,
+        center: { lat: userLocation.lat, lng: userLocation.lng },
         zoom: 14,
         mapTypeControl: false,
       });
       
       // Add a marker for the user's location
       new window.google.maps.Marker({
-        position: userLocation,
+        position: { lat: userLocation.lat, lng: userLocation.lng },
         map: googleMapRef.current,
         icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: "#4285F4",
-          fillOpacity: 1,
-          strokeColor: "#FFFFFF",
-          strokeWeight: 2,
+          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%234285F4' stroke='%23FFFFFF' stroke-width='2'/%3E%3C/svg%3E",
+          scaledSize: new window.google.maps.Size(20, 20),
         },
         title: t("map.yourPosition"),
       });
@@ -87,7 +64,7 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
       // Add markers for all places
       places.forEach((place) => {
         const marker = new window.google.maps.Marker({
-          position: place.location,
+          position: { lat: place.location.lat, lng: place.location.lng },
           map: googleMapRef.current,
           title: place.name,
           animation: window.google.maps.Animation.DROP,
@@ -115,7 +92,7 @@ const GoogleMap = forwardRef<GoogleMapRef, GoogleMapProps>(
 
     const centerMapOnLocation = (location: { lat: number; lng: number }) => {
       if (googleMapRef.current) {
-        googleMapRef.current.setCenter(location);
+        googleMapRef.current.setCenter({ lat: location.lat, lng: location.lng });
         googleMapRef.current.setZoom(16);
       }
     };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Pharmacy, HealthCenter } from '@/types/user';
 import {
@@ -11,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, Clock, Navigation, BadgeCheck, Wallet, Map as MapIcon } from "lucide-react";
-import { formatDistance } from '@/utils/mapUtils';
+import { formatDistance, calculateDistance } from '@/utils/mapUtils';
 
 interface PlaceCardProps {
   place: Pharmacy | HealthCenter;
@@ -21,12 +20,8 @@ interface PlaceCardProps {
 }
 
 const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: PlaceCardProps) => {
-  const distance = userLocation ? formatDistance(
-    Math.sqrt(
-      Math.pow(place.location.lat - userLocation.lat, 2) + 
-      Math.pow(place.location.lng - userLocation.lng, 2)
-    ) * 111.32 // Approximate conversion to km at equator
-  ) : '';
+  const distanceValue = userLocation ? calculateDistance(userLocation, place.location) : null;
+  const distance = distanceValue !== null ? formatDistance(distanceValue) : '';
 
   // Check if the place is a health center by checking for the services property
   const isHealthCenter = 'services' in place;
@@ -57,7 +52,7 @@ const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: Pl
           </div>
         )}
         
-        {userLocation && (
+        {userLocation && distance && (
           <div className="flex items-center text-sm text-blue-600 font-medium mb-4">
             <Navigation className="h-4 w-4 mr-1" />
             {distance}
