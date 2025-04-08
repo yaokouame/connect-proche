@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,8 @@ const Map = () => {
     setFilterByInsurance,
     setSortBy,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    getLocation
   } = useMap();
 
   useEffect(() => {
@@ -53,8 +54,12 @@ const Map = () => {
     }
   }, [error, toast, t]);
 
-  const viewOnMap = (location: { lat: number; lng: number }) => {
-    // This will be handled in the MapInteractive component
+  const handleUseMyLocation = () => {
+    getLocation();
+    toast({
+      title: t("map.updatingLocation"),
+      description: t("map.findingYourLocation"),
+    });
   };
 
   return (
@@ -79,6 +84,7 @@ const Map = () => {
                 </div>
                 <Button 
                   className="flex-shrink-0"
+                  onClick={handleUseMyLocation}
                 >
                   <MapPin className="mr-2 h-4 w-4" /> {t('map.useMyLocation')}
                 </Button>
@@ -99,7 +105,7 @@ const Map = () => {
           filterByInsurance={null}
           userLocation={userLocation}
           userInsuranceProvider={userInsuranceProvider}
-          viewOnMap={viewOnMap}
+          viewOnMap={() => {}}
         />
       </div>
       

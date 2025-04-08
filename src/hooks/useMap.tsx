@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { calculateDistance } from "@/utils/mapUtils";
@@ -82,24 +81,8 @@ export function useMap() {
     
     fetchData();
     
-    // Load Google Maps script
-    const loadGoogleMapsScript = () => {
-      if (window.google && window.google.maps) {
-        setMapLoaded(true);
-        return;
-      }
-      
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        setMapLoaded(true);
-      };
-      document.head.appendChild(script);
-    };
-    
-    loadGoogleMapsScript();
+    // We'll let the GoogleMap component handle Maps API loading
+    setMapLoaded(true);
   }, [getLocation]);
 
   const getFilteredPharmacies = useCallback(() => {
