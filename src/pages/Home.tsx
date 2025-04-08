@@ -49,7 +49,7 @@ const Home = () => {
             <Button 
               size={isSmallScreen ? "default" : "lg"} 
               variant="outline" 
-              className="border-white text-white hover:bg-white/20 w-full sm:w-auto"
+              className="border-white text-white hover:bg-white/20 w-full sm:w-auto whitespace-normal sm:whitespace-nowrap"
               onClick={handleFindProfessional}
             >
               Rechercher un professionnel
