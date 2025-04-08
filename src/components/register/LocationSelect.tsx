@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Volume2 } from "lucide-react";
 import { ivoryCoastRegions, ivoryCoastCities } from "@/data/locationData";
 
 interface LocationSelectProps {
@@ -21,6 +23,8 @@ interface LocationSelectProps {
     addressPlaceholder: string;
     location: string;
   };
+  showVoiceHelp?: boolean;
+  onSpeakField?: (fieldName: string) => void;
 }
 
 const LocationSelect: React.FC<LocationSelectProps> = ({
@@ -30,7 +34,9 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
   setCity,
   address,
   setAddress,
-  translations
+  translations,
+  showVoiceHelp = false,
+  onSpeakField
 }) => {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
 
@@ -46,10 +52,38 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
 
   return (
     <div className="space-y-2">
-      <h3 className="text-md font-medium">{translations.location}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-md font-medium">{translations.location}</h3>
+        {showVoiceHelp && onSpeakField && (
+          <Button 
+            type="button" 
+            variant="ghost" 
+            size="icon" 
+            className="h-6 w-6" 
+            onClick={() => onSpeakField("location")}
+            title="Écouter les instructions pour cette section"
+          >
+            <Volume2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="region">{translations.region}</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="region">{translations.region}</Label>
+            {showVoiceHelp && onSpeakField && (
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6" 
+                onClick={() => onSpeakField("region")}
+                title="Écouter les instructions pour ce champ"
+              >
+                <Volume2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
           <Select value={region} onValueChange={setRegion}>
             <SelectTrigger>
               <SelectValue placeholder={translations.regionPlaceholder} />
@@ -64,7 +98,21 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="city">{translations.city}</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="city">{translations.city}</Label>
+            {showVoiceHelp && onSpeakField && (
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6" 
+                onClick={() => onSpeakField("city")}
+                title="Écouter les instructions pour ce champ"
+              >
+                <Volume2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
           <Select value={city} onValueChange={setCity} disabled={!region}>
             <SelectTrigger>
               <SelectValue placeholder={translations.cityPlaceholder} />
@@ -80,7 +128,21 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="address">{translations.address}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="address">{translations.address}</Label>
+          {showVoiceHelp && onSpeakField && (
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6" 
+              onClick={() => onSpeakField("address")}
+              title="Écouter les instructions pour ce champ"
+            >
+              <Volume2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         <Textarea
           id="address"
           placeholder={translations.addressPlaceholder}

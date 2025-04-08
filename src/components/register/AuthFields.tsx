@@ -2,6 +2,8 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Volume2 } from "lucide-react";
 
 interface AuthFieldsProps {
   name: string;
@@ -20,6 +22,8 @@ interface AuthFieldsProps {
     confirmPassword: string;
     passwordMismatch: string;
   };
+  showVoiceHelp?: boolean;
+  onSpeakField?: (fieldName: string) => void;
 }
 
 const AuthFields: React.FC<AuthFieldsProps> = ({
@@ -32,12 +36,28 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
   confirmPassword,
   setConfirmPassword,
   passwordMatch,
-  translations
+  translations,
+  showVoiceHelp = false,
+  onSpeakField
 }) => {
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="name">{translations.fullName}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="name">{translations.fullName}</Label>
+          {showVoiceHelp && onSpeakField && (
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6" 
+              onClick={() => onSpeakField("name")}
+              title="Écouter les instructions pour ce champ"
+            >
+              <Volume2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         <Input
           id="name"
           placeholder="Jean Dupont"
@@ -47,7 +67,21 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="email">{translations.email}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="email">{translations.email}</Label>
+          {showVoiceHelp && onSpeakField && (
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6" 
+              onClick={() => onSpeakField("email")}
+              title="Écouter les instructions pour ce champ"
+            >
+              <Volume2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
         <Input
           id="email"
           type="email"
@@ -59,7 +93,21 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="password">{translations.password}</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">{translations.password}</Label>
+            {showVoiceHelp && onSpeakField && (
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6" 
+                onClick={() => onSpeakField("password")}
+                title="Écouter les instructions pour ce champ"
+              >
+                <Volume2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
           <Input
             id="password"
             type="password"
@@ -69,7 +117,21 @@ const AuthFields: React.FC<AuthFieldsProps> = ({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">{translations.confirmPassword}</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="confirmPassword">{translations.confirmPassword}</Label>
+            {showVoiceHelp && onSpeakField && (
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6" 
+                onClick={() => onSpeakField("confirmPassword")}
+                title="Écouter les instructions pour ce champ"
+              >
+                <Volume2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
           <Input
             id="confirmPassword"
             type="password"
