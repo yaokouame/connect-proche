@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,8 @@ import { useRegisterTranslation } from "@/hooks/useRegisterTranslation";
 import PageVoiceHelp from "@/components/voice/PageVoiceHelp";
 
 const Register = () => {
-  const { t } = useRegisterTranslation();
+  const translations = useRegisterTranslation();
+  const { t } = translations;
   const [accountType, setAccountType] = useState("patient");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -27,19 +28,20 @@ const Register = () => {
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [region, setRegion] = useState("");
   const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [license, setLicense] = useState("");
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
 
   // Instructions vocales pour chaque champ
-  const fieldInstructions = {
+  const fieldInstructions = useMemo(() => ({
     name: "Veuillez entrer votre nom complet.",
     email: "Veuillez entrer votre adresse email. Cette adresse sera utilisée pour vous connecter et pour les communications importantes.",
     password: "Choisissez un mot de passe sécurisé d'au moins 8 caractères, contenant des lettres majuscules, minuscules et des chiffres.",
     confirmPassword: "Veuillez confirmer votre mot de passe en le saisissant une seconde fois pour éviter les erreurs.",
     specialty: "Si vous êtes professionnel de santé, veuillez sélectionner votre spécialité dans la liste déroulante.",
     license: "Veuillez entrer votre numéro de licence ou d'identification professionnelle."
-  };
+  }), []);
 
   // Vérifier si les mots de passe correspondent
   useEffect(() => {
@@ -63,6 +65,7 @@ const Register = () => {
       password,
       region,
       city,
+      address,
       specialty,
       license,
     });
@@ -70,7 +73,7 @@ const Register = () => {
     // Dans une véritable application, cela enverrait les données au serveur
   };
 
-  const handleSpeakField = (fieldName: string) => {
+  const handleSpeakField = useCallback((fieldName: string) => {
     if (fieldInstructions[fieldName as keyof typeof fieldInstructions]) {
       const text = fieldInstructions[fieldName as keyof typeof fieldInstructions];
       if ('speechSynthesis' in window) {
@@ -79,11 +82,11 @@ const Register = () => {
         window.speechSynthesis.speak(utterance);
       }
     }
-  };
+  }, [fieldInstructions]);
 
-  const toggleVoiceHelp = () => {
+  const toggleVoiceHelp = useCallback(() => {
     setShowVoiceHelp(!showVoiceHelp);
-  };
+  }, [showVoiceHelp]);
 
   const pageDescription = "Page d'inscription. Ici, vous pouvez créer un compte en tant que patient ou professionnel de santé. Remplissez les champs obligatoires comme votre nom, email et mot de passe. Si vous êtes un professionnel de santé, vous devrez également indiquer votre spécialité et votre numéro de licence.";
 
@@ -132,6 +135,8 @@ const Register = () => {
                 setRegion={setRegion}
                 city={city}
                 setCity={setCity}
+                address={address}
+                setAddress={setAddress}
                 translations={t.location}
               />
 
