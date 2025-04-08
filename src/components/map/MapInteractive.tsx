@@ -56,7 +56,7 @@ const MapInteractive = () => {
         <AdBanner className="h-full" />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-250px)] min-h-[600px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-300px)] min-h-[500px]">
         {/* Map Container */}
         <div className="md:col-span-2 h-full flex flex-col">
           <Card className="h-full border-none shadow-md overflow-hidden">
@@ -66,6 +66,7 @@ const MapInteractive = () => {
                 userLocation={userLocation}
                 places={places}
                 onMarkerClick={handleMarkerClick}
+                height="h-full"
               />
               
               {/* Visitor Counter - positioned on the map */}

@@ -41,15 +41,22 @@ export const cleanupGoogleMapsCallback = (): void => {
 export const createGoogleMap = (
   mapElement: HTMLElement, 
   center: google.maps.LatLngLiteral,
-  zoom: number = 12
+  zoom: number = 12,
+  compact: boolean = false
 ): google.maps.Map => {
   return new google.maps.Map(mapElement, {
     center,
     zoom,
-    fullscreenControl: true,
-    mapTypeControl: true,
+    fullscreenControl: !compact,
+    mapTypeControl: !compact,
     streetViewControl: false,
     mapTypeId: "roadmap",
+    zoomControl: true,
+    scrollwheel: !compact,
+    disableDefaultUI: compact,
+    styles: compact ? [
+      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+    ] : undefined
   });
 };
 
@@ -73,13 +80,14 @@ export const addMarker = (
 };
 
 // Get icon for a place based on its type
-export const getPlaceIcon = (place: { type?: string } | any): google.maps.Icon => {
+export const getPlaceIcon = (place: { type?: string } | any, compact: boolean = false): google.maps.Icon => {
   const isPharmacy = 'type' in place && place.type === "pharmacy";
+  const size = compact ? 24 : 32;
   
   return {
     url: isPharmacy
       ? "/images/pharmacy-marker.png" 
       : "/images/hospital-marker.png",
-    scaledSize: new google.maps.Size(32, 32),
+    scaledSize: new google.maps.Size(size, size),
   };
 };

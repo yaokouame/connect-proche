@@ -13,6 +13,7 @@ interface UseGoogleMapProps {
   userLocation: { lat: number; lng: number } | null;
   places: (Pharmacy | HealthCenter)[];
   onMarkerClick?: (place: Pharmacy | HealthCenter) => void;
+  compact?: boolean;
 }
 
 interface UseGoogleMapReturn {
@@ -25,7 +26,8 @@ interface UseGoogleMapReturn {
 export const useGoogleMap = ({
   userLocation,
   places,
-  onMarkerClick
+  onMarkerClick,
+  compact = false
 }: UseGoogleMapProps): UseGoogleMapReturn => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -50,13 +52,14 @@ export const useGoogleMap = ({
     
     try {
       const initialLocation = userLocation || { lat: 5.3599, lng: -4.0083 }; // Default to Abidjan
-      const newMap = createGoogleMap(mapRef.current, initialLocation);
+      const zoomLevel = compact ? 10 : 12;
+      const newMap = createGoogleMap(mapRef.current, initialLocation, zoomLevel, compact);
       setMap(newMap);
     } catch (error) {
       console.error("Error initializing map:", error);
       setLoadError("Error initializing map");
     }
-  }, [mapRef, googleMapsLoaded, map, userLocation]);
+  }, [mapRef, googleMapsLoaded, map, userLocation, compact]);
   
   // Add user location marker
   useEffect(() => {
@@ -67,17 +70,18 @@ export const useGoogleMap = ({
       map.setCenter({ lat: userLocation.lat, lng: userLocation.lng });
       
       // Add marker for user location
+      const markerSize = compact ? 24 : 32;
       addMarker(map, userLocation, {
         title: "Your Location",
         icon: {
           url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-          scaledSize: new google.maps.Size(32, 32)
+          scaledSize: new google.maps.Size(markerSize, markerSize)
         }
       });
     } catch (error) {
       console.error("Error adding user location marker:", error);
     }
-  }, [map, userLocation, googleMapsLoaded]);
+  }, [map, userLocation, googleMapsLoaded, compact]);
   
   // Add markers for places
   useEffect(() => {
@@ -94,7 +98,7 @@ export const useGoogleMap = ({
           { lat: place.location.lat, lng: place.location.lng },
           {
             title: place.name,
-            icon: getPlaceIcon(place),
+            icon: getPlaceIcon(place, compact),
             animation: google.maps.Animation.DROP
           }
         );
@@ -111,15 +115,15 @@ export const useGoogleMap = ({
     } catch (error) {
       console.error("Error adding place markers:", error);
     }
-  }, [map, places, onMarkerClick, googleMapsLoaded, markers]);
+  }, [map, places, onMarkerClick, googleMapsLoaded, markers, compact]);
   
   // Function to center map on a location
   const centerMapOnLocation = useCallback((location: { lat: number; lng: number }) => {
     if (map && googleMapsLoaded) {
       map.setCenter({ lat: location.lat, lng: location.lng });
-      map.setZoom(15);
+      map.setZoom(compact ? 13 : 15);
     }
-  }, [map, googleMapsLoaded]);
+  }, [map, googleMapsLoaded, compact]);
   
   return {
     mapRef,

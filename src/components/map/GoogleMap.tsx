@@ -11,6 +11,8 @@ interface GoogleMapProps {
   places: (Pharmacy | HealthCenter)[];
   onMarkerClick?: (place: Pharmacy | HealthCenter) => void;
   className?: string;
+  height?: string;
+  compact?: boolean;
 }
 
 export interface GoogleMapRefHandle {
@@ -18,7 +20,14 @@ export interface GoogleMapRefHandle {
 }
 
 const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
-  ({ userLocation, places, onMarkerClick, className = "w-full h-full" }, ref) => {
+  ({ 
+    userLocation, 
+    places, 
+    onMarkerClick, 
+    className = "w-full", 
+    height = "h-full", 
+    compact = false 
+  }, ref) => {
     const {
       mapRef,
       googleMapsLoaded,
@@ -27,7 +36,8 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
     } = useGoogleMap({
       userLocation,
       places,
-      onMarkerClick
+      onMarkerClick,
+      compact
     });
     
     // Expose methods via ref
@@ -37,16 +47,16 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
     
     // Show loading state
     if (!googleMapsLoaded) {
-      return <MapLoading className={className} />;
+      return <MapLoading className={`${className} ${height}`} />;
     }
     
     // Show error if map failed to load
     if (loadError) {
-      return <MapError error={loadError} className={className} />;
+      return <MapError error={loadError} className={`${className} ${height}`} />;
     }
     
     return (
-      <div className={`relative ${className} rounded-lg overflow-hidden shadow-lg border border-gray-200`}>
+      <div className={`relative ${className} ${height} ${compact ? 'rounded-md' : 'rounded-lg'} overflow-hidden ${compact ? 'shadow-md' : 'shadow-lg'} border border-gray-200`}>
         <div ref={mapRef} className="w-full h-full"></div>
         
         {!userLocation && <LocationAlert />}

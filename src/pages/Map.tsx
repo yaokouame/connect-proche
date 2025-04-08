@@ -63,30 +63,29 @@ const Map = () => {
 
   return (
     <Layout>
-      <div className="container py-6 space-y-6">
+      <div className="container py-4 space-y-4">
         <Card className="bg-gradient-to-r from-health-blue/10 to-white border-none shadow-md">
-          <CardHeader>
-            <CardTitle className="text-health-blue text-2xl">{t('map.locationSearch')}</CardTitle>
+          <CardHeader className="py-3">
+            <CardTitle className="text-health-blue text-xl">{t('map.locationSearch')}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4">
+          <CardContent className="py-2">
+            <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
                   <Input
                     type="text"
                     placeholder={t('map.searchPlaceholder')}
-                    className="pl-10 py-6 text-base"
+                    className="pl-9 py-4 text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <Button 
                   className="flex-shrink-0 bg-health-blue hover:bg-health-teal"
-                  size="lg"
                   onClick={handleUseMyLocation}
                 >
-                  <MapPin className="mr-2 h-5 w-5" /> {t('map.useMyLocation')}
+                  <MapPin className="mr-2 h-4 w-4" /> {t('map.useMyLocation')}
                 </Button>
               </div>
             </div>
