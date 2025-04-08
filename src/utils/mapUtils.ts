@@ -1,6 +1,6 @@
 
 import { Pharmacy, HealthCenter } from "@/types/user";
-import { searchNearbyPlaces, getPlaceDetails } from "@/services/mapService";
+import { searchNearbyPlaces, getPlaceDetails as fetchPlaceDetails } from "@/services/mapService";
 
 // Helper function to calculate distance between two coordinates (in km)
 export const calculateDistance = (
@@ -77,7 +77,7 @@ export const getPlaceDetails = async (
   placeId: string
 ): Promise<Pharmacy | HealthCenter | null> => {
   try {
-    return await getPlaceDetails(placeId);
+    return await fetchPlaceDetails(placeId);
   } catch (error) {
     console.error("Error fetching place details:", error);
     return null;
