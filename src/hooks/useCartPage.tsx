@@ -63,7 +63,20 @@ export const useCartPage = () => {
     0
   );
   
-  const shippingCost = shippingMethod === "express" ? 7999 : 3999;
+  // Shipping costs based on method
+  const getShippingCost = (method: string) => {
+    switch (method) {
+      case "express":
+        return 7999;
+      case "pickup":
+        return 1999;
+      case "standard":
+      default:
+        return 3999;
+    }
+  };
+  
+  const shippingCost = getShippingCost(shippingMethod);
   const discount = couponCode === "SANTE10" ? Math.round(subtotal * 0.1) : 0;
   const total = subtotal + shippingCost - discount;
 

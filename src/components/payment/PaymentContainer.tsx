@@ -71,8 +71,7 @@ const PaymentContainer = () => {
       expiryDate, 
       cvv, 
       insuranceProvider, 
-      policyNumber, 
-      toast
+      policyNumber
     )) {
       return;
     }

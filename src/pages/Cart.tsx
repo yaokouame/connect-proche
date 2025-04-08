@@ -76,6 +76,7 @@ const Cart = () => {
             handleShippingInfoChange={handleShippingInfoChange}
             setCountry={setCountry}
             shippingMethod={shippingMethod}
+            setShippingMethod={setShippingMethod}
             total={total}
             prevStep={prevStep}
             nextStep={nextStep}
