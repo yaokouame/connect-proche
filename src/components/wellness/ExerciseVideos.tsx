@@ -1,162 +1,111 @@
 
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { getExerciseVideos } from "@/services/wellnessService";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExerciseVideo } from "@/types/health";
-import { Clock, Play } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { PlayCircle, Heart } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { getExerciseVideos } from "@/services/wellnessService";
 
-interface VideoDialogProps {
-  video: ExerciseVideo | null;
-  isOpen: boolean;
-  onClose: () => void;
+interface VideoItem {
+  id: string;
+  title: string;
+  thumbnail: string;
+  duration: string;
+  embedUrl: string;
+  category: "yoga" | "cardio" | "strength" | "flexibility";
 }
 
-const VideoDialog: React.FC<VideoDialogProps> = ({ video, isOpen, onClose }) => {
-  if (!video) return null;
+const ExerciseVideos = () => {
+  const [activeCategory, setActiveCategory] = useState<"yoga" | "cardio" | "strength" | "flexibility">("yoga");
   
+  // In a real app, this would come from an API call
+  const videos = getExerciseVideos();
+  
+  const filteredVideos = videos.filter(video => video.category === activeCategory);
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px]">
-        <DialogHeader>
-          <DialogTitle>{video.title}</DialogTitle>
-          <DialogDescription>
-            {video.difficulty} · {video.duration} minutes
-          </DialogDescription>
-        </DialogHeader>
-        <div className="aspect-video bg-gray-100 rounded-md flex items-center justify-center">
-          {/* In a real application, this would be a video player */}
-          <div className="text-center">
-            <Play className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">Le lecteur vidéo s'afficherait ici</p>
-          </div>
-        </div>
-        <div className="mt-4">
-          <h3 className="font-medium mb-2">Description</h3>
-          <p className="text-gray-600">{video.description}</p>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center">
+          <PlayCircle className="mr-2 h-5 w-5 text-health-blue" />
+          Vidéos d'exercices
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Tabs value={activeCategory} onValueChange={(value) => setActiveCategory(value as any)}>
+          <TabsList className="grid grid-cols-4 mb-4">
+            <TabsTrigger value="yoga">Yoga</TabsTrigger>
+            <TabsTrigger value="cardio">Cardio</TabsTrigger>
+            <TabsTrigger value="strength">Force</TabsTrigger>
+            <TabsTrigger value="flexibility">Souplesse</TabsTrigger>
+          </TabsList>
+          
+          {["yoga", "cardio", "strength", "flexibility"].map(category => (
+            <TabsContent key={category} value={category} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredVideos.map(video => (
+                  <VideoCard key={video.id} video={video} />
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 };
 
-const ExerciseVideos: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [selectedVideo, setSelectedVideo] = useState<ExerciseVideo | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  const { data: videos = [], isLoading } = useQuery({
-    queryKey: ['exerciseVideos', activeCategory],
-    queryFn: () => getExerciseVideos(activeCategory === 'all' ? undefined : activeCategory),
-  });
-  
-  const handleOpenVideo = (video: ExerciseVideo) => {
-    setSelectedVideo(video);
-    setIsDialogOpen(true);
-  };
-  
-  const getDifficultyColor = (difficulty: ExerciseVideo['difficulty']): string => {
-    switch (difficulty) {
-      case 'beginner':
-        return 'bg-green-100 text-green-800';
-      case 'intermediate':
-        return 'bg-amber-100 text-amber-800';
-      case 'advanced':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-  
-  const getDifficultyLabel = (difficulty: ExerciseVideo['difficulty']): string => {
-    switch (difficulty) {
-      case 'beginner':
-        return 'Débutant';
-      case 'intermediate':
-        return 'Intermédiaire';
-      case 'advanced':
-        return 'Avancé';
-      default:
-        return difficulty;
-    }
-  };
+interface VideoCardProps {
+  video: VideoItem;
+}
 
+const VideoCard = ({ video }: VideoCardProps) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  
+  const handleFavoriteToggle = () => {
+    setIsFavorite(!isFavorite);
+  };
+  
   return (
-    <div>
-      <Tabs value={activeCategory} onValueChange={setActiveCategory}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="all">Tous</TabsTrigger>
-          <TabsTrigger value="yoga">Yoga</TabsTrigger>
-          <TabsTrigger value="meditation">Méditation</TabsTrigger>
-          <TabsTrigger value="cardio">Cardio</TabsTrigger>
-          <TabsTrigger value="strength">Musculation</TabsTrigger>
-          <TabsTrigger value="flexibility">Étirements</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeCategory}>
-          {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <Card key={i} className="animate-pulse">
-                  <div className="aspect-video bg-gray-200 rounded-t-md"></div>
-                  <CardHeader>
-                    <div className="h-5 bg-gray-200 rounded mb-2 w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
+    <Card className="overflow-hidden">
+      <div className="relative">
+        <AspectRatio ratio={16/9}>
+          {isPlaying ? (
+            <iframe 
+              src={video.embedUrl} 
+              title={video.title}
+              className="w-full h-full"
+              allowFullScreen
+            />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {videos.map((video) => (
-                <Card key={video.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                  <div 
-                    className="aspect-video bg-gray-100 relative cursor-pointer group"
-                    onClick={() => handleOpenVideo(video)}
-                  >
-                    <img 
-                      src={video.thumbnailUrl} 
-                      alt={video.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full bg-white bg-opacity-80 flex items-center justify-center">
-                        <Play className="h-8 w-8 text-health-blue" />
-                      </div>
-                    </div>
-                  </div>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{video.title}</CardTitle>
-                    <CardDescription className="flex items-center text-sm">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {video.duration} minutes
-                    </CardDescription>
-                  </CardHeader>
-                  <CardFooter className="pt-0 flex justify-between">
-                    <Badge variant="outline" className={getDifficultyColor(video.difficulty)}>
-                      {getDifficultyLabel(video.difficulty)}
-                    </Badge>
-                    <Button variant="ghost" size="sm" onClick={() => handleOpenVideo(video)}>
-                      Voir
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+            <div 
+              className="bg-cover bg-center w-full h-full flex items-center justify-center cursor-pointer"
+              style={{ backgroundImage: `url(${video.thumbnail})` }}
+              onClick={() => setIsPlaying(true)}
+            >
+              <div className="w-16 h-16 bg-health-blue rounded-full flex items-center justify-center text-white">
+                <PlayCircle className="h-10 w-10" />
+              </div>
+              <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 text-xs rounded">
+                {video.duration}
+              </div>
             </div>
           )}
-        </TabsContent>
-      </Tabs>
+        </AspectRatio>
+        
+        <button 
+          className={`absolute top-2 right-2 p-1 rounded-full ${isFavorite ? 'bg-red-500 text-white' : 'bg-white text-gray-500'}`}
+          onClick={handleFavoriteToggle}
+        >
+          <Heart className="h-5 w-5" fill={isFavorite ? "white" : "none"} />
+        </button>
+      </div>
       
-      <VideoDialog 
-        video={selectedVideo} 
-        isOpen={isDialogOpen} 
-        onClose={() => setIsDialogOpen(false)} 
-      />
-    </div>
+      <CardContent className="p-3">
+        <h3 className="font-medium text-sm">{video.title}</h3>
+      </CardContent>
+    </Card>
   );
 };
 

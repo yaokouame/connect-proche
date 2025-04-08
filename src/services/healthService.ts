@@ -1,121 +1,121 @@
 
-import { VitalSign, ConnectedDevice } from "@/types/health";
+import { VitalSign } from "@/types/health";
 
-// Mock data generator for vital signs
-const generateMockVitalSigns = (
-  userId: string,
-  type: VitalSign['type'],
-  count: number,
-  baseValue: number,
-  variance: number,
-  unit: string
-): VitalSign[] => {
-  const result: VitalSign[] = [];
-  const now = new Date();
-  
-  for (let i = 0; i < count; i++) {
-    // Generate data points for the last 30 days
-    const date = new Date(now);
-    date.setDate(date.getDate() - (count - i - 1));
-    
-    // Add some randomness to the value
-    const randomVariance = (Math.random() - 0.5) * variance;
-    let value: number | string = baseValue + randomVariance;
-    
-    // Format blood pressure as "systolic/diastolic"
-    if (type === 'blood_pressure') {
-      const diastolic = Math.round(value * 0.65);
-      value = `${Math.round(value)}/${diastolic}`;
-    } else {
-      value = Math.round(value * 10) / 10; // Round to 1 decimal place
-    }
-    
-    result.push({
-      id: `${type}-${i}`,
-      userId,
-      type,
-      value,
-      unit,
-      timestamp: date.toISOString(),
-      notes: i % 5 === 0 ? "Mesure après activité physique" : undefined,
-      device: i % 3 === 0 ? "Montre connectée" : "Application mobile"
-    });
-  }
-  
-  return result;
-};
-
-// Mock data service for health metrics
-export const getUserVitalSigns = async (userId: string) => {
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  return {
-    bloodPressure: generateMockVitalSigns(userId, 'blood_pressure', 30, 120, 10, 'mmHg'),
-    heartRate: generateMockVitalSigns(userId, 'heart_rate', 30, 75, 15, 'bpm'),
-    bloodSugar: generateMockVitalSigns(userId, 'blood_sugar', 30, 5.6, 1.2, 'mmol/L'),
-    weight: generateMockVitalSigns(userId, 'weight', 30, 70, 2, 'kg'),
-    temperature: generateMockVitalSigns(userId, 'temperature', 30, 36.8, 0.5, '°C'),
-    oxygen: generateMockVitalSigns(userId, 'oxygen', 30, 97, 2, '%')
-  };
-};
-
-// Mock data for connected devices
-export const getUserConnectedDevices = async (userId: string): Promise<ConnectedDevice[]> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
+export const getVitalSigns = (userId: string): VitalSign[] => {
+  // Mock data - in a real app, this would come from an API
   return [
     {
-      id: 'device-1',
-      name: 'Montre Fitbit Versa 3',
-      type: 'smartwatch',
-      lastSync: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-      status: 'connected'
+      id: "vs1",
+      userId,
+      type: "blood-pressure",
+      value: "120/80",
+      unit: "mmHg",
+      date: "2023-03-25T08:30:00",
+      notes: "Morning reading",
     },
     {
-      id: 'device-2',
-      name: 'Tensiomètre Omron X7',
-      type: 'blood_pressure_monitor',
-      lastSync: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-      status: 'connected'
+      id: "vs2",
+      userId,
+      type: "heart-rate",
+      value: "72",
+      unit: "bpm",
+      date: "2023-03-25T08:35:00",
+      notes: "Resting",
     },
     {
-      id: 'device-3',
-      name: 'Balance connectée Withings Body+',
-      type: 'scale',
-      lastSync: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-      status: 'connected'
+      id: "vs3",
+      userId,
+      type: "blood-glucose",
+      value: "100",
+      unit: "mg/dL",
+      date: "2023-03-25T07:15:00",
+      notes: "Fasting",
     },
     {
-      id: 'device-4',
-      name: 'Glucomètre FreeStyle Libre',
-      type: 'glucose_monitor',
-      lastSync: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-      status: 'disconnected'
-    }
+      id: "vs4",
+      userId,
+      type: "weight",
+      value: "70.5",
+      unit: "kg",
+      date: "2023-03-25T07:00:00",
+    },
+    {
+      id: "vs5",
+      userId,
+      type: "temperature",
+      value: "36.6",
+      unit: "°C",
+      date: "2023-03-24T19:30:00",
+    },
+    {
+      id: "vs6",
+      userId,
+      type: "blood-pressure",
+      value: "118/78",
+      unit: "mmHg",
+      date: "2023-03-24T08:30:00",
+      notes: "Morning reading",
+    },
+    {
+      id: "vs7",
+      userId,
+      type: "heart-rate",
+      value: "75",
+      unit: "bpm",
+      date: "2023-03-24T08:35:00",
+      notes: "Resting",
+    },
   ];
 };
 
-// Add a new vital sign reading
-export const addVitalSignReading = async (reading: Omit<VitalSign, 'id'>): Promise<VitalSign> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  // In a real app, this would be a POST to an API
-  return {
-    ...reading,
-    id: `reading-${Date.now()}`
+export const addVitalSign = (
+  userId: string,
+  vitalSign: Omit<VitalSign, "id" | "userId" | "date">
+): VitalSign => {
+  // In a real app, this would be sent to an API
+  const newVitalSign: VitalSign = {
+    id: `vs-${Date.now()}`,
+    userId,
+    date: new Date().toISOString(),
+    ...vitalSign,
   };
+  
+  return newVitalSign;
 };
 
-// Connect a new device
-export const connectDevice = async (deviceInfo: { name: string; type: string }): Promise<ConnectedDevice> => {
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // In a real app, this would initiate a device pairing process
-  return {
-    id: `device-${Date.now()}`,
-    name: deviceInfo.name,
-    type: deviceInfo.type,
-    lastSync: new Date().toISOString(),
-    status: 'connected'
-  };
+// Add mock function for medication reminders to fix the import error
+export interface MedicationReminder {
+  id: string;
+  medicationName: string;
+  time: string;
+  frequency: string;
+  startDate: string;
+  endDate?: string;
+  notes?: string;
+  active: boolean;
+}
+
+export const getMedicationReminders = (userId: string): MedicationReminder[] => {
+  // Mock data - in a real app, this would come from an API
+  return [
+    {
+      id: "rem-1",
+      medicationName: "Amoxicilline",
+      time: "8:00",
+      frequency: "daily",
+      startDate: "2023-09-15",
+      endDate: "2023-09-22",
+      notes: "Prendre avec de la nourriture",
+      active: true
+    },
+    {
+      id: "rem-2",
+      medicationName: "Doliprane",
+      time: "14:00",
+      frequency: "asNeeded",
+      startDate: "2023-08-20",
+      notes: "Prendre en cas de douleur",
+      active: true
+    }
+  ];
 };

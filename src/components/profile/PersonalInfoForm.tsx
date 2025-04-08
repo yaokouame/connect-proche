@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { User } from "@/types/user";
+import { User, PatientProfile } from "@/types/user";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PersonalInfoFormProps {
@@ -17,7 +17,9 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
   const { language } = useLanguage();
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || "");
-  const [cmuCardNumber, setCmuCardNumber] = useState(currentUser?.cmuCardNumber || "");
+  const [cmuCardNumber, setCmuCardNumber] = useState(
+    (currentUser as PatientProfile)?.cmuCardNumber || ""
+  );
   
   // Location fields
   const [city, setCity] = useState(currentUser?.location?.city || "");
@@ -35,7 +37,7 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
         ...currentUser,
         name,
         email,
-        cmuCardNumber,
+        ...(currentUser.role === 'patient' && { cmuCardNumber }),
         location: {
           city,
           region,
