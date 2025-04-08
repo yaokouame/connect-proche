@@ -1,11 +1,22 @@
 
 import React from "react";
-import { Truck, Info, Check } from "lucide-react";
+import { Truck, Info, Check, AlertTriangle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
-const CashOnDeliveryForm = () => {
+interface CashOnDeliveryFormProps {
+  onTermsAcceptedChange?: (accepted: boolean) => void;
+}
+
+const CashOnDeliveryForm = ({ onTermsAcceptedChange }: CashOnDeliveryFormProps) => {
   const [termsAccepted, setTermsAccepted] = React.useState(false);
+  
+  const handleTermsChange = (checked: boolean) => {
+    setTermsAccepted(checked);
+    if (onTermsAcceptedChange) {
+      onTermsAcceptedChange(checked);
+    }
+  };
   
   return (
     <div className="space-y-4 p-4 border rounded-lg">
@@ -27,11 +38,18 @@ const CashOnDeliveryForm = () => {
         </div>
       </div>
       
+      <div className="bg-amber-50 border border-amber-100 p-3 rounded-md text-amber-700 text-sm flex items-start">
+        <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+        <div>
+          <p>Le livreur exigera une pièce d'identité. Assurez-vous d'être présent avec une pièce d'identité valide lors de la livraison.</p>
+        </div>
+      </div>
+      
       <div className="mt-4 flex items-center space-x-2">
         <Checkbox 
           id="terms" 
           checked={termsAccepted}
-          onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+          onCheckedChange={(checked) => handleTermsChange(checked === true)}
         />
         <Label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">
           J'accepte de payer à la livraison et je comprends que des frais supplémentaires s'appliquent

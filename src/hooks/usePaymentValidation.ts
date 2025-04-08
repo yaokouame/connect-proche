@@ -10,7 +10,8 @@ export const usePaymentValidation = () => {
     cvv: string,
     insuranceProvider: string,
     policyNumber: string,
-    mobileNumber: string
+    mobileNumber: string,
+    codTermsAccepted?: boolean
   ): boolean => {
     if (method === "card") {
       if (!cardNumber.trim() || cardNumber.replace(/\s/g, "").length < 16) {
@@ -72,6 +73,15 @@ export const usePaymentValidation = () => {
           variant: "destructive",
           title: "Numéro de téléphone invalide",
           description: "Veuillez saisir un numéro de téléphone valide",
+        });
+        return false;
+      }
+    } else if (method === "cod") {
+      if (!codTermsAccepted) {
+        toastFunction({
+          variant: "destructive",
+          title: "Conditions non acceptées",
+          description: "Veuillez accepter les conditions de paiement à la livraison",
         });
         return false;
       }
