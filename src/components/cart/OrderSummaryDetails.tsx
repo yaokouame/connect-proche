@@ -22,22 +22,22 @@ const OrderSummaryDetails = ({
     <div className="space-y-4">
       <div className="flex justify-between">
         <span>Sous-total</span>
-        <span>{subtotal.toFixed(2)} €</span>
+        <span>{subtotal.toFixed(0)} F CFA</span>
       </div>
       <div className="flex justify-between">
         <span>Livraison</span>
-        <span>{shippingCost.toFixed(2)} €</span>
+        <span>{shippingCost.toFixed(0)} F CFA</span>
       </div>
       {discount > 0 && (
         <div className="flex justify-between text-green-600">
           <span>Réduction</span>
-          <span>-{discount.toFixed(2)} €</span>
+          <span>-{discount.toFixed(0)} F CFA</span>
         </div>
       )}
       <Separator />
       <div className="flex justify-between font-bold">
         <span>Total</span>
-        <span>{total.toFixed(2)} €</span>
+        <span>{total.toFixed(0)} F CFA</span>
       </div>
       
       {estimatedDelivery && (

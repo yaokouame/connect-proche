@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -51,7 +50,6 @@ const OrderConfirmation = () => {
   };
   
   const handleViewOnMap = () => {
-    // This would typically navigate to a map view with the delivery location
     toast({
       title: "Carte de livraison",
       description: "Fonctionnalité de carte en cours de développement",
@@ -118,7 +116,7 @@ const OrderConfirmation = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Total</p>
-                <p className="font-bold">{total} €</p>
+                <p className="font-bold">{total} F CFA</p>
               </div>
             </div>
             
@@ -192,7 +190,7 @@ const OrderConfirmation = () => {
                     <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
                   </div>
                   <div className="text-right font-medium">
-                    {(item.product.price * item.quantity).toFixed(2)} €
+                    {(item.product.price * item.quantity).toFixed(0)} F CFA
                   </div>
                 </div>
               ))}
@@ -203,22 +201,22 @@ const OrderConfirmation = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Sous-total</span>
-                <span>{(orderData.subtotal || 0).toFixed(2)} €</span>
+                <span>{(orderData.subtotal || 0).toFixed(0)} F CFA</span>
               </div>
               <div className="flex justify-between">
                 <span>Livraison</span>
-                <span>{(orderData.shippingCost || 0).toFixed(2)} €</span>
+                <span>{(orderData.shippingCost || 0).toFixed(0)} F CFA</span>
               </div>
               {(orderData.discount || 0) > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>Réduction</span>
-                  <span>-{(orderData.discount || 0).toFixed(2)} €</span>
+                  <span>-{(orderData.discount || 0).toFixed(0)} F CFA</span>
                 </div>
               )}
               <Separator className="my-2" />
               <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>{total} €</span>
+                <span>{total} F CFA</span>
               </div>
             </div>
           </CardContent>

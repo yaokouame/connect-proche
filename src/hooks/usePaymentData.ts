@@ -15,7 +15,7 @@ interface PaymentData {
 export const usePaymentData = (): PaymentData => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [shippingInfo, setShippingInfo] = useState<any>(null);
-  const [shippingCost, setShippingCost] = useState(3.99);
+  const [shippingCost, setShippingCost] = useState(3999);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
@@ -39,7 +39,7 @@ export const usePaymentData = (): PaymentData => {
     }
     
     if (savedShippingMethod) {
-      setShippingCost(savedShippingMethod === "express" ? 7.99 : 3.99);
+      setShippingCost(savedShippingMethod === "express" ? 7999 : 3999);
     }
     
     if (savedCouponCode && savedCouponCode === "SANTE10") {

@@ -134,7 +134,7 @@ export const usePaymentProcessing = (
         trackingNumber,
         orderDate: format(new Date(), "dd/MM/yyyy"),
         estimatedDelivery,
-        total: total.toFixed(2),
+        total: total.toFixed(0),
         subtotal: subtotal,
         discount: discount,
         shippingCost: shippingCost,

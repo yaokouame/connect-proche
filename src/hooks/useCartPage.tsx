@@ -59,7 +59,7 @@ export const useCartPage = () => {
     0
   );
   
-  const shippingCost = shippingMethod === "express" ? 7.99 : 3.99;
+  const shippingCost = shippingMethod === "express" ? 7999 : 3999;
   const discount = couponCode === "SANTE10" ? subtotal * 0.1 : 0;
   const total = subtotal + shippingCost - discount;
 

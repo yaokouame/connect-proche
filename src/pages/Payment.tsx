@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -26,7 +25,6 @@ const Payment = () => {
   const { toast } = useToast();
   const { currentUser } = useUser();
   
-  // Use custom hooks for payment data and processing
   const { 
     cartItems, 
     shippingInfo, 
@@ -47,25 +45,21 @@ const Payment = () => {
     validatePayment,
   } = usePaymentProcessing(total, cartItems, shippingInfo, subtotal, discount, shippingCost);
   
-  // Card form state
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolder, setCardHolder] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   
-  // Insurance form state
   const [insuranceProvider, setInsuranceProvider] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [hasVoucher, setHasVoucher] = useState(false);
   
-  // Redirect to cart if no shipping info is available
   useEffect(() => {
     if (cartItems.length === 0) {
       navigate("/cart");
     }
   }, [cartItems, navigate]);
   
-  // Auto-fill cardholder name from user data
   useEffect(() => {
     if (currentUser?.name && cardHolder === "") {
       setCardHolder(currentUser.name);
@@ -131,13 +125,11 @@ const Payment = () => {
           <div className="lg:col-span-2 space-y-6">
             <h2 className="text-xl font-semibold mb-4">Choisissez votre mode de paiement</h2>
             
-            {/* Payment method selector */}
             <PaymentMethodSelector
               selectedMethod={paymentMethod}
               onMethodChange={setPaymentMethod}
             />
             
-            {/* Card payment form */}
             {paymentMethod === "card" && (
               <CardPaymentForm
                 cardNumber={cardNumber}
@@ -151,7 +143,6 @@ const Payment = () => {
               />
             )}
             
-            {/* Insurance payment form */}
             {paymentMethod === "insurance" && (
               <InsurancePaymentForm
                 insuranceProvider={insuranceProvider}
@@ -163,7 +154,6 @@ const Payment = () => {
               />
             )}
             
-            {/* PayPal payment option */}
             {paymentMethod === "paypal" && (
               <div className="p-4 border rounded-lg">
                 <p className="text-center mb-4">
@@ -193,14 +183,13 @@ const Payment = () => {
                     Traitement en cours...
                   </>
                 ) : (
-                  `Payer ${total.toFixed(2)} €`
+                  `Payer ${total.toFixed(0)} F CFA`
                 )}
               </Button>
             </div>
           </div>
           
           <div>
-            {/* Order summary */}
             <OrderSummary
               cartItems={cartItems}
               shippingCost={shippingCost}
@@ -208,13 +197,11 @@ const Payment = () => {
               total={total}
             />
             
-            {/* Shipping information */}
             <ShippingInfoDisplay shippingInfo={shippingInfo} />
           </div>
         </div>
       </div>
       
-      {/* Success dialog */}
       <PaymentSuccessDialog 
         isOpen={isSuccessDialogOpen} 
         onOpenChange={setIsSuccessDialogOpen}

@@ -29,7 +29,7 @@ const ProductCard = React.memo(({ product, onAddToCart, enableVoiceHelp = false 
   // Optimize the speech function 
   const speakProductInfo = useCallback(() => {
     if ('speechSynthesis' in window) {
-      const text = `${product.name}. ${product.description}. Prix: ${product.price} euros.`;
+      const text = `${product.name}. ${product.description}. Prix: ${product.price} francs CFA.`;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'fr-FR';
       window.speechSynthesis.speak(utterance);
@@ -38,7 +38,7 @@ const ProductCard = React.memo(({ product, onAddToCart, enableVoiceHelp = false 
 
   // Memoize the price display
   const formattedPrice = useMemo(() => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(product.price);
+    return `${product.price.toFixed(0)} F CFA`;
   }, [product.price]);
 
   return (
