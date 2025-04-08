@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -33,7 +32,7 @@ export interface PatientProfile extends User {
   role: 'patient';
   dateOfBirth?: string;
   allergies?: string[];
-  medications?: Medication[];
+  medications?: string[];
   medicalHistory?: string[];
   vaccinations?: Vaccination[];
   emergencyContacts?: EmergencyContact[];
@@ -70,6 +69,9 @@ export interface Professional {
   bio?: string;
   education?: string[];
   languages?: string[];
+  phone?: string;
+  email?: string;
+  consultationTypes?: string[];
 }
 
 export interface Medication {
@@ -80,15 +82,6 @@ export interface Medication {
   instructions?: string;
   startDate?: string;
   endDate?: string;
-}
-
-export interface Vaccination {
-  name: string;
-  date: string;
-  expiryDate?: string;
-  batchNumber?: string;
-  provider?: string;
-  notes?: string;
 }
 
 export interface EmergencyContact {
@@ -236,4 +229,14 @@ export interface Address {
   country: string;
   phone: string;
   isDefault?: boolean;
+}
+
+export interface Vaccination {
+  id: string;
+  name: string;
+  date: string;
+  expiryDate?: string;
+  batchNumber?: string;
+  provider?: string;
+  notes?: string;
 }

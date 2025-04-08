@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import {
@@ -59,7 +58,7 @@ const Professionals = () => {
       name: "Dr. Sophie Laurent",
       specialty: "Médecin généraliste",
       location: "Paris, 75008",
-      photoUrl: "",
+      profileImage: "",
       rating: 4.8,
       reviewCount: 124,
       availability: [
@@ -77,7 +76,7 @@ const Professionals = () => {
       name: "Dr. Thomas Benoit",
       specialty: "Cardiologue",
       location: "Lyon, 69002",
-      photoUrl: "",
+      profileImage: "",
       rating: 4.9,
       reviewCount: 87,
       availability: [
@@ -95,7 +94,7 @@ const Professionals = () => {
       name: "Dr. Marie Dubois",
       specialty: "Dermatologue",
       location: "Marseille, 13006",
-      photoUrl: "",
+      profileImage: "",
       rating: 4.7,
       reviewCount: 62,
       availability: [
@@ -112,7 +111,7 @@ const Professionals = () => {
       name: "Dr. Jean Martin",
       specialty: "Pédiatre",
       location: "Bordeaux, 33000",
-      photoUrl: "",
+      profileImage: "",
       rating: 4.9,
       reviewCount: 103,
       availability: [
@@ -130,7 +129,7 @@ const Professionals = () => {
       name: "Dr. Claire Moreau",
       specialty: "Psychiatre",
       location: "Lille, 59000",
-      photoUrl: "",
+      profileImage: "",
       rating: 4.6,
       reviewCount: 78,
       availability: [
@@ -297,7 +296,7 @@ const Professionals = () => {
                       <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-shrink-0">
                           <Avatar className="h-24 w-24">
-                            <AvatarImage src={professional.photoUrl} alt={professional.name} />
+                            <AvatarImage src={professional.profileImage} alt={professional.name} />
                             <AvatarFallback className="text-xl">
                               {professional.name.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
