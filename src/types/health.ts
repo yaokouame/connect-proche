@@ -1,4 +1,3 @@
-
 export interface VitalSign {
   id: string;
   userId: string;
@@ -86,6 +85,7 @@ export interface WellnessGoal {
 export interface WellnessGoalsProps {
   goals: WellnessGoal[];
   isLoading?: boolean;
+  onAddGoal?: () => void;
 }
 
 export interface WellnessRecommendation {

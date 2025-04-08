@@ -2,7 +2,14 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getUserActivities, getUserSleep, getUserNutrition, getUserHydration, getUserWellnessGoals, getWellnessRecommendations } from "@/services/wellnessService";
+import { 
+  getUserActivities, 
+  getUserSleep, 
+  getUserNutrition, 
+  getUserHydration, 
+  getUserWellnessGoals, 
+  getWellnessRecommendations 
+} from "@/services/wellnessService";
 import { WellnessGoal, PhysicalActivity, SleepEntry, NutritionEntry, HydrationEntry } from "@/types/health";
 import { useQuery } from "@tanstack/react-query";
 
