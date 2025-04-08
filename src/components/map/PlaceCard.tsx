@@ -1,19 +1,12 @@
 
-import React from 'react';
-import { Pharmacy, HealthCenter } from '@/types/user';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { Pharmacy, HealthCenter } from "@/types/user";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Phone, Clock, Navigation, BadgeCheck, Wallet, Map as MapIcon, Star } from "lucide-react";
-import { formatDistance, calculateDistance } from '@/utils/mapUtils';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDistance } from "@/utils/mapUtils";
+import { MapPin, Phone, Clock, Activity, Shield } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PlaceCardProps {
   place: Pharmacy | HealthCenter;
@@ -22,127 +15,94 @@ interface PlaceCardProps {
   viewOnMap: (location: { lat: number; lng: number }) => void;
 }
 
-const PlaceCard = ({ place, userLocation, userInsuranceProvider, viewOnMap }: PlaceCardProps) => {
+const PlaceCard: React.FC<PlaceCardProps> = ({
+  place,
+  userLocation,
+  userInsuranceProvider,
+  viewOnMap,
+}) => {
   const { t } = useLanguage();
-  const distanceValue = userLocation ? calculateDistance(userLocation, place.location) : null;
-  const distance = distanceValue !== null ? formatDistance(distanceValue) : '';
-
-  // Check if the place is a health center by checking for the services property
-  const isHealthCenter = 'services' in place;
-
-  // Function to render star rating
-  const renderRating = (rating: number = 0) => {
-    return (
-      <div className="flex items-center">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            className={cn(
-              "h-4 w-4", 
-              star <= Math.round(rating) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
-            )}
-          />
-        ))}
-        <span className="ml-1 text-sm font-medium">
-          {rating.toFixed(1)}
-        </span>
-      </div>
-    );
-  };
-
+  
+  // Calculate if user insurance is accepted
+  const isUserInsuranceAccepted = 
+    userInsuranceProvider && 
+    place.acceptedInsuranceProviders && 
+    place.acceptedInsuranceProviders.includes(userInsuranceProvider);
+  
   return (
-    <Card 
-      key={place.id} 
-      className="overflow-hidden hover:border-health-blue transition-colors duration-200"
-    >
-      <CardHeader className="pb-2 bg-gradient-to-r from-health-blue/10 to-transparent">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-health-blue">{place.name}</CardTitle>
-            <CardDescription className="flex items-start mt-1">
-              <MapPin className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0 text-gray-500" />
-              <span className="line-clamp-2">{place.address}</span>
-            </CardDescription>
-          </div>
-          {place.rating && (
-            <div className="flex-shrink-0">
-              {renderRating(place.rating)}
-            </div>
-          )}
+    <Card className="mb-4 overflow-hidden border-l-4 border-l-primary">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xl font-semibold">{place.name}</CardTitle>
+        <div className="flex items-center text-sm text-muted-foreground">
+          <MapPin className="mr-1 h-4 w-4" />
+          <span>{place.address}</span>
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
-        <div className="space-y-3">
-          <div className="flex items-center text-sm text-gray-700">
-            <Phone className="h-4 w-4 mr-2 flex-shrink-0 text-health-blue" />
-            <span className="truncate">{place.phone}</span>
+      
+      <CardContent className="pb-2 pt-0">
+        {/* Phone and hours */}
+        <div className="grid gap-2">
+          <div className="flex items-center">
+            <Phone className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>{place.phone}</span>
           </div>
           
-          <div className="flex items-center text-sm text-gray-700">
-            <Clock className="h-4 w-4 mr-2 flex-shrink-0 text-health-blue" />
-            <span className="line-clamp-2">{place.hours}</span>
+          <div className="flex items-center">
+            <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>{place.hours}</span>
           </div>
           
-          {userLocation && distance && (
-            <div className="flex items-center text-sm font-medium text-health-teal">
-              <Navigation className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>{distance} {t('map.fromYourLocation')}</span>
+          {userLocation && place.location && (
+            <div className="flex items-center font-medium">
+              <span>{formatDistance(userLocation, place.location)} {t('map.fromYourLocation')}</span>
             </div>
           )}
-          
-          {isHealthCenter && 'services' in place && place.services && place.services.length > 0 && (
-            <div className="mt-3">
-              <p className="text-sm font-medium mb-2 text-gray-700">{t('map.services')}:</p>
-              <div className="flex flex-wrap gap-1">
-                {place.services.map((service, idx) => (
-                  <span 
-                    key={idx} 
-                    className="text-xs bg-health-blue/10 text-health-blue px-2 py-1 rounded-full"
-                  >
-                    {service}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {place.acceptedInsuranceProviders && place.acceptedInsuranceProviders.length > 0 && (
-            <div className="mt-3">
-              <p className="text-sm font-medium flex items-center mb-2 text-gray-700">
-                <Wallet className="h-4 w-4 mr-1 flex-shrink-0 text-health-blue" />
-                {t('map.insuranceAccepted')}:
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {place.acceptedInsuranceProviders.map((provider, idx) => {
-                  const isUserInsurance = provider === userInsuranceProvider;
-                  return (
-                    <Badge 
-                      key={idx} 
-                      variant={isUserInsurance ? "default" : "outline"}
-                      className={isUserInsurance ? "bg-green-600 hover:bg-green-700" : ""}
-                    >
-                      {provider}
-                      {isUserInsurance && (
-                        <BadgeCheck className="h-3 w-3 ml-1" />
-                      )}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          
-          <Button 
-            variant="outline"
-            size="sm" 
-            onClick={() => viewOnMap(place.location)}
-            className="flex items-center w-full mt-3 border-health-blue text-health-blue hover:bg-health-blue hover:text-white"
-          >
-            <MapIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span className="truncate">{t('map.viewOnMap')}</span>
-          </Button>
         </div>
+        
+        {/* Insurance accepted */}
+        <div className="mt-3">
+          <h4 className="text-sm font-medium mb-1.5">{t('generic.acceptedInsurance')}:</h4>
+          <div className="flex flex-wrap gap-1.5">
+            {place.acceptedInsuranceProviders && place.acceptedInsuranceProviders.length > 0 ? (
+              place.acceptedInsuranceProviders.map((provider, index) => (
+                <Badge key={index} variant={isUserInsuranceAccepted && provider === userInsuranceProvider ? "default" : "outline"}>
+                  {provider}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-sm text-muted-foreground">{t('generic.noInsurance')}</span>
+            )}
+          </div>
+        </div>
+        
+        {/* Services for HealthCenter */}
+        {'services' in place && place.services && place.services.length > 0 && (
+          <div className="mt-3">
+            <h4 className="text-sm font-medium mb-1.5">
+              <Activity className="inline-block mr-1 h-4 w-4" /> 
+              {t('generic.services')}:
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+              {place.services.map((service, index) => (
+                <Badge key={index} variant="secondary">
+                  {service}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
+      
+      <CardFooter className="pt-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full" 
+          onClick={() => viewOnMap(place.location)}
+        >
+          {t('map.showOnMap')}
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

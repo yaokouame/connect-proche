@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import GoogleMap, { GoogleMapRefHandle } from "./GoogleMap";
 import MapFilters from "./MapFilters";
 import PlaceList from "./PlaceList";
+import PlaceCard from "./PlaceCard";
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { useMap } from "@/hooks/useMap";
 import AdBanner from "../ads/AdBanner";

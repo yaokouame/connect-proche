@@ -129,6 +129,22 @@ export default {
   "map.sortAlphabetical": "Alphabétique",
   "map.all": "Tous",
   "map.fromYourLocation": "de votre position",
+  
+  // Reviews translations
+  "reviews.giveReview": "Donner un avis sur",
+  "reviews.yourRating": "Votre évaluation",
+  "reviews.yourComment": "Votre commentaire",
+  "reviews.shareDoctorExperience": "Partagez votre expérience avec ce médecin...",
+  "reviews.publish": "Publier",
+  "reviews.ratingRequired": "L'évaluation est requise",
+
+  // Common translations
+  "common.cancel": "Annuler",
+  "common.save": "Enregistrer",
+  "common.delete": "Supprimer",
+  "common.edit": "Modifier",
+  "common.add": "Ajouter",
+  "common.language": "Langue",
 
   // Generic translations
   "generic.loading": "Chargement...",
@@ -333,19 +349,25 @@ export default {
   "generic.preciseLocation": "Localisation précise",
   "generic.locationUpdated": "Localisation mise à jour",
   "generic.locationUpdateFailed": "Échec de la mise à jour de la localisation",
-  
-  // Reviews translations
-  "reviews.giveReview": "Donner un avis sur",
-  "reviews.yourRating": "Votre évaluation",
-  "reviews.yourComment": "Votre commentaire",
-  "reviews.shareDoctorExperience": "Partagez votre expérience avec ce médecin...",
-  "reviews.publish": "Publier",
-  "reviews.ratingRequired": "L'évaluation est requise",
-  
-  // Common translations
-  "common.cancel": "Annuler",
-  "common.save": "Enregistrer",
-  "common.delete": "Supprimer",
-  "common.edit": "Modifier",
-  "common.add": "Ajouter"
+  "generic.locationUpdateTimeout": "Délai d'attente de la mise à jour de la localisation dépassé",
+  "generic.locationUpdateError": "Erreur de la mise à jour de la localisation",
+  "generic.locationUpdatePermissionDenied": "Permission de la mise à jour de la localisation refusée",
+  "generic.locationUpdateUnavailable": "Mise à jour de la localisation non disponible",
+  "generic.locationUpdateDisabled": "Mise à jour de la localisation désactivée",
+  "generic.locationUpdateNotSupported": "Mise à jour de la localisation non supportée",
+  "generic.locationUpdateNotAvailable": "Mise à jour de la localisation non disponible",
+  "generic.locationUpdateNotEnabled": "Mise à jour de la localisation non activée",
+  "generic.locationUpdateNotAuthorized": "Mise à jour de la localisation non autorisée",
+  "generic.locationUpdateNotAllowed": "Mise à jour de la localisation non autorisée",
+  "generic.locationUpdateNotPermitted": "Mise à jour de la localisation non autorisée",
+  "generic.locationUpdateNotGranted": "Mise à jour de la localisation non accordée",
+  "generic.locationUpdateNotProvided": "Mise à jour de la localisation non fournie",
+  "generic.locationUpdateNotSupportedByDevice": "Mise à jour de la localisation non supportée par l'appareil",
+  "generic.locationUpdateNotSupportedByPlatform": "Mise à jour de la localisation non supportée par la plateforme",
+  "generic.locationUpdateNotSupportedByBrowser": "Mise à jour de la localisation non supportée par le navigateur",
+  "generic.locationUpdateNotSupportedByApplication": "Mise à jour de la localisation non supportée par l'application",
+  "generic.locationUpdateNotSupportedBySystem": "Mise à jour de la localisation non supportée par le système",
+  "generic.locationUpdateNotSupportedByHardware": "Mise à jour de la localisation non supportée par le matériel",
+  "generic.locationUpdateNotSupportedBySoftware": "Mise à jour de la localisation non supportée par le logiciel",
+  "generic.locationUpdateNotSupportedByApiAuthentication": "Mise à jour de la localisation non supportée par l'authentification de l'API"
 }
