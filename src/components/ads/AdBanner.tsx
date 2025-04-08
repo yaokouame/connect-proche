@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface AdBannerProps {
   className?: string;
@@ -14,12 +15,12 @@ const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => {
           <h3 className="font-semibold text-sm md:text-base">ConnectProche Premium</h3>
           <p className="text-xs md:text-sm mt-1">Accès illimité aux professionnels de santé</p>
         </div>
-        <a 
-          href="/premium" 
+        <Link 
+          to="/premium" 
           className="bg-white text-health-blue text-xs font-medium px-3 py-1 rounded flex items-center hover:bg-gray-100 transition-colors"
         >
           Configurer <ExternalLink className="h-3 w-3 ml-1" />
-        </a>
+        </Link>
       </div>
     </div>
   );

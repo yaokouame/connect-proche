@@ -18,6 +18,7 @@ import MedicalTutorials from "@/pages/MedicalTutorials";
 import Wellness from "@/pages/Wellness";
 import Cart from "@/pages/Cart";
 import OrderConfirmation from "@/pages/OrderConfirmation";
+import Premium from "@/pages/Premium";
 
 import { UserProvider } from "@/contexts/UserContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -46,6 +47,7 @@ function App() {
             <Route path="/wellness" element={<Wellness />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/premium" element={<Premium />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster />
