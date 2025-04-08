@@ -14,6 +14,11 @@ export interface GoogleMapRefHandle {
   centerMapOnLocation: (location: { lat: number; lng: number }) => void;
 }
 
+// Helper function to convert our simple location object to Google's LatLng
+const convertToGoogleLatLng = (location: { lat: number; lng: number }): google.maps.LatLng => {
+  return new google.maps.LatLng(location.lat, location.lng);
+};
+
 const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
   ({ userLocation, places, onMarkerClick, className = "w-full h-full" }, ref) => {
     const mapRef = useRef<HTMLDivElement>(null);
@@ -25,14 +30,15 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
       if (!mapRef.current || map) return;
       
       const initialLocation = userLocation || { lat: 5.3599, lng: -4.0083 }; // Default to Abidjan
+      const googleLatLng = convertToGoogleLatLng(initialLocation);
       
       const newMap = new google.maps.Map(mapRef.current, {
-        center: initialLocation,
+        center: googleLatLng,
         zoom: 12,
         fullscreenControl: true,
         mapTypeControl: true,
         streetViewControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeId: "roadmap",
       });
       
       setMap(newMap);
@@ -43,11 +49,11 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
       if (!map || !userLocation) return;
       
       // Center map on user location
-      map.setCenter(userLocation);
+      map.setCenter(convertToGoogleLatLng(userLocation));
       
       // Add marker for user location
       new google.maps.Marker({
-        position: userLocation,
+        position: convertToGoogleLatLng(userLocation),
         map,
         icon: {
           url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
@@ -69,7 +75,7 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
         const isPharmacy = 'type' in place && place.type === "pharmacy";
         
         const marker = new google.maps.Marker({
-          position: place.location,
+          position: convertToGoogleLatLng(place.location),
           map,
           animation: google.maps.Animation.DROP,
           title: place.name,
@@ -96,7 +102,7 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
     useImperativeHandle(ref, () => ({
       centerMapOnLocation: (location: { lat: number; lng: number }) => {
         if (map) {
-          map.setCenter(location);
+          map.setCenter(convertToGoogleLatLng(location));
           map.setZoom(15);
         }
       },

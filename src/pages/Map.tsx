@@ -1,11 +1,10 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search } from "lucide-react";
-import MapToggle from "@/components/map/MapToggle";
-import MapFilters from "@/components/map/MapFilters";
 import MapInteractive from "@/components/map/MapInteractive";
 import MapTabContent from "@/components/map/MapTabContent";
 import { useMap } from "@/hooks/useMap";
@@ -13,7 +12,6 @@ import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PatientProfile } from "@/types/user";
-import { GoogleMapRef } from "@/types/map";
 import EmergencyButton from "@/components/emergency/EmergencyButton";
 
 const Map = () => {
@@ -22,12 +20,6 @@ const Map = () => {
   const { t } = useLanguage();
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterByInsurance, setFilterByInsurance] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"pharmacies" | "centers">("pharmacies");
-  const [showMap, setShowMap] = useState(true);
-  
-  const mapRef = useRef<HTMLDivElement>(null);
-  const googleMapRef = useRef<GoogleMapRef>(null);
   
   const userInsuranceProvider = currentUser?.role === 'patient' 
     ? (currentUser as PatientProfile)?.insuranceInfo?.provider || null 
@@ -41,17 +33,15 @@ const Map = () => {
     sortedPharmacies,
     sortedHealthCenters,
     setSearchTerm: setMapSearchTerm,
-    setFilterByInsurance: setMapFilterByInsurance,
+    setFilterByInsurance,
     setSortBy,
+    activeTab,
+    setActiveTab
   } = useMap();
 
   useEffect(() => {
     setMapSearchTerm(searchTerm);
   }, [searchTerm, setMapSearchTerm]);
-
-  useEffect(() => {
-    setMapFilterByInsurance(filterByInsurance);
-  }, [filterByInsurance, setMapFilterByInsurance]);
 
   useEffect(() => {
     if (error) {
@@ -64,7 +54,7 @@ const Map = () => {
   }, [error, toast, t]);
 
   const viewOnMap = (location: { lat: number; lng: number }) => {
-    googleMapRef.current?.centerMapOnLocation(location);
+    // This will be handled in the MapInteractive component
   };
 
   return (
@@ -93,31 +83,11 @@ const Map = () => {
                   <MapPin className="mr-2 h-4 w-4" /> {t('map.useMyLocation')}
                 </Button>
               </div>
-              
-              <div className="flex items-center justify-between">
-                <MapToggle showMap={showMap} setShowMap={setShowMap} />
-                <MapFilters 
-                  filterByInsurance={filterByInsurance}
-                  setFilterByInsurance={setFilterByInsurance}
-                  userInsuranceProvider={userInsuranceProvider}
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                  sortBy="distance" 
-                  setSortBy={setSortBy}
-                />
-              </div>
             </div>
           </CardContent>
         </Card>
         
-        <MapInteractive 
-          showMap={showMap}
-          userLocation={userLocation}
-          places={activeTab === "pharmacies" ? sortedPharmacies : sortedHealthCenters}
-          mapLoaded={mapLoaded}
-          mapRef={mapRef}
-          googleMapRef={googleMapRef}
-        />
+        <MapInteractive />
         
         <MapTabContent 
           activeTab={activeTab}
@@ -126,7 +96,7 @@ const Map = () => {
           sortedHealthCenters={sortedHealthCenters}
           loading={loading}
           searchTerm={searchTerm}
-          filterByInsurance={filterByInsurance}
+          filterByInsurance={null}
           userLocation={userLocation}
           userInsuranceProvider={userInsuranceProvider}
           viewOnMap={viewOnMap}

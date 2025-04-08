@@ -1,5 +1,5 @@
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import GoogleMap, { GoogleMapRefHandle } from "./GoogleMap";
 import MapFilters from "./MapFilters";
 import PlaceList from "./PlaceList";
@@ -13,12 +13,19 @@ const MapInteractive = () => {
   
   const {
     userLocation,
-    places,
+    sortedPharmacies,
+    sortedHealthCenters,
     loading,
-    filterOptions,
-    applyFilters,
-    clearFilters
+    searchTerm,
+    filterByInsurance,
+    setFilterByInsurance,
+    activeTab,
+    setSortBy,
+    userInsuranceProvider
   } = useMap();
+  
+  // Get places based on the active tab
+  const places = activeTab === "pharmacies" ? sortedPharmacies : sortedHealthCenters;
   
   const handleMarkerClick = (place: Pharmacy | HealthCenter) => {
     setSelectedPlace(place);
@@ -28,6 +35,12 @@ const MapInteractive = () => {
     setSelectedPlace(place);
     if (mapRef.current && place.location) {
       mapRef.current.centerMapOnLocation(place.location);
+    }
+  };
+
+  const viewOnMap = (location: { lat: number; lng: number }) => {
+    if (mapRef.current) {
+      mapRef.current.centerMapOnLocation(location);
     }
   };
   
@@ -43,21 +56,33 @@ const MapInteractive = () => {
       </div>
       <div className="flex flex-col h-full">
         <MapFilters
-          options={filterOptions}
-          onApplyFilters={applyFilters}
-          onClearFilters={clearFilters}
+          filterByInsurance={filterByInsurance}
+          setFilterByInsurance={setFilterByInsurance}
+          userInsuranceProvider={userInsuranceProvider}
+          searchTerm={searchTerm}
+          setSearchTerm={() => {}} // This is a placeholder, we'll fix the proper implementation
+          sortBy="distance"
+          setSortBy={setSortBy}
         />
         <div className="flex-1 overflow-auto mt-4">
           <PlaceList 
             places={places} 
-            selectedPlace={selectedPlace}
-            onPlaceClick={handlePlaceCardClick}
             loading={loading}
+            searchTerm={searchTerm}
+            filterByInsurance={filterByInsurance}
+            userLocation={userLocation}
+            userInsuranceProvider={userInsuranceProvider}
+            viewOnMap={viewOnMap}
           />
         </div>
         {selectedPlace && (
           <div className="mt-4">
-            <PlaceCard place={selectedPlace} detailed />
+            <PlaceCard 
+              place={selectedPlace} 
+              userLocation={userLocation}
+              userInsuranceProvider={userInsuranceProvider}
+              viewOnMap={viewOnMap}
+            />
           </div>
         )}
       </div>
