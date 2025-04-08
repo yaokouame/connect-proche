@@ -44,10 +44,14 @@ const PaymentContainer = () => {
   const [cardHolder, setCardHolder] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
+  const [is3DSecureEnabled, setIs3DSecureEnabled] = useState(true);
   
   const [insuranceProvider, setInsuranceProvider] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [hasVoucher, setHasVoucher] = useState(false);
+  
+  // Mobile payment fields
+  const [mobileNumber, setMobileNumber] = useState("");
   
   // Prefill data if user is logged in
   useEffect(() => {
@@ -71,7 +75,8 @@ const PaymentContainer = () => {
       expiryDate, 
       cvv, 
       insuranceProvider, 
-      policyNumber
+      policyNumber,
+      mobileNumber
     )) {
       return;
     }
@@ -84,7 +89,9 @@ const PaymentContainer = () => {
         expiryDate,
         cvv,
         insuranceProvider,
-        policyNumber
+        policyNumber,
+        mobileNumber,
+        is3DSecureEnabled
       }
     );
   };
@@ -122,9 +129,13 @@ const PaymentContainer = () => {
             setPolicyNumber={setPolicyNumber}
             hasVoucher={hasVoucher}
             setHasVoucher={setHasVoucher}
+            mobileNumber={mobileNumber}
+            setMobileNumber={setMobileNumber}
             handlePayButtonClick={handlePayButtonClick}
             isProcessing={isProcessing}
             total={total}
+            is3DSecureEnabled={is3DSecureEnabled}
+            setIs3DSecureEnabled={setIs3DSecureEnabled}
           />
         </div>
         

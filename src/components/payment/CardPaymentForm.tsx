@@ -2,7 +2,8 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Lock } from "lucide-react";
+import { CreditCard, Lock, ShieldCheck } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface CardPaymentFormProps {
   cardNumber: string;
@@ -13,6 +14,8 @@ interface CardPaymentFormProps {
   setExpiryDate: (value: string) => void;
   cvv: string;
   setCvv: (value: string) => void;
+  is3DSecureEnabled: boolean;
+  setIs3DSecureEnabled: (value: boolean) => void;
 }
 
 const CardPaymentForm = ({
@@ -24,6 +27,8 @@ const CardPaymentForm = ({
   setExpiryDate,
   cvv,
   setCvv,
+  is3DSecureEnabled,
+  setIs3DSecureEnabled
 }: CardPaymentFormProps) => {
   // Formater le numéro de carte avec des espaces tous les 4 chiffres
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,6 +121,24 @@ const CardPaymentForm = ({
             />
           </div>
         </div>
+        
+        <div className="flex items-center space-x-2 pt-2">
+          <Switch
+            id="3d-secure"
+            checked={is3DSecureEnabled}
+            onCheckedChange={setIs3DSecureEnabled}
+          />
+          <Label htmlFor="3d-secure" className="cursor-pointer flex items-center">
+            <ShieldCheck className="h-4 w-4 mr-1 text-green-500" />
+            <span>Activer la vérification 3D Secure</span>
+          </Label>
+        </div>
+        
+        {is3DSecureEnabled && (
+          <div className="bg-green-50 border border-green-100 p-2 rounded text-sm text-green-700">
+            La vérification 3D Secure vous redirigera vers l'interface sécurisée de votre banque
+          </div>
+        )}
       </div>
       
       <div className="mt-4 flex items-center justify-center bg-gray-50 p-2 rounded text-sm text-gray-600">

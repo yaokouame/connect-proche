@@ -1,15 +1,18 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, CreditCard, Smartphone, Phone, BanknoteIcon, Wallet, ShieldCheck } from "lucide-react";
 import PaymentMethodSelector from "@/components/payment/PaymentMethodSelector";
 import CardPaymentForm from "@/components/payment/CardPaymentForm";
 import InsurancePaymentForm from "@/components/payment/InsurancePaymentForm";
 import PaymentProcessingIndicator from "@/components/payment/PaymentProcessingIndicator";
+import MobilePaymentForm from "@/components/payment/MobilePaymentForm";
+import BankTransferForm from "@/components/payment/BankTransferForm";
+import CashOnDeliveryForm from "@/components/payment/CashOnDeliveryForm";
 
 interface PaymentFormProps {
-  paymentMethod: "card" | "insurance" | "paypal";
-  setPaymentMethod: (method: "card" | "insurance" | "paypal") => void;
+  paymentMethod: "card" | "insurance" | "paypal" | "mobile" | "transfer" | "cod";
+  setPaymentMethod: (method: "card" | "insurance" | "paypal" | "mobile" | "transfer" | "cod") => void;
   cardNumber: string;
   setCardNumber: (value: string) => void;
   cardHolder: string;
@@ -24,9 +27,13 @@ interface PaymentFormProps {
   setPolicyNumber: (value: string) => void;
   hasVoucher: boolean;
   setHasVoucher: (value: boolean) => void;
+  mobileNumber: string;
+  setMobileNumber: (value: string) => void;
   handlePayButtonClick: () => void;
   isProcessing: boolean;
   total: number;
+  is3DSecureEnabled: boolean;
+  setIs3DSecureEnabled: (value: boolean) => void;
 }
 
 const PaymentForm = ({
@@ -46,9 +53,13 @@ const PaymentForm = ({
   setPolicyNumber,
   hasVoucher,
   setHasVoucher,
+  mobileNumber,
+  setMobileNumber,
   handlePayButtonClick,
   isProcessing,
-  total
+  total,
+  is3DSecureEnabled,
+  setIs3DSecureEnabled
 }: PaymentFormProps) => {
   return (
     <div className="space-y-6">
@@ -69,6 +80,8 @@ const PaymentForm = ({
           setExpiryDate={setExpiryDate}
           cvv={cvv}
           setCvv={setCvv}
+          is3DSecureEnabled={is3DSecureEnabled}
+          setIs3DSecureEnabled={setIs3DSecureEnabled}
         />
       )}
       
@@ -97,8 +110,23 @@ const PaymentForm = ({
           </div>
         </div>
       )}
+
+      {paymentMethod === "mobile" && (
+        <MobilePaymentForm
+          mobileNumber={mobileNumber}
+          setMobileNumber={setMobileNumber}
+        />
+      )}
+
+      {paymentMethod === "transfer" && (
+        <BankTransferForm />
+      )}
+
+      {paymentMethod === "cod" && (
+        <CashOnDeliveryForm />
+      )}
       
-      <PaymentProcessingIndicator />
+      <PaymentProcessingIndicator paymentMethod={paymentMethod} />
       
       <div className="mt-6">
         <Button 
@@ -115,6 +143,13 @@ const PaymentForm = ({
             `Payer ${total.toFixed(0)} F CFA`
           )}
         </Button>
+      </div>
+
+      <div className="flex items-center justify-center mt-4">
+        <ShieldCheck className="h-5 w-5 text-green-600 mr-2" />
+        <p className="text-sm text-gray-600">
+          Toutes les transactions sont sécurisées et chiffrées
+        </p>
       </div>
     </div>
   );

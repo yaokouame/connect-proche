@@ -3,13 +3,14 @@ import { toast as toastFunction } from "@/components/ui/use-toast";
 
 export const usePaymentValidation = () => {
   const validatePayment = (
-    method: "card" | "insurance" | "paypal",
+    method: "card" | "insurance" | "paypal" | "mobile" | "transfer" | "cod",
     cardNumber: string,
     cardHolder: string,
     expiryDate: string,
     cvv: string,
     insuranceProvider: string,
-    policyNumber: string
+    policyNumber: string,
+    mobileNumber: string
   ): boolean => {
     if (method === "card") {
       if (!cardNumber.trim() || cardNumber.replace(/\s/g, "").length < 16) {
@@ -62,6 +63,15 @@ export const usePaymentValidation = () => {
           variant: "destructive",
           title: "Numéro de police manquant",
           description: "Veuillez saisir votre numéro de police d'assurance",
+        });
+        return false;
+      }
+    } else if (method === "mobile") {
+      if (!mobileNumber.trim() || mobileNumber.replace(/\s/g, "").length < 8) {
+        toastFunction({
+          variant: "destructive",
+          title: "Numéro de téléphone invalide",
+          description: "Veuillez saisir un numéro de téléphone valide",
         });
         return false;
       }
