@@ -196,14 +196,14 @@ const Map = () => {
             </Select>
             
             <Select 
-              value={filterByInsurance || ""} 
-              onValueChange={(value) => setFilterByInsurance(value || null)}
+              value={filterByInsurance || "all"} 
+              onValueChange={(value) => setFilterByInsurance(value === "all" ? null : value)}
             >
               <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="Filtrer par assurance" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toutes les assurances</SelectItem>
+                <SelectItem value="all">Toutes les assurances</SelectItem>
                 <SelectItem value="CPAM">CPAM</SelectItem>
                 <SelectItem value="MGEN">MGEN</SelectItem>
                 <SelectItem value="AXA">AXA</SelectItem>

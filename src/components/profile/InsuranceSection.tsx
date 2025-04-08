@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -93,18 +92,20 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
     if (setInsuranceVouchers) {
       const voucher: InsuranceVoucher = {
         id: `voucher-${Date.now()}`,
-        provider: newVoucher.provider || "",
-        voucherNumber: newVoucher.voucherNumber || "",
+        userId: 'user-123',
+        insuranceProvider: newVoucher.provider || "",
+        policyNumber: newVoucher.voucherNumber || "",
+        coverageType: newVoucher.coverageType || "",
         validFrom: newVoucher.validFrom || "",
         validUntil: newVoucher.validUntil || "",
-        coverageType: newVoucher.coverageType || "",
-        coverageAmount: newVoucher.coverageAmount || 0,
-        isPercentage: newVoucher.isPercentage || false,
-        forService: newVoucher.forService,
-        forPharmacy: newVoucher.forPharmacy,
-        forHealthCenter: newVoucher.forHealthCenter,
+        coveragePercentage: newVoucher.coverageAmount || 0,
+        allowedPharmacies: [],
+        allowedHealthCenters: [],
         status: "active",
-        qrCodeUrl: `/placeholder.svg` // In a real app, generate a QR code
+        qrCode: `/placeholder.svg`,
+        voucherCode: newVoucher.voucherNumber || "",
+        coverageDetails: [],
+        additionalNotes: '',
       };
 
       setInsuranceVouchers([...(insuranceVouchers || []), voucher]);
@@ -255,8 +256,8 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
                 
                 <div className="flex items-start mb-2">
                   <div className="flex-1">
-                    <h5 className="font-medium">{voucher.provider}</h5>
-                    <p className="text-sm text-gray-600">Bon n° {voucher.voucherNumber}</p>
+                    <h5 className="font-medium">{voucher.insuranceProvider}</h5>
+                    <p className="text-sm text-gray-600">Bon n° {voucher.policyNumber}</p>
                   </div>
                   <div>
                     {getStatusBadge(voucher.status)}
@@ -279,24 +280,27 @@ const InsuranceSection: React.FC<InsuranceSectionProps> = ({
                   <div className="flex items-center">
                     <Percent className="h-4 w-4 mr-1 text-gray-500" />
                     <span>
-                      Couverture: {voucher.coverageAmount}
+                      Couverture: {voucher.coveragePercentage}
                       {voucher.isPercentage ? '%' : '€'}
                     </span>
                   </div>
                 </div>
                 
-                {(voucher.forService || voucher.forPharmacy || voucher.forHealthCenter) && (
+                {(voucher.allowedPharmacies || voucher.allowedHealthCenters) && (
                   <div className="text-sm text-gray-600 mb-3">
                     <p className="font-medium mb-1">Valable pour:</p>
                     <ul className="list-disc list-inside">
-                      {voucher.forService && <li>{voucher.forService}</li>}
-                      {voucher.forPharmacy && <li>Pharmacie: {voucher.forPharmacy}</li>}
-                      {voucher.forHealthCenter && <li>Centre: {voucher.forHealthCenter}</li>}
+                      {voucher.allowedPharmacies && voucher.allowedPharmacies.length > 0 && (
+                        <li>Pharmacie: {voucher.allowedPharmacies.join(', ')}</li>
+                      )}
+                      {voucher.allowedHealthCenters && voucher.allowedHealthCenters.length > 0 && (
+                        <li>Centre: {voucher.allowedHealthCenters.join(', ')}</li>
+                      )}
                     </ul>
                   </div>
                 )}
                 
-                {voucher.qrCodeUrl && (
+                {voucher.qrCode && (
                   <div className="flex justify-center mt-2">
                     <Button variant="outline" size="sm" className="flex items-center">
                       <QrCode className="h-4 w-4 mr-1" />

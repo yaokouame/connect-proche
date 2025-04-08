@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -80,7 +79,6 @@ const MedicationReminders = () => {
       description: `Rappel pour ${reminder.medicationName} créé avec succès.`,
     });
     
-    // Reset form
     setNewReminder({
       medicationName: "",
       time: "",
@@ -118,7 +116,6 @@ const MedicationReminders = () => {
     }
   };
 
-  // Group reminders by time of day
   const morningReminders = reminders.filter(r => {
     const hourNum = parseInt(r.time.split(':')[0]);
     return r.active && hourNum >= 5 && hourNum < 12;
@@ -208,8 +205,8 @@ const MedicationReminders = () => {
                       <Input
                         id="endDate"
                         type="date"
-                        value={newReminder.endDate}
-                        onChange={(e) => setNewReminder({...newReminder, endDate: e.target.value})}
+                        value={newReminder.endDate || ""}
+                        onChange={(e) => setNewReminder({...newReminder, endDate: e.target.value || undefined})}
                       />
                     </div>
                   </div>
@@ -217,14 +214,15 @@ const MedicationReminders = () => {
                     <Label htmlFor="notes">Notes (optionnel)</Label>
                     <Input
                       id="notes"
-                      value={newReminder.notes}
-                      onChange={(e) => setNewReminder({...newReminder, notes: e.target.value})}
-                      placeholder="Instructions ou notes additionnelles"
+                      value={newReminder.notes || ""}
+                      onChange={(e) => setNewReminder({...newReminder, notes: e.target.value || undefined})}
+                      placeholder="Ex: Prendre avant le repas"
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddReminder}>Ajouter le rappel</Button>
+                  <Button variant="outline" onClick={() => {}}>Annuler</Button>
+                  <Button onClick={handleAddReminder}>Ajouter</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
