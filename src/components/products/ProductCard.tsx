@@ -19,13 +19,31 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
+  // Map product categories to appropriate images
+  const getCategoryImage = (category: string): string => {
+    switch(category.toLowerCase()) {
+      case "analgésique":
+        return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
+      case "anti-inflammatoire":
+        return "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9";
+      case "antibiotique":
+        return "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1";
+      case "respiratoire":
+        return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
+      case "digestif":
+        return "https://images.unsplash.com/photo-1501286353178-1ec871214838";
+      default:
+        return product.imageUrl || "/placeholder.svg";
+    }
+  };
+
   return (
     <Card key={product.id} className="overflow-hidden">
       <div className="aspect-square relative bg-gray-100">
         <img
-          src={product.imageUrl}
+          src={getCategoryImage(product.category)}
           alt={product.name}
-          className="object-contain w-full h-full p-6"
+          className="object-cover w-full h-full"
         />
         {product.requiresPrescription && (
           <Badge className="absolute top-2 right-2 bg-yellow-500">
