@@ -1,46 +1,38 @@
 
 // Page specific translations
 export default {
-  // Settings page translations
-  "settings.title": "Paramètres",
-  "settings.language": "Langue",
-  "settings.theme": "Thème",
-  "settings.notifications": "Notifications",
-  "settings.accessibility": "Accessibilité",
-  "settings.fontSize": "Taille de la police",
-  "settings.highContrast": "Contraste élevé",
+  "appointments.title": "Mes Rendez-vous",
+  "appointments.upcoming": "Prochains rendez-vous",
+  "appointments.past": "Rendez-vous passés",
+  "appointments.empty": "Aucun rendez-vous",
+  
+  "professionals.title": "Professionnels de Santé",
+  "professionals.specialty": "Spécialité",
+  "professionals.location": "Localisation",
+  "professionals.search.placeholder": "Rechercher un professionnel...",
+  "professionals.noResults": "Aucun professionnel trouvé avec ces critères",
+  "professionals.appointment": "Impossible de prendre un rendez-vous",
+  
+  "medications.title": "Mes Médicaments",
+  "medications.prescriptions": "Mes Prescriptions",
+  "medications.reminders": "Rappels",
+  
+  "health.title": "Suivi Santé",
+  "health.overview": "Aperçu",
+  "health.trends": "Tendances",
+  "health.devices": "Appareils Connectés",
+  
+  "premium.title": "Services Premium",
+  "premium.benefits": "Avantages",
+  "premium.pricing": "Tarification",
+  
+  "wellness.title": "Bien-être",
+  "wellness.activity": "Activité Physique",
+  "wellness.nutrition": "Nutrition",
+  "wellness.sleep": "Sommeil",
 
-  // Home page translations
-  "home.welcome": "Bienvenue",
-  "home.description": "Ceci est la page d'accueil de notre application.",
-  "home.getStarted": "Commencer",
-
-  // Dashboard page translations
-  "dashboard.title": "Tableau de Bord",
-  "dashboard.summary": "Résumé",
-  "dashboard.reports": "Rapports",
-  "dashboard.analytics": "Analytique",
-  "dashboard.tasks": "Tâches",
-  "dashboard.upcomingEvents": "Événements à Venir",
-
-  // Contact page translations
-  "contact.title": "Contactez-nous",
-  "contact.description": "Envoyez-nous un message et nous vous répondrons dès que possible.",
-  "contact.name": "Votre Nom",
-  "contact.email": "Votre Email",
-  "contact.message": "Votre Message",
-  "contact.submit": "Envoyer le Message",
-
-  // About page translations
-  "about.title": "À propos de nous",
-  "about.description": "En savoir plus sur notre application et notre équipe.",
-  "about.team": "Notre Équipe",
-  "about.mission": "Notre Mission",
-  "about.values": "Nos Valeurs",
-
-  // Footer translations
-  "footer.description": "Votre santé à portée de main, n'importe où, n'importe quand.",
-  "footer.quickLinks": "Liens rapides",
-  "footer.contact": "Contact",
-  "footer.rights": "Tous droits réservés",
+  "products.title": "Produits",
+  "products.categories": "Catégories",
+  "products.bestsellers": "Meilleures ventes",
+  "products.promotions": "Promotions",
 }
