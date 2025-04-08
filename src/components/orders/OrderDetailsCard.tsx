@@ -2,11 +2,12 @@
 import React from "react";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Map, Bell } from "lucide-react";
+import { Map, Bell, RefreshCw, MessageSquare, Star } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import OrderStatus from "@/components/orders/OrderStatus";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface OrderDetailsCardProps {
   orderNumber: string;
@@ -36,6 +37,7 @@ const OrderDetailsCard = ({
   setNotificationsEnabled
 }: OrderDetailsCardProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const handleTrackingNotifications = () => {
     setNotificationsEnabled(!notificationsEnabled);
@@ -52,6 +54,31 @@ const OrderDetailsCard = ({
       title: "Carte de livraison",
       description: "Fonctionnalité de carte en cours de développement",
     });
+  };
+
+  const handleRequestReturn = () => {
+    toast({
+      title: "Demande de retour",
+      description: "Nous avons enregistré votre demande de retour pour cette commande",
+    });
+  };
+
+  const handleContactSupport = () => {
+    toast({
+      title: "Service client",
+      description: "Un agent vous contactera bientôt concernant cette commande",
+    });
+  };
+
+  const handleLeaveReview = () => {
+    // Store the products from this order in localStorage for easy access in the Reviews page
+    const orderInfo = {
+      orderNumber,
+      orderDate,
+      from: "order-confirmation"
+    };
+    localStorage.setItem("reviewOrderInfo", JSON.stringify(orderInfo));
+    navigate("/reviews");
   };
   
   return (
@@ -110,6 +137,37 @@ const OrderDetailsCard = ({
           >
             <Map className="h-4 w-4 mr-2" />
             Voir le statut de livraison sur la carte
+          </Button>
+
+          {orderStatus === "delivered" && (
+            <>
+              <Button 
+                variant="outline" 
+                className="w-full mt-2" 
+                onClick={handleRequestReturn}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Demander un retour
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full mt-2" 
+                onClick={handleLeaveReview}
+              >
+                <Star className="h-4 w-4 mr-2" />
+                Laisser un avis
+              </Button>
+            </>
+          )}
+
+          <Button 
+            variant="outline" 
+            className="w-full mt-2" 
+            onClick={handleContactSupport}
+          >
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Contacter le service client
           </Button>
         </div>
       </CardContent>

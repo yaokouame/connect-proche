@@ -3,11 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import OrderConfirmationHeader from "@/components/orders/OrderConfirmationHeader";
 import OrderDetailsCard from "@/components/orders/OrderDetailsCard";
 import OrderAddressCards from "@/components/orders/OrderAddressCards";
 import OrderItemsCard from "@/components/orders/OrderItemsCard";
 import OrderFooter from "@/components/orders/OrderFooter";
+import { OrderStatusType } from "@/types/user/orderTypes";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -15,6 +19,8 @@ const OrderConfirmation = () => {
   const { toast } = useToast();
   const [orderData, setOrderData] = useState<any>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [showReturnDialog, setShowReturnDialog] = useState(false);
+  const [returnReason, setReturnReason] = useState("");
   
   useEffect(() => {
     if (location.state?.orderData) {
@@ -36,6 +42,25 @@ const OrderConfirmation = () => {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleSubmitReturn = () => {
+    if (!returnReason.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez indiquer la raison du retour",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Demande de retour envoyée",
+      description: "Nous avons bien reçu votre demande de retour et la traiterons dans les plus brefs délais",
+    });
+    
+    setShowReturnDialog(false);
+    setReturnReason("");
   };
 
   if (!orderData) {
@@ -83,7 +108,7 @@ const OrderConfirmation = () => {
           trackingNumber={generatedTrackingNumber}
           trackingUrl={trackingUrl}
           carrier={carrier}
-          orderStatus={status}
+          orderStatus={status as OrderStatusType}
           notificationsEnabled={notificationsEnabled}
           setNotificationsEnabled={setNotificationsEnabled}
         />
@@ -105,6 +130,32 @@ const OrderConfirmation = () => {
         
         <OrderFooter email={email} />
       </div>
+
+      <Dialog open={showReturnDialog} onOpenChange={setShowReturnDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Demande de retour</DialogTitle>
+            <DialogDescription>
+              Veuillez nous indiquer la raison de votre retour
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Raison du retour</label>
+              <Textarea
+                placeholder="Expliquez pourquoi vous souhaitez retourner ce produit..."
+                value={returnReason}
+                onChange={(e) => setReturnReason(e.target.value)}
+                rows={5}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReturnDialog(false)}>Annuler</Button>
+            <Button onClick={handleSubmitReturn}>Envoyer la demande</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

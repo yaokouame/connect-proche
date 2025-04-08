@@ -7,13 +7,14 @@ import { Star } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ReviewFormProps {
-  doctorId: string;
-  doctorName: string;
+  entityId: string;
+  entityName: string;
+  entityType: "doctor" | "product";
   onSubmit: (rating: number, comment: string) => void;
   onCancel: () => void;
 }
 
-const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProps) => {
+const ReviewForm = ({ entityId, entityName, entityType, onSubmit, onCancel }: ReviewFormProps) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -31,7 +32,11 @@ const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{t('reviews.giveReview')} {doctorName}</CardTitle>
+        <CardTitle className="text-lg">
+          {entityType === "doctor" 
+            ? `${t('reviews.giveReview')} ${entityName}` 
+            : `Donner votre avis sur ${entityName}`}
+        </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
@@ -58,7 +63,10 @@ const ReviewForm = ({ doctorId, doctorName, onSubmit, onCancel }: ReviewFormProp
             <label htmlFor="comment" className="text-sm font-medium">{t('reviews.yourComment')}</label>
             <Textarea
               id="comment"
-              placeholder={t('reviews.shareDoctorExperience')}
+              placeholder={entityType === "doctor" 
+                ? t('reviews.shareDoctorExperience')
+                : "Partagez votre expérience avec ce produit..."
+              }
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={5}
