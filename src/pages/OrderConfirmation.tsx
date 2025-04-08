@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -7,7 +6,7 @@ import { CheckCircle, Printer, ChevronLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import { OrderStatus } from "@/components/orders/OrderStatus";
+import OrderStatus from "@/components/orders/OrderStatus";
 
 const OrderConfirmation = () => {
   const navigate = useNavigate();
@@ -15,18 +14,14 @@ const OrderConfirmation = () => {
   const { toast } = useToast();
   const [orderData, setOrderData] = useState<any>(null);
   
-  // Récupérer les données de commande depuis le localStorage ou state
   useEffect(() => {
-    // Tenter de récupérer les données du state (payment.tsx)
     if (location.state?.orderData) {
       setOrderData(location.state.orderData);
     } else {
-      // Tenter de récupérer les données du localStorage
       const savedOrderData = localStorage.getItem("latestOrder");
       if (savedOrderData) {
         setOrderData(JSON.parse(savedOrderData));
       } else {
-        // Si aucune donnée n'est disponible, rediriger vers la page d'accueil
         toast({
           title: "Erreur",
           description: "Impossible de récupérer les détails de votre commande",

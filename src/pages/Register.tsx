@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,8 +17,7 @@ import { useRegisterTranslation } from "@/hooks/useRegisterTranslation";
 import PageVoiceHelp from "@/components/voice/PageVoiceHelp";
 
 const Register = () => {
-  const translations = useRegisterTranslation();
-  const { register: t } = translations;
+  const { register: t } = useRegisterTranslation();
   const [accountType, setAccountType] = useState("patient");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,7 +31,6 @@ const Register = () => {
   const [license, setLicense] = useState("");
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
 
-  // Instructions vocales pour chaque champ
   const fieldInstructions = useMemo(() => ({
     name: "Veuillez entrer votre nom complet.",
     email: "Veuillez entrer votre adresse email. Cette adresse sera utilisée pour vous connecter et pour les communications importantes.",
@@ -43,7 +40,6 @@ const Register = () => {
     license: "Veuillez entrer votre numéro de licence ou d'identification professionnelle."
   }), []);
 
-  // Vérifier si les mots de passe correspondent
   useEffect(() => {
     if (confirmPassword) {
       setPasswordMatch(password === confirmPassword);
