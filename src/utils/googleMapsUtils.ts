@@ -60,7 +60,7 @@ export const addMarker = (
   options: {
     title?: string,
     icon?: string | google.maps.Icon,
-    animation?: google.maps.Animation,
+    animation?: typeof google.maps.Animation[keyof typeof google.maps.Animation],
   } = {}
 ): google.maps.Marker => {
   return new google.maps.Marker({
@@ -73,7 +73,7 @@ export const addMarker = (
 };
 
 // Get icon for a place based on its type
-export const getPlaceIcon = (place: { type?: string }): google.maps.Icon => {
+export const getPlaceIcon = (place: { type?: string } | any): google.maps.Icon => {
   const isPharmacy = 'type' in place && place.type === "pharmacy";
   
   return {

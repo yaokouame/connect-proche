@@ -31,16 +31,16 @@ const MapInteractive = () => {
     setSelectedPlace(place);
   };
   
+  const viewOnMap = (location: { lat: number; lng: number }) => {
+    if (mapRef.current) {
+      mapRef.current.centerMapOnLocation(location);
+    }
+  };
+  
   const handlePlaceCardClick = (place: Pharmacy | HealthCenter) => {
     setSelectedPlace(place);
     if (mapRef.current && place.location) {
       mapRef.current.centerMapOnLocation(place.location);
-    }
-  };
-
-  const viewOnMap = (location: { lat: number; lng: number }) => {
-    if (mapRef.current) {
-      mapRef.current.centerMapOnLocation(location);
     }
   };
   
