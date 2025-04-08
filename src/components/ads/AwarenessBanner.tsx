@@ -12,7 +12,7 @@ interface AwarenessBannerProps {
 const AwarenessBanner: React.FC<AwarenessBannerProps> = ({ 
   className = "", 
   variant = 'info',
-  message = "Lavez-vous régulièrement les mains pour prévenir la propagation des maladies" 
+  message = "CMU, NOTRE ASSURANCE SANTÉ EN CÔTE D'IVOIRE - SE FAIRE ENRÔLER" 
 }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const messageLength = message.length;

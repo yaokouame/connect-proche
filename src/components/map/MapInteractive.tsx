@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import GoogleMap, { GoogleMapRefHandle } from "./GoogleMap";
 import MapFilters from "./MapFilters";
@@ -50,11 +49,7 @@ const MapInteractive = () => {
   return (
     <div className="flex flex-col gap-4">
       {/* Awareness Banner */}
-      <AwarenessBanner 
-        className="mb-2" 
-        variant="warning"
-        message="Attention: certaines zones affichent un taux élevé de paludisme. Utilisez des répulsifs et consultez un médecin en cas de symptômes."
-      />
+      <AwarenessBanner className="mb-2" />
       
       {/* Ad Banner */}
       <AdBanner className="mb-2" />

@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <Layout>
       {/* Awareness Banner */}
-      <AwarenessBanner className="mb-6" message="Protégez-vous et vos proches : maintenez une distance de sécurité et portez un masque dans les lieux publics" />
+      <AwarenessBanner className="mb-6" />
       
       {/* Hero section */}
       <section className="relative py-20 bg-gradient-to-br from-health-blue to-health-teal text-white rounded-lg overflow-hidden mb-16">
