@@ -184,6 +184,8 @@ export interface Pharmacy {
     lng: number;
   };
   acceptedInsuranceProviders: string[];
+  rating?: number;
+  placeId?: string;
 }
 
 export interface HealthCenter {
@@ -199,6 +201,8 @@ export interface HealthCenter {
     lng: number;
   };
   acceptedInsuranceProviders: string[];
+  rating?: number;
+  placeId?: string;
 }
 
 export interface CartItem {
