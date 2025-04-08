@@ -3,6 +3,35 @@
  * Service for interacting with Google Maps and Places APIs
  */
 
+// Add TypeScript type declarations for Google Maps API
+declare global {
+  interface Window {
+    google: {
+      maps: {
+        Map: any;
+        Marker: any;
+        InfoWindow: any;
+        LatLng: any;
+        SymbolPath: any;
+        Animation: {
+          DROP: any;
+        };
+        places: {
+          PlacesService: any;
+          PlacesServiceStatus: {
+            OK: string;
+            ZERO_RESULTS: string;
+            OVER_QUERY_LIMIT: string;
+            REQUEST_DENIED: string;
+            INVALID_REQUEST: string;
+            UNKNOWN_ERROR: string;
+          };
+        };
+      };
+    };
+  }
+}
+
 /**
  * Fetches nearby places of a specific type based on location
  * 
@@ -23,18 +52,18 @@ export const fetchNearbyPlaces = (
       return;
     }
 
-    const service = new google.maps.places.PlacesService(
+    const service = new window.google.maps.places.PlacesService(
       document.createElement("div")
     );
 
     const request = {
-      location: new google.maps.LatLng(location.lat, location.lng),
+      location: new window.google.maps.LatLng(location.lat, location.lng),
       radius: radius,
       type: type
     };
 
-    service.nearbySearch(request, (results, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+    service.nearbySearch(request, (results: any[], status: string) => {
+      if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
         resolve(results);
       } else {
         console.error(`Error fetching nearby ${type}:`, status);
@@ -58,7 +87,7 @@ export const getPlaceDetails = (placeId: string): Promise<any> => {
       return;
     }
 
-    const service = new google.maps.places.PlacesService(
+    const service = new window.google.maps.places.PlacesService(
       document.createElement("div")
     );
 
@@ -75,8 +104,8 @@ export const getPlaceDetails = (placeId: string): Promise<any> => {
       ]
     };
 
-    service.getDetails(request, (place, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+    service.getDetails(request, (place: any, status: string) => {
+      if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
         resolve(place);
       } else {
         reject(`Error fetching place details: ${status}`);
@@ -84,25 +113,3 @@ export const getPlaceDetails = (placeId: string): Promise<any> => {
     });
   });
 };
-
-// Add TypeScript type declarations for Google Maps API
-// We need to add this because the Google Maps types aren't included by default
-declare global {
-  interface Window {
-    google: {
-      maps: {
-        Map: any;
-        Marker: any;
-        InfoWindow: any;
-        LatLng: any;
-        SymbolPath: any;
-        places: {
-          PlacesService: any;
-          PlacesServiceStatus: {
-            OK: string;
-          };
-        };
-      };
-    };
-  }
-}
