@@ -1,0 +1,121 @@
+
+import React from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CreditCard } from "lucide-react";
+
+interface CardPaymentFormProps {
+  cardNumber: string;
+  setCardNumber: (value: string) => void;
+  cardHolder: string;
+  setCardHolder: (value: string) => void;
+  expiryDate: string;
+  setExpiryDate: (value: string) => void;
+  cvv: string;
+  setCvv: (value: string) => void;
+}
+
+const CardPaymentForm = ({
+  cardNumber,
+  setCardNumber,
+  cardHolder,
+  setCardHolder,
+  expiryDate,
+  setExpiryDate,
+  cvv,
+  setCvv,
+}: CardPaymentFormProps) => {
+  // Formater le numéro de carte avec des espaces tous les 4 chiffres
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\s/g, "");
+    if (value.length > 16) value = value.slice(0, 16);
+    
+    // Ajouter un espace tous les 4 chiffres
+    let formattedValue = "";
+    for (let i = 0; i < value.length; i++) {
+      if (i > 0 && i % 4 === 0) {
+        formattedValue += " ";
+      }
+      formattedValue += value[i];
+    }
+    
+    setCardNumber(formattedValue);
+  };
+
+  // Formater la date d'expiration (MM/YY)
+  const handleExpiryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 4) value = value.slice(0, 4);
+    
+    if (value.length > 2) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    }
+    
+    setExpiryDate(value);
+  };
+
+  // Limiter CVV à 3 ou 4 chiffres
+  const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 4) value = value.slice(0, 4);
+    setCvv(value);
+  };
+
+  return (
+    <div className="space-y-4 p-4 border rounded-lg">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium">Informations de paiement</h3>
+        <CreditCard className="h-6 w-6 text-gray-500" />
+      </div>
+      
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="card-number">Numéro de carte</Label>
+          <Input
+            id="card-number"
+            placeholder="1234 5678 9012 3456"
+            value={cardNumber}
+            onChange={handleCardNumberChange}
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="card-holder">Titulaire de la carte</Label>
+          <Input
+            id="card-holder"
+            placeholder="Prénom NOM"
+            value={cardHolder}
+            onChange={(e) => setCardHolder(e.target.value)}
+          />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="expiry-date">Date d'expiration</Label>
+            <Input
+              id="expiry-date"
+              placeholder="MM/YY"
+              value={expiryDate}
+              onChange={handleExpiryDateChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="cvv">
+              CVV
+              <span className="ml-1 text-xs text-gray-500">(3 ou 4 chiffres)</span>
+            </Label>
+            <Input
+              id="cvv"
+              placeholder="123"
+              value={cvv}
+              onChange={handleCvvChange}
+              type="password"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CardPaymentForm;

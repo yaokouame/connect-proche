@@ -33,6 +33,7 @@ import { useToast } from "@/components/ui/use-toast";
 import Layout from "@/components/Layout";
 import { useUser } from "@/contexts/UserContext";
 import { CartItem, Product, Prescription } from "@/types/user";
+import ShippingForm from "@/components/payment/ShippingForm";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -45,10 +46,13 @@ const Cart = () => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
   
-  const [shippingMethod, setShippingMethod] = useState("standard");
+  const [shippingMethod, setShippingMethod] = useState<string>(() => {
+    const savedMethod = localStorage.getItem("shippingMethod");
+    return savedMethod || "standard";
+  });
+  
   const [couponCode, setCouponCode] = useState("");
   const [step, setStep] = useState<"cart" | "shipping" | "payment">("cart");
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "insurance">("card");
   
   // Informations de livraison
   const [shippingInfo, setShippingInfo] = useState({
@@ -97,6 +101,7 @@ const Cart = () => {
   // Appliquer un code promo
   const applyCoupon = () => {
     if (couponCode === "SANTE10") {
+      localStorage.setItem("couponCode", couponCode);
       toast({
         title: "Code promo appliqué",
         description: "10% de réduction sur votre commande",
@@ -133,14 +138,19 @@ const Cart = () => {
         });
         return;
       }
-      setStep("payment");
+      
+      // Enregistrer les informations de livraison
+      localStorage.setItem("shippingInfo", JSON.stringify(shippingInfo));
+      localStorage.setItem("shippingMethod", shippingMethod);
+      
+      // Rediriger vers la page de paiement
+      navigate("/payment");
     }
   };
 
   // Retourner à l'étape précédente
   const prevStep = () => {
     if (step === "shipping") setStep("cart");
-    if (step === "payment") setStep("shipping");
   };
 
   // Mettre à jour les informations de livraison
@@ -149,30 +159,6 @@ const Cart = () => {
       ...shippingInfo,
       [e.target.name]: e.target.value,
     });
-  };
-
-  // Finaliser la commande
-  const placeOrder = () => {
-    // Simuler le traitement de la commande
-    toast({
-      title: "Commande en cours de traitement",
-      description: "Veuillez patienter...",
-    });
-
-    // En production, on appellerait une API pour créer la commande
-    setTimeout(() => {
-      // Vider le panier
-      setCartItems([]);
-      localStorage.removeItem("cart");
-
-      toast({
-        title: "Commande confirmée !",
-        description: "Merci pour votre achat. Vous recevrez un email de confirmation.",
-      });
-
-      // Rediriger vers la page de confirmation
-      navigate("/order-confirmation");
-    }, 2000);
   };
 
   if (cartItems.length === 0 && step === "cart") {
@@ -197,7 +183,7 @@ const Cart = () => {
     <Layout>
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold my-8 text-health-dark">
-          {step === "cart" ? "Votre Panier" : step === "shipping" ? "Livraison" : "Paiement"}
+          {step === "cart" ? "Votre Panier" : "Livraison"}
         </h1>
 
         {/* Étapes du processus d'achat */}
@@ -216,8 +202,8 @@ const Cart = () => {
             <span className="text-sm">Livraison</span>
           </div>
           <div className="flex-1 border-t border-gray-200 relative top-4 mx-4"></div>
-          <div className={`flex flex-col items-center ${step === "payment" ? "text-primary" : "text-gray-400"}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${step === "payment" ? "bg-primary text-white" : "bg-gray-200"}`}>
+          <div className="flex flex-col items-center text-gray-400">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center mb-2 bg-gray-200">
               3
             </div>
             <span className="text-sm">Paiement</span>
@@ -336,74 +322,11 @@ const Cart = () => {
                   <CardDescription>Veuillez entrer vos informations de livraison</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="fullName">Nom complet</Label>
-                      <Input
-                        id="fullName"
-                        name="fullName"
-                        value={shippingInfo.fullName}
-                        onChange={handleShippingInfoChange}
-                        placeholder="Prénom Nom"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="streetAddress">Adresse</Label>
-                      <Input
-                        id="streetAddress"
-                        name="streetAddress"
-                        value={shippingInfo.streetAddress}
-                        onChange={handleShippingInfoChange}
-                        placeholder="Numéro et nom de rue"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city">Ville</Label>
-                        <Input
-                          id="city"
-                          name="city"
-                          value={shippingInfo.city}
-                          onChange={handleShippingInfoChange}
-                          placeholder="Ville"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="postalCode">Code postal</Label>
-                        <Input
-                          id="postalCode"
-                          name="postalCode"
-                          value={shippingInfo.postalCode}
-                          onChange={handleShippingInfoChange}
-                          placeholder="Code postal"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="country">Pays</Label>
-                      <Select value={shippingInfo.country} onValueChange={(value) => setShippingInfo({ ...shippingInfo, country: value })}>
-                        <SelectTrigger id="country">
-                          <SelectValue placeholder="Sélectionner un pays" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="France">France</SelectItem>
-                          <SelectItem value="Belgique">Belgique</SelectItem>
-                          <SelectItem value="Suisse">Suisse</SelectItem>
-                          <SelectItem value="Luxembourg">Luxembourg</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Téléphone</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={shippingInfo.phone}
-                        onChange={handleShippingInfoChange}
-                        placeholder="Numéro de téléphone"
-                      />
-                    </div>
-                  </div>
+                  <ShippingForm 
+                    shippingInfo={shippingInfo}
+                    handleChange={handleShippingInfoChange}
+                    setCountry={(value) => setShippingInfo({ ...shippingInfo, country: value })}
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -429,176 +352,6 @@ const Cart = () => {
                 <CardFooter className="flex justify-between">
                   <Button variant="outline" onClick={prevStep}>Retour</Button>
                   <Button onClick={nextStep}>Continuer vers le paiement</Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {step === "payment" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Méthode de paiement</CardTitle>
-                  <CardDescription>Choisissez votre méthode de paiement préférée</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="card-payment"
-                        checked={paymentMethod === "card"}
-                        onChange={() => setPaymentMethod("card")}
-                        className="h-4 w-4 text-primary"
-                      />
-                      <label htmlFor="card-payment" className="flex items-center">
-                        <CreditCard className="mr-2 h-5 w-5" />
-                        Carte bancaire
-                      </label>
-                    </div>
-
-                    {paymentMethod === "card" && (
-                      <div className="ml-6 space-y-4 mt-2">
-                        <div>
-                          <Label htmlFor="card-number">Numéro de carte</Label>
-                          <Input id="card-number" placeholder="1234 5678 9012 3456" />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="expiry">Date d'expiration</Label>
-                            <Input id="expiry" placeholder="MM/YY" />
-                          </div>
-                          <div>
-                            <Label htmlFor="cvv">CVV</Label>
-                            <Input id="cvv" placeholder="123" />
-                          </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="card-name">Nom sur la carte</Label>
-                          <Input id="card-name" placeholder="Prénom Nom" />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex items-center space-x-2 pt-2">
-                      <input
-                        type="radio"
-                        id="insurance-payment"
-                        checked={paymentMethod === "insurance"}
-                        onChange={() => setPaymentMethod("insurance")}
-                        className="h-4 w-4 text-primary"
-                      />
-                      <label htmlFor="insurance-payment" className="flex items-center">
-                        <FileText className="mr-2 h-5 w-5" />
-                        Paiement par assurance santé
-                      </label>
-                    </div>
-
-                    {paymentMethod === "insurance" && (
-                      <div className="ml-6 space-y-4 mt-2">
-                        <div>
-                          <Label htmlFor="insurance-provider">Assureur</Label>
-                          <Select>
-                            <SelectTrigger id="insurance-provider">
-                              <SelectValue placeholder="Sélectionner votre assureur" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="cpam">CPAM (Assurance Maladie)</SelectItem>
-                              <SelectItem value="mgen">MGEN</SelectItem>
-                              <SelectItem value="axa">AXA Santé</SelectItem>
-                              <SelectItem value="harmonie">Harmonie Mutuelle</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="insurance-number">Numéro d'assuré</Label>
-                          <Input id="insurance-number" placeholder="Numéro d'assuré" />
-                        </div>
-                        <div>
-                          <Label htmlFor="voucher">Bon de prise en charge</Label>
-                          <div className="flex">
-                            <Input id="voucher" type="file" className="flex-1" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Livraison</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-start">
-                      <Truck className="h-5 w-5 mr-2 mt-0.5 text-gray-500" />
-                      <div>
-                        <p className="font-medium">{shippingInfo.fullName}</p>
-                        <p className="text-sm text-gray-500">{shippingInfo.streetAddress}</p>
-                        <p className="text-sm text-gray-500">{shippingInfo.postalCode} {shippingInfo.city}, {shippingInfo.country}</p>
-                        <p className="text-sm text-gray-500">{shippingInfo.phone}</p>
-                        <p className="text-sm mt-2">
-                          <span className="font-medium">Méthode de livraison: </span>
-                          {shippingMethod === "express" ? "Express (1-2 jours)" : "Standard (3-5 jours)"}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Récapitulatif</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Table>
-                      <TableBody>
-                        {cartItems.map((item) => (
-                          <TableRow key={item.product.id}>
-                            <TableCell className="font-medium w-full">
-                              {item.product.name} <span className="text-gray-500">x{item.quantity}</span>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              {(item.product.price * item.quantity).toFixed(2)} €
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        <TableRow>
-                          <TableCell>Sous-total</TableCell>
-                          <TableCell className="text-right">{subtotal.toFixed(2)} €</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>Livraison</TableCell>
-                          <TableCell className="text-right">{shippingCost.toFixed(2)} €</TableCell>
-                        </TableRow>
-                        {discount > 0 && (
-                          <TableRow>
-                            <TableCell className="text-green-600">Réduction</TableCell>
-                            <TableCell className="text-right text-green-600">-{discount.toFixed(2)} €</TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                    
-                    <Separator />
-                    
-                    <div className="flex justify-between font-bold text-lg pt-2">
-                      <span>Total</span>
-                      <span>{total.toFixed(2)} €</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <Button className="w-full" onClick={placeOrder}>Confirmer la commande</Button>
-                  <Button variant="outline" className="w-full" onClick={prevStep}>Retour</Button>
                 </CardFooter>
               </Card>
             </div>

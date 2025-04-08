@@ -17,6 +17,7 @@ import HealthTracker from "@/pages/HealthTracker";
 import MedicalTutorials from "@/pages/MedicalTutorials";
 import Wellness from "@/pages/Wellness";
 import Cart from "@/pages/Cart";
+import Payment from "@/pages/Payment";
 import OrderConfirmation from "@/pages/OrderConfirmation";
 import Premium from "@/pages/Premium";
 import Admin from "@/pages/Admin";
@@ -47,6 +48,7 @@ function App() {
             <Route path="/tutorials" element={<Navigate to="/medical-tutorials" />} />
             <Route path="/wellness" element={<Wellness />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/payment" element={<Payment />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/premium" element={<Premium />} />
             <Route path="/admin" element={<Admin />} />
