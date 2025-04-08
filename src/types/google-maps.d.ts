@@ -1,246 +1,139 @@
 
-// Type definitions for Google Maps JavaScript API 3.45
-// This adds minimal typing required for our GoogleMap component
+declare namespace google {
+  namespace maps {
+    class Map {
+      constructor(mapDiv: HTMLElement, options: MapOptions);
+      setCenter(latLng: LatLng): void;
+      setZoom(zoom: number): void;
+      panTo(latLng: LatLng): void;
+      setOptions(options: MapOptions): void;
+    }
 
-declare namespace google.maps {
-  interface MapOptions {
-    center?: LatLng | LatLngLiteral;
-    clickableIcons?: boolean;
-    disableDefaultUI?: boolean;
-    disableDoubleClickZoom?: boolean;
-    gestureHandling?: string;
-    heading?: number;
-    mapTypeControl?: boolean;
-    mapTypeControlOptions?: MapTypeControlOptions;
-    mapTypeId?: string;
-    maxZoom?: number;
-    minZoom?: number;
-    restriction?: MapRestriction;
-    rotateControl?: boolean;
-    rotateControlOptions?: RotateControlOptions;
-    scaleControl?: boolean;
-    scaleControlOptions?: ScaleControlOptions;
-    scrollwheel?: boolean;
-    streetView?: StreetViewPanorama;
-    streetViewControl?: boolean;
-    streetViewControlOptions?: StreetViewControlOptions;
-    styles?: MapTypeStyle[];
-    tilt?: number;
-    zoom?: number;
-    zoomControl?: boolean;
-    zoomControlOptions?: ZoomControlOptions;
-  }
+    class Marker {
+      constructor(options: MarkerOptions);
+      setPosition(latLng: LatLng): void;
+      setMap(map: Map | null): void;
+      setAnimation(animation: any): void;
+      addListener(event: string, handler: Function): void;
+    }
 
-  interface LatLngLiteral {
-    lat: number;
-    lng: number;
-  }
+    class InfoWindow {
+      constructor(options?: InfoWindowOptions);
+      setContent(content: string | Node): void;
+      open(map: Map, anchor?: Marker): void;
+      close(): void;
+    }
 
-  interface LatLng {
-    lat(): number;
-    lng(): number;
-    toString(): string;
-    toUrlValue(precision?: number): string;
-    toJSON(): LatLngLiteral;
-    equals(other: LatLng): boolean;
-  }
+    class LatLng {
+      constructor(lat: number, lng: number);
+      lat(): number;
+      lng(): number;
+    }
 
-  interface MarkerOptions {
-    position: LatLng | LatLngLiteral;
-    map?: Map;
-    title?: string;
-    icon?: string | Icon | Symbol;
-    animation?: Animation;
-    clickable?: boolean;
-    cursor?: string;
-    draggable?: boolean;
-    label?: string | MarkerLabel;
-    opacity?: number;
-    optimized?: boolean;
-    shape?: MarkerShape;
-    visible?: boolean;
-    zIndex?: number;
-  }
+    interface MapOptions {
+      center: LatLng;
+      zoom: number;
+      disableDefaultUI?: boolean;
+      zoomControl?: boolean;
+      styles?: any[];
+      mapTypeId?: string;
+      fullscreenControl?: boolean;
+      streetViewControl?: boolean;
+      mapTypeControl?: boolean;
+    }
 
-  interface Icon {
-    url?: string;
-    anchor?: Point;
-    path?: string | SymbolPath;
-    fillColor?: string;
-    fillOpacity?: number;
-    scale?: number;
-    strokeColor?: string;
-    strokeOpacity?: number;
-    strokeWeight?: number;
-  }
+    interface MarkerOptions {
+      position: LatLng;
+      map?: Map;
+      title?: string;
+      icon?: string | Icon;
+      animation?: any;
+      draggable?: boolean;
+    }
 
-  interface Symbol {
-    path: string | SymbolPath;
-    anchor?: Point;
-    fillColor?: string;
-    fillOpacity?: number;
-    labelOrigin?: Point;
-    rotation?: number;
-    scale?: number;
-    strokeColor?: string;
-    strokeOpacity?: number;
-    strokeWeight?: number;
-  }
+    interface InfoWindowOptions {
+      content?: string | Node;
+      maxWidth?: number;
+      pixelOffset?: Size;
+    }
 
-  interface InfoWindowOptions {
-    content?: string | Node;
-    disableAutoPan?: boolean;
-    maxWidth?: number;
-    pixelOffset?: Size;
-    position?: LatLng | LatLngLiteral;
-    zIndex?: number;
-  }
+    interface Icon {
+      url: string;
+      scaledSize?: Size;
+      origin?: Point;
+      anchor?: Point;
+    }
 
-  interface StreetViewControlOptions {
-    position?: ControlPosition;
-  }
+    class Size {
+      constructor(width: number, height: number);
+    }
 
-  interface ZoomControlOptions {
-    position?: ControlPosition;
-  }
+    class Point {
+      constructor(x: number, y: number);
+    }
 
-  interface RotateControlOptions {
-    position?: ControlPosition;
-  }
+    namespace places {
+      class PlacesService {
+        constructor(map: Map | HTMLElement);
+        nearbySearch(request: NearbySearchRequest, callback: (results: PlaceResult[], status: PlacesServiceStatus, pagination: any) => void): void;
+        getDetails(request: DetailsRequest, callback: (result: PlaceResult, status: PlacesServiceStatus) => void): void;
+      }
 
-  interface ScaleControlOptions {
-    style?: ScaleControlStyle;
-  }
+      interface NearbySearchRequest {
+        location: LatLng;
+        radius: number;
+        type?: string;
+        keyword?: string;
+        rankBy?: any;
+      }
 
-  interface MapTypeControlOptions {
-    position?: ControlPosition;
-    style?: MapTypeControlStyle;
-  }
+      interface DetailsRequest {
+        placeId: string;
+        fields?: string[];
+      }
 
-  interface MapRestriction {
-    latLngBounds: LatLngBounds | LatLngBoundsLiteral;
-    strictBounds?: boolean;
-  }
+      interface PlaceResult {
+        geometry: {
+          location: LatLng;
+        };
+        name: string;
+        vicinity: string;
+        place_id: string;
+        types: string[];
+        rating?: number;
+        opening_hours?: {
+          open_now?: boolean;
+        };
+        photos?: {
+          getUrl: (options: { maxWidth?: number; maxHeight?: number }) => string;
+        }[];
+        formatted_address?: string;
+        formatted_phone_number?: string;
+        website?: string;
+        international_phone_number?: string;
+      }
 
-  interface LatLngBoundsLiteral {
-    east: number;
-    north: number;
-    south: number;
-    west: number;
-  }
+      const PlacesServiceStatus: {
+        OK: string;
+        ZERO_RESULTS: string;
+        OVER_QUERY_LIMIT: string;
+        REQUEST_DENIED: string;
+        INVALID_REQUEST: string;
+        UNKNOWN_ERROR: string;
+      };
+    }
 
-  interface LatLngBounds {
-    contains(latLng: LatLng | LatLngLiteral): boolean;
-    equals(other: LatLngBounds | LatLngBoundsLiteral): boolean;
-    extend(latLng: LatLng | LatLngLiteral): LatLngBounds;
-    getCenter(): LatLng;
-    getNorthEast(): LatLng;
-    getSouthWest(): LatLng;
-    intersects(other: LatLngBounds | LatLngBoundsLiteral): boolean;
-    isEmpty(): boolean;
-    toJSON(): LatLngBoundsLiteral;
-    toSpan(): LatLng;
-    toString(): string;
-    toUrlValue(precision?: number): string;
-    union(other: LatLngBounds | LatLngBoundsLiteral): LatLngBounds;
-  }
+    const Animation: {
+      DROP: any;
+      BOUNCE: any;
+    };
 
-  class Map {
-    constructor(mapDiv: Element, opts?: MapOptions);
-    setCenter(latLng: LatLng | LatLngLiteral): void;
-    setZoom(zoom: number): void;
-    getCenter(): LatLng;
-    getZoom(): number;
-  }
-
-  class Marker {
-    constructor(opts?: MarkerOptions);
-    setMap(map: Map | null): void;
-    addListener(eventName: string, handler: Function): MapsEventListener;
-  }
-
-  class InfoWindow {
-    constructor(opts?: InfoWindowOptions);
-    open(map?: Map, anchor?: MVCObject): void;
-    setContent(content: string | Node): void;
-  }
-
-  interface MapsEventListener {
-    remove(): void;
-  }
-
-  class MVCObject {
-    constructor();
-  }
-
-  interface Point {
-    x: number;
-    y: number;
-  }
-
-  interface Size {
-    width: number;
-    height: number;
-  }
-
-  interface MarkerLabel {
-    color?: string;
-    fontFamily?: string;
-    fontSize?: string;
-    fontWeight?: string;
-    text: string;
-  }
-
-  interface MarkerShape {
-    coords: number[];
-    type: string;
-  }
-
-  enum SymbolPath {
-    BACKWARD_CLOSED_ARROW,
-    BACKWARD_OPEN_ARROW,
-    CIRCLE,
-    FORWARD_CLOSED_ARROW,
-    FORWARD_OPEN_ARROW
-  }
-
-  enum Animation {
-    BOUNCE,
-    DROP
-  }
-
-  enum ControlPosition {
-    BOTTOM_CENTER,
-    BOTTOM_LEFT,
-    BOTTOM_RIGHT,
-    LEFT_BOTTOM,
-    LEFT_CENTER,
-    LEFT_TOP,
-    RIGHT_BOTTOM,
-    RIGHT_CENTER,
-    RIGHT_TOP,
-    TOP_CENTER,
-    TOP_LEFT,
-    TOP_RIGHT
-  }
-
-  enum MapTypeControlStyle {
-    DEFAULT,
-    DROPDOWN_MENU,
-    HORIZONTAL_BAR
-  }
-
-  enum ScaleControlStyle {
-    DEFAULT
-  }
-
-  interface MapTypeStyle {
-    elementType?: string;
-    featureType?: string;
-    stylers: MapTypeStyler[];
-  }
-
-  interface MapTypeStyler {
-    [key: string]: string | number | null;
+    const SymbolPath: {
+      CIRCLE: any;
+      FORWARD_CLOSED_ARROW: any;
+      FORWARD_OPEN_ARROW: any;
+      BACKWARD_CLOSED_ARROW: any;
+      BACKWARD_OPEN_ARROW: any;
+    };
   }
 }

@@ -24,6 +24,7 @@ export interface User {
   isProfileComplete?: boolean;
   isSharingMedicalData?: boolean;
   authorizedDoctors?: string[];
+  cmuCardNumber?: string;
 }
 
 export type UserRole = 'patient' | 'professional' | 'none';
@@ -38,6 +39,7 @@ export interface PatientProfile extends User {
   emergencyContact?: EmergencyContact;
   insuranceInfo?: InsuranceInfo;
   bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | 'unknown';
+  cmuCardNumber?: string;
 }
 
 export interface ProfessionalProfile extends User {
@@ -102,6 +104,7 @@ export interface InsuranceInfo {
 
 export interface InsuranceVoucher {
   id: string;
+  userId: string;
   provider: string;
   voucherNumber: string;
   validFrom: string;

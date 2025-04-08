@@ -3,29 +3,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { User, PatientProfile, ProfessionalProfile, InsuranceVoucher, Medication } from "@/types/user";
 import { VitalSign, PhysicalActivity, NutritionEntry, HydrationEntry, SleepEntry, WellnessGoal } from "@/types/health";
 
+// Mock database functionality since the Supabase tables don't exist yet
+// In a real implementation, these would call the actual Supabase tables
+
 // User profiles
 export const saveUserProfile = async (profile: Partial<User>) => {
   try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .upsert({
-        id: profile.id,
-        email: profile.email,
-        name: profile.name,
-        role: profile.role || 'patient',
-        profile_image_url: profile.profileImageUrl,
-        created_at: profile.created_at || new Date().toISOString(),
-        allergies: profile.allergies,
-        medications: profile.medications,
-        medical_history: profile.medicalHistory,
-        blood_type: profile.bloodType,
-        is_profile_complete: profile.isProfileComplete,
-        is_sharing_medical_data: profile.isSharingMedicalData,
-        authorized_doctors: profile.authorizedDoctors
-      }, { onConflict: 'id' });
-
-    if (error) throw error;
-    return data;
+    console.log("Saving user profile:", profile);
+    // This is a mock implementation for now
+    const updatedProfile = {
+      ...profile,
+      updated_at: new Date().toISOString()
+    };
+    
+    // Store in localStorage for demo purposes
+    if (profile.id) {
+      localStorage.setItem(`profile_${profile.id}`, JSON.stringify(updatedProfile));
+    }
+    
+    return updatedProfile;
   } catch (error) {
     console.error("Error saving user profile:", error);
     throw error;
@@ -34,29 +30,29 @@ export const saveUserProfile = async (profile: Partial<User>) => {
 
 export const getUserProfile = async (userId: string) => {
   try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-
-    if (error) throw error;
+    console.log("Getting user profile for:", userId);
     
-    // Map database fields back to camelCase for frontend
+    // Retrieve from localStorage for demo purposes
+    const savedProfile = localStorage.getItem(`profile_${userId}`);
+    if (savedProfile) {
+      return JSON.parse(savedProfile);
+    }
+    
+    // Return mock data if no saved profile exists
     return {
-      id: data.id,
-      email: data.email,
-      name: data.name,
-      role: data.role,
-      profileImageUrl: data.profile_image_url,
-      created_at: data.created_at,
-      allergies: data.allergies,
-      medications: data.medications,
-      medicalHistory: data.medical_history,
-      bloodType: data.blood_type,
-      isProfileComplete: data.is_profile_complete,
-      isSharingMedicalData: data.is_sharing_medical_data,
-      authorizedDoctors: data.authorized_doctors
+      id: userId,
+      email: "user@example.com",
+      name: "Demo User",
+      role: "patient",
+      profileImageUrl: null,
+      created_at: new Date().toISOString(),
+      allergies: [],
+      medications: [],
+      medicalHistory: [],
+      bloodType: "unknown",
+      isProfileComplete: false,
+      isSharingMedicalData: false,
+      authorizedDoctors: []
     };
   } catch (error) {
     console.error("Error getting user profile:", error);
@@ -67,20 +63,23 @@ export const getUserProfile = async (userId: string) => {
 // Vital signs
 export const saveVitalSign = async (vitalSign: Omit<VitalSign, 'id'>) => {
   try {
-    const { data, error } = await supabase
-      .from('vital_signs')
-      .insert({
-        user_id: vitalSign.userId,
-        type: vitalSign.type,
-        value: vitalSign.value,
-        unit: vitalSign.unit,
-        timestamp: vitalSign.timestamp,
-        notes: vitalSign.notes,
-        device: vitalSign.device
-      });
-
-    if (error) throw error;
-    return data;
+    console.log("Saving vital sign:", vitalSign);
+    
+    // Generate an ID and add timestamp
+    const newVitalSign = {
+      id: `vital-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...vitalSign,
+      timestamp: vitalSign.timestamp || new Date().toISOString()
+    };
+    
+    // Store in localStorage for demo purposes
+    const key = `vital_signs_${vitalSign.userId}`;
+    const existingSignsJson = localStorage.getItem(key);
+    const existingSigns = existingSignsJson ? JSON.parse(existingSignsJson) : [];
+    
+    localStorage.setItem(key, JSON.stringify([...existingSigns, newVitalSign]));
+    
+    return newVitalSign;
   } catch (error) {
     console.error("Error saving vital sign:", error);
     throw error;
@@ -89,13 +88,12 @@ export const saveVitalSign = async (vitalSign: Omit<VitalSign, 'id'>) => {
 
 export const getUserVitalSigns = async (userId: string) => {
   try {
-    const { data, error } = await supabase
-      .from('vital_signs')
-      .select('*')
-      .eq('user_id', userId)
-      .order('timestamp', { ascending: false });
-
-    if (error) throw error;
+    console.log("Getting vital signs for user:", userId);
+    
+    // Retrieve from localStorage for demo purposes
+    const key = `vital_signs_${userId}`;
+    const signsJson = localStorage.getItem(key);
+    const allSigns = signsJson ? JSON.parse(signsJson) : [];
     
     // Transform data to match frontend structure
     const vitalSignsData = {
@@ -107,10 +105,10 @@ export const getUserVitalSigns = async (userId: string) => {
       oxygen: []
     };
     
-    data.forEach(sign => {
+    allSigns.forEach(sign => {
       const transformedSign = {
         id: sign.id,
-        userId: sign.user_id,
+        userId: sign.userId,
         type: sign.type,
         value: sign.value,
         unit: sign.unit,
@@ -151,26 +149,22 @@ export const getUserVitalSigns = async (userId: string) => {
 // Insurance vouchers
 export const saveInsuranceVoucher = async (voucher: Omit<InsuranceVoucher, 'id'>) => {
   try {
-    const { data, error } = await supabase
-      .from('insurance_vouchers')
-      .insert({
-        user_id: voucher.userId,
-        provider: voucher.provider,
-        voucher_number: voucher.voucherNumber,
-        coverage_type: voucher.coverageType,
-        valid_from: voucher.validFrom,
-        valid_until: voucher.validUntil,
-        coverage_amount: voucher.coverageAmount,
-        is_percentage: voucher.isPercentage,
-        status: voucher.status,
-        for_service: voucher.forService,
-        for_pharmacy: voucher.forPharmacy,
-        for_health_center: voucher.forHealthCenter,
-        qr_code: voucher.qrCode
-      });
-
-    if (error) throw error;
-    return data;
+    console.log("Saving insurance voucher:", voucher);
+    
+    // Generate an ID
+    const newVoucher = {
+      id: `voucher-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...voucher
+    };
+    
+    // Store in localStorage for demo purposes
+    const key = `insurance_vouchers_${voucher.userId}`;
+    const existingVouchersJson = localStorage.getItem(key);
+    const existingVouchers = existingVouchersJson ? JSON.parse(existingVouchersJson) : [];
+    
+    localStorage.setItem(key, JSON.stringify([...existingVouchers, newVoucher]));
+    
+    return newVoucher;
   } catch (error) {
     console.error("Error saving insurance voucher:", error);
     throw error;
@@ -179,31 +173,14 @@ export const saveInsuranceVoucher = async (voucher: Omit<InsuranceVoucher, 'id'>
 
 export const getUserInsuranceVouchers = async (userId: string) => {
   try {
-    const { data, error } = await supabase
-      .from('insurance_vouchers')
-      .select('*')
-      .eq('user_id', userId)
-      .order('valid_until', { ascending: false });
-
-    if (error) throw error;
+    console.log("Getting insurance vouchers for user:", userId);
     
-    // Transform data to match frontend structure
-    return data.map(voucher => ({
-      id: voucher.id,
-      userId: voucher.user_id,
-      provider: voucher.provider,
-      voucherNumber: voucher.voucher_number,
-      coverageType: voucher.coverage_type,
-      validFrom: voucher.valid_from,
-      validUntil: voucher.valid_until,
-      coverageAmount: voucher.coverage_amount,
-      isPercentage: voucher.is_percentage,
-      status: voucher.status,
-      forService: voucher.for_service,
-      forPharmacy: voucher.for_pharmacy,
-      forHealthCenter: voucher.for_health_center,
-      qrCode: voucher.qr_code
-    }));
+    // Retrieve from localStorage for demo purposes
+    const key = `insurance_vouchers_${userId}`;
+    const vouchersJson = localStorage.getItem(key);
+    const vouchers = vouchersJson ? JSON.parse(vouchersJson) : [];
+    
+    return vouchers;
   } catch (error) {
     console.error("Error getting insurance vouchers:", error);
     throw error;
@@ -213,21 +190,22 @@ export const getUserInsuranceVouchers = async (userId: string) => {
 // Wellness goals
 export const saveWellnessGoal = async (goal: Omit<WellnessGoal, 'id'>) => {
   try {
-    const { data, error } = await supabase
-      .from('wellness_goals')
-      .insert({
-        user_id: goal.userId,
-        type: goal.type,
-        target: goal.target,
-        unit: goal.unit,
-        progress: goal.progress,
-        start_date: goal.startDate,
-        end_date: goal.endDate,
-        completed: goal.completed
-      });
-
-    if (error) throw error;
-    return data;
+    console.log("Saving wellness goal:", goal);
+    
+    // Generate an ID
+    const newGoal = {
+      id: `goal-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...goal
+    };
+    
+    // Store in localStorage for demo purposes
+    const key = `wellness_goals_${goal.userId}`;
+    const existingGoalsJson = localStorage.getItem(key);
+    const existingGoals = existingGoalsJson ? JSON.parse(existingGoalsJson) : [];
+    
+    localStorage.setItem(key, JSON.stringify([...existingGoals, newGoal]));
+    
+    return newGoal;
   } catch (error) {
     console.error("Error saving wellness goal:", error);
     throw error;
@@ -236,26 +214,14 @@ export const saveWellnessGoal = async (goal: Omit<WellnessGoal, 'id'>) => {
 
 export const getUserWellnessGoals = async (userId: string) => {
   try {
-    const { data, error } = await supabase
-      .from('wellness_goals')
-      .select('*')
-      .eq('user_id', userId)
-      .order('start_date', { ascending: false });
-
-    if (error) throw error;
+    console.log("Getting wellness goals for user:", userId);
     
-    // Transform data to match frontend structure
-    return data.map(goal => ({
-      id: goal.id,
-      userId: goal.user_id,
-      type: goal.type,
-      target: goal.target,
-      unit: goal.unit,
-      progress: goal.progress,
-      startDate: goal.start_date,
-      endDate: goal.end_date,
-      completed: goal.completed
-    }));
+    // Retrieve from localStorage for demo purposes
+    const key = `wellness_goals_${userId}`;
+    const goalsJson = localStorage.getItem(key);
+    const goals = goalsJson ? JSON.parse(goalsJson) : [];
+    
+    return goals;
   } catch (error) {
     console.error("Error getting wellness goals:", error);
     throw error;

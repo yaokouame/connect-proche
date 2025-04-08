@@ -1,115 +1,115 @@
 
-/**
- * Service for interacting with Google Maps and Places APIs
- */
+import { Pharmacy, HealthCenter } from '@/types/user';
 
-// Add TypeScript type declarations for Google Maps API
-declare global {
-  interface Window {
-    google: {
-      maps: {
-        Map: any;
-        Marker: any;
-        InfoWindow: any;
-        LatLng: any;
-        SymbolPath: any;
-        Animation: {
-          DROP: any;
-        };
-        places: {
-          PlacesService: any;
-          PlacesServiceStatus: {
-            OK: string;
-            ZERO_RESULTS: string;
-            OVER_QUERY_LIMIT: string;
-            REQUEST_DENIED: string;
-            INVALID_REQUEST: string;
-            UNKNOWN_ERROR: string;
-          };
-        };
-      };
-    };
+// Mock data for pharmacies
+export const getMockPharmacies = (): Pharmacy[] => [
+  {
+    id: 'ph-1',
+    name: 'Pharmacie Centrale',
+    address: '123 Avenue des Champs-Élysées, Paris',
+    phone: '+33 1 23 45 67 89',
+    hours: 'Lun-Sam: 8h-20h, Dim: 9h-18h',
+    location: { lat: 48.873792, lng: 2.295028 },
+    acceptedInsuranceProviders: ['CMU', 'Assurance Nationale', 'MutuelSanté'],
+    rating: 4.5,
+    placeId: 'ChIJxxxxxxxxxxxxxx1'
+  },
+  {
+    id: 'ph-2',
+    name: 'Pharmacie du Marché',
+    address: '45 Rue de Rivoli, Paris',
+    phone: '+33 1 98 76 54 32',
+    hours: 'Lun-Ven: 8h30-19h30, Sam: 9h-19h',
+    location: { lat: 48.856613, lng: 2.352222 },
+    acceptedInsuranceProviders: ['MutuelSanté', 'AssurTous'],
+    rating: 4.2,
+    placeId: 'ChIJxxxxxxxxxxxxxx2'
   }
-}
+];
 
-/**
- * Fetches nearby places of a specific type based on location
- * 
- * @param location User location coordinates
- * @param type Type of place ('pharmacy', 'hospital', 'health', etc.)
- * @param radius Search radius in meters
- * @returns Array of Google Places results
- */
-export const fetchNearbyPlaces = (
+// Mock data for health centers
+export const getMockHealthCenters = (): HealthCenter[] => [
+  {
+    id: 'hc-1',
+    name: 'Centre Médical Saint-Michel',
+    type: 'Clinique',
+    services: ['Médecine générale', 'Cardiologie', 'Pédiatrie'],
+    address: '7 Boulevard Saint-Michel, Paris',
+    phone: '+33 1 11 22 33 44',
+    hours: 'Lun-Ven: 8h-19h',
+    location: { lat: 48.853333, lng: 2.343333 },
+    acceptedInsuranceProviders: ['CMU', 'AssurTous', 'MutuelSanté'],
+    rating: 4.7,
+    placeId: 'ChIJxxxxxxxxxxxxxx3'
+  },
+  {
+    id: 'hc-2',
+    name: 'Hôpital Saint-Louis',
+    type: 'Hôpital',
+    services: ['Urgences', 'Chirurgie', 'Maternité', 'Oncologie'],
+    address: '1 Avenue Claude Vellefaux, Paris',
+    phone: '+33 1 42 49 49 49',
+    hours: '24h/24, 7j/7',
+    location: { lat: 48.874352, lng: 2.368351 },
+    acceptedInsuranceProviders: ['CMU', 'Assurance Nationale', 'MutuelSanté', 'AssurTous'],
+    rating: 4.4,
+    placeId: 'ChIJxxxxxxxxxxxxxx4'
+  }
+];
+
+// Function to search for pharmacies and health centers using Google Places API
+// This is a mock implementation for now
+export const searchNearbyPlaces = async (
   location: { lat: number; lng: number },
-  type: string,
-  radius: number = 5000
-): Promise<any[]> => {
-  return new Promise((resolve, reject) => {
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      console.error("Google Maps API not loaded");
-      reject("Google Maps API not loaded");
-      return;
-    }
-
-    const service = new window.google.maps.places.PlacesService(
-      document.createElement("div")
+  radius: number = 1500,
+  type: 'pharmacy' | 'health' | 'both',
+  keyword?: string
+): Promise<(Pharmacy | HealthCenter)[]> => {
+  console.log(`Searching for ${type} places near ${location.lat},${location.lng} within ${radius}m`);
+  
+  // For demo purposes, return mock data
+  let results: (Pharmacy | HealthCenter)[] = [];
+  
+  if (type === 'pharmacy' || type === 'both') {
+    results = [...results, ...getMockPharmacies()];
+  }
+  
+  if (type === 'health' || type === 'both') {
+    results = [...results, ...getMockHealthCenters()];
+  }
+  
+  // Filter by keyword if provided
+  if (keyword && keyword.length > 0) {
+    const lowerKeyword = keyword.toLowerCase();
+    results = results.filter(
+      place => place.name.toLowerCase().includes(lowerKeyword) || 
+               place.address.toLowerCase().includes(lowerKeyword)
     );
-
-    const request = {
-      location: new window.google.maps.LatLng(location.lat, location.lng),
-      radius: radius,
-      type: type
-    };
-
-    service.nearbySearch(request, (results: any[], status: string) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-        resolve(results);
-      } else {
-        console.error(`Error fetching nearby ${type}:`, status);
-        resolve([]); // Return empty array instead of rejecting to prevent UI errors
-      }
-    });
+  }
+  
+  // Sort by distance from provided location (simplified calculation)
+  results.sort((a, b) => {
+    const distA = Math.sqrt(
+      Math.pow(a.location.lat - location.lat, 2) + 
+      Math.pow(a.location.lng - location.lng, 2)
+    );
+    const distB = Math.sqrt(
+      Math.pow(b.location.lat - location.lat, 2) + 
+      Math.pow(b.location.lng - location.lng, 2)
+    );
+    return distA - distB;
   });
+  
+  return results;
 };
 
-/**
- * Gets details for a specific place using its place_id
- * 
- * @param placeId The Google Place ID
- * @returns Detailed place information
- */
-export const getPlaceDetails = (placeId: string): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      console.error("Google Maps API not loaded");
-      reject("Google Maps API not loaded");
-      return;
-    }
-
-    const service = new window.google.maps.places.PlacesService(
-      document.createElement("div")
-    );
-
-    const request = {
-      placeId: placeId,
-      fields: [
-        'name', 
-        'formatted_address', 
-        'formatted_phone_number', 
-        'geometry', 
-        'opening_hours', 
-        'rating', 
-        'website'
-      ]
-    };
-
-    service.getDetails(request, (place: any, status: string) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
-        resolve(place);
-      } else {
-        reject(`Error fetching place details: ${status}`);
-      }
-    });
-  });
+// This function would use the Google Places API in a real implementation
+export const getPlaceDetails = async (placeId: string): Promise<Pharmacy | HealthCenter | null> => {
+  console.log(`Getting details for place ID: ${placeId}`);
+  
+  // For demo purposes, search in our mock data
+  const allPlaces = [...getMockPharmacies(), ...getMockHealthCenters()];
+  const place = allPlaces.find(p => p.placeId === placeId);
+  
+  return place || null;
 };

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/user";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PersonalInfoFormProps {
   currentUser: User;
@@ -12,8 +13,10 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormProps) => {
+  const { language } = useLanguage();
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || "");
+  const [cmuCardNumber, setCmuCardNumber] = useState(currentUser?.cmuCardNumber || "");
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -25,6 +28,7 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
         ...currentUser,
         name,
         email,
+        cmuCardNumber
       };
       
       updateUserProfile(updatedUser);
@@ -32,15 +36,51 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
     }, 1000);
   };
 
+  const getTranslations = () => {
+    if (language === 'fr') {
+      return {
+        personalInfo: "Informations personnelles",
+        fullName: "Nom complet",
+        cmuCardNumber: "Numéro de carte CMU",
+        specialty: "Spécialité",
+        license: "Numéro de licence",
+        saving: "Enregistrement...",
+        save: "Enregistrer les modifications"
+      };
+    } else if (language === 'es') {
+      return {
+        personalInfo: "Información personal",
+        fullName: "Nombre completo",
+        cmuCardNumber: "Número de tarjeta CMU",
+        specialty: "Especialidad",
+        license: "Número de licencia",
+        saving: "Guardando...",
+        save: "Guardar cambios"
+      };
+    } else {
+      return {
+        personalInfo: "Personal Information",
+        fullName: "Full name",
+        cmuCardNumber: "CMU Card Number",
+        specialty: "Specialty",
+        license: "License number",
+        saving: "Saving...",
+        save: "Save changes"
+      };
+    }
+  };
+
+  const translations = getTranslations();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Informations personnelles</CardTitle>
+        <CardTitle>{translations.personalInfo}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSaveProfile} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nom complet</Label>
+            <Label htmlFor="name">{translations.fullName}</Label>
             <Input 
               id="name" 
               value={name} 
@@ -58,10 +98,22 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
             />
           </div>
           
+          {currentUser?.role === "patient" && (
+            <div className="space-y-2">
+              <Label htmlFor="cmuCardNumber">{translations.cmuCardNumber}</Label>
+              <Input 
+                id="cmuCardNumber" 
+                value={cmuCardNumber} 
+                onChange={(e) => setCmuCardNumber(e.target.value)} 
+                placeholder="123-456-789"
+              />
+            </div>
+          )}
+          
           {currentUser?.role === "professional" && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="specialty">Spécialité</Label>
+                <Label htmlFor="specialty">{translations.specialty}</Label>
                 <Input 
                   id="specialty" 
                   value={(currentUser as any).specialty || ""}
@@ -70,7 +122,7 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="license">Numéro de licence</Label>
+                <Label htmlFor="license">{translations.license}</Label>
                 <Input 
                   id="license" 
                   value={(currentUser as any).license || ""}
@@ -81,7 +133,7 @@ const PersonalInfoForm = ({ currentUser, updateUserProfile }: PersonalInfoFormPr
           )}
           
           <Button type="submit" className="mt-6" disabled={isSaving}>
-            {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
+            {isSaving ? translations.saving : translations.save}
           </Button>
         </form>
       </CardContent>
