@@ -24,14 +24,14 @@ const ProductList = React.memo(({
   
   // Memoize the grid style to prevent recalculation on every render
   const gridStyle = useMemo(() => {
-    return `grid grid-cols-1 ${isTablet ? 'sm:grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-4 md:gap-6`;
+    return `grid grid-cols-1 ${isTablet ? 'sm:grid-cols-2' : 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'} gap-6`;
   }, [isTablet]);
 
   // Display loading state
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <p>Chargement des produits...</p>
+      <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <p className="text-gray-600">Chargement des produits...</p>
       </div>
     );
   }
@@ -39,8 +39,8 @@ const ProductList = React.memo(({
   // Display no products found message
   if (products.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">Aucun produit trouvé pour "{searchTerm}"</p>
+      <div className="text-center py-16 bg-gray-50 rounded-lg border border-gray-200">
+        <p className="text-gray-500">Aucun produit trouvé pour "<span className="font-medium">{searchTerm}</span>"</p>
       </div>
     );
   }

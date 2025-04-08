@@ -18,33 +18,33 @@ const OrderSummary = ({
   total 
 }: OrderSummaryProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Récapitulatif de la commande</CardTitle>
+    <Card className="shadow-md">
+      <CardHeader className="bg-gray-50 pb-3">
+        <CardTitle className="text-health-dark">Récapitulatif de la commande</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-5">
         {cartItems.map((item) => (
-          <div key={item.product.id} className="flex justify-between">
+          <div key={item.product.id} className="flex justify-between pb-2">
             <div>
-              <p className="font-medium">{item.product.name}</p>
+              <p className="font-medium text-health-dark">{item.product.name}</p>
               <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
             </div>
             <p className="font-medium">{(item.product.price * item.quantity).toFixed(0)} F CFA</p>
           </div>
         ))}
         
-        <Separator />
+        <Separator className="my-2" />
         
         <div className="flex justify-between">
-          <span>Sous-total</span>
-          <span>
+          <span className="text-gray-600">Sous-total</span>
+          <span className="font-medium">
             {cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0).toFixed(0)} F CFA
           </span>
         </div>
         
         <div className="flex justify-between">
-          <span>Livraison</span>
-          <span>{shippingCost.toFixed(0)} F CFA</span>
+          <span className="text-gray-600">Livraison</span>
+          <span className="font-medium">{shippingCost.toFixed(0)} F CFA</span>
         </div>
         
         {discount > 0 && (
@@ -54,9 +54,9 @@ const OrderSummary = ({
           </div>
         )}
         
-        <Separator />
+        <Separator className="my-2" />
         
-        <div className="flex justify-between font-bold text-lg">
+        <div className="flex justify-between font-bold text-lg bg-gray-50 p-3 rounded-md">
           <span>Total</span>
           <span>{total.toFixed(0)} F CFA</span>
         </div>
