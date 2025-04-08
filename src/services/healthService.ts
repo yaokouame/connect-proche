@@ -99,7 +99,7 @@ export const addVitalSign = (
   return newVitalSign;
 };
 
-// Export addVitalSignReading to match what's imported in HealthTracker.tsx
+// Export addVitalSignReading to match what's imported in useHealthTracker.ts
 export const addVitalSignReading = (reading: Omit<VitalSign, "id">): Promise<VitalSign> => {
   return Promise.resolve(addVitalSign(reading.userId, {
     type: reading.type,
