@@ -1,102 +1,118 @@
-import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
+import React, { useState } from "react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Product, Prescription } from "@/types/user";
-import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Volume2 } from "lucide-react";
+import { Product } from "@/types/user";
+import { VoiceHelp } from "@/components/voice/VoiceAssistant";
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
+  enableVoiceHelp?: boolean;
 }
 
-const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
-  // Helper function to get medication images
-  const getMedicationImage = (medicationName: string): string => {
-    const medicationImages: Record<string, string> = {
-      "Amoxicilline": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-      "Doliprane": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-      "Ventoline": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-      "Advil": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-      "Augmentin": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-      "Smecta": "https://images.unsplash.com/photo-1501286353178-1ec871214838",
-      "Imodium": "https://images.unsplash.com/photo-1501286353178-1ec871214838",
-      "Aspirine": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9"
-    };
-    
-    // Try to find an exact match first
-    if (medicationImages[medicationName]) {
-      return medicationImages[medicationName];
-    }
-    
-    // Otherwise, try to find a partial match
-    for (const [key, url] of Object.entries(medicationImages)) {
-      if (medicationName.toLowerCase().includes(key.toLowerCase())) {
-        return url;
+const ProductCard = ({ product, onAddToCart, enableVoiceHelp = false }: ProductCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const speakProductInfo = () => {
+    if ('speechSynthesis' in window) {
+      const description = `${product.name}. ${product.description}. Prix: ${product.price} euros. ${product.requiresPrescription ? 'Ce produit nécessite une ordonnance.' : ''}`;
+      const utterance = new SpeechSynthesisUtterance(description);
+      utterance.lang = 'fr-FR';
+      
+      // Essaie de trouver une voix française
+      const voices = window.speechSynthesis.getVoices();
+      const frenchVoice = voices.find(voice => voice.lang.includes('fr'));
+      if (frenchVoice) {
+        utterance.voice = frenchVoice;
       }
+      
+      window.speechSynthesis.speak(utterance);
     }
-    
-    // Default image if no match is found
-    return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
   };
 
   return (
-    <Card key={product.id} className="overflow-hidden">
-      <div className="aspect-square relative bg-gray-100">
-        <img
-          src={getMedicationImage(product.name)}
-          alt={product.name}
-          className="object-cover w-full h-full"
-        />
+    <Card
+      className="overflow-hidden transition-all duration-200 hover:shadow-md relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="h-40 overflow-hidden bg-gray-100 relative">
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full h-full object-contain p-2"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-400">
+            Image non disponible
+          </div>
+        )}
+        {enableVoiceHelp && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-1 right-1 bg-white/80 hover:bg-white"
+            onClick={speakProductInfo}
+            title="Écouter la description du produit"
+          >
+            <Volume2 className="h-4 w-4 text-health-blue" />
+          </Button>
+        )}
         {product.requiresPrescription && (
-          <Badge className="absolute top-2 right-2 bg-yellow-500">
-            Sur ordonnance
+          <Badge variant="destructive" className="absolute top-2 left-2">
+            Ordonnance requise
           </Badge>
         )}
-        {!product.inStock && (
-          <Badge className="absolute top-2 right-2 bg-red-500">
+        {product.stock < 5 && product.stock > 0 && (
+          <Badge variant="secondary" className="absolute bottom-2 left-2">
+            Stock limité: {product.stock}
+          </Badge>
+        )}
+        {product.stock === 0 && (
+          <Badge variant="outline" className="absolute bottom-2 left-2 bg-gray-100">
             Rupture de stock
           </Badge>
         )}
       </div>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">{product.name}</CardTitle>
-        <CardDescription>{product.category}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-gray-500 mb-2">{product.description}</p>
-        <p className="font-bold text-health-dark">{product.price.toFixed(0)} F CFA</p>
-        {product.insuranceCoverage?.eligible && (
-          <div className="mt-1">
-            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
-              {product.insuranceCoverage.coveragePercentage 
-                ? `Remboursable ${product.insuranceCoverage.coveragePercentage}%` 
-                : "Remboursable"}
-            </span>
-          </div>
-        )}
+
+      <CardContent className="p-4">
+        <h3 className="font-medium text-md mb-1 line-clamp-1">{product.name}</h3>
+        <p className="text-sm text-gray-600 line-clamp-2 h-10">
+          {product.description}
+        </p>
+        <div className="mt-2 flex justify-between items-center">
+          <p className="font-semibold text-health-blue">{product.price} €</p>
+          {product.category && (
+            <Badge variant="outline" className="text-xs">
+              {product.category}
+            </Badge>
+          )}
+        </div>
       </CardContent>
-      <CardFooter>
+
+      <CardFooter className="p-4 pt-0">
         <Button
-          className="w-full"
           onClick={() => onAddToCart(product)}
-          disabled={!product.inStock}
+          disabled={product.stock === 0}
+          className="w-full"
+          variant={product.requiresPrescription ? "outline" : "default"}
         >
-          <ShoppingCart className="mr-2 h-4 w-4" />
+          <ShoppingCart className="h-4 w-4 mr-2" />
           {product.requiresPrescription
             ? "Ajouter avec ordonnance"
-            : !product.inStock
-            ? "Indisponible"
             : "Ajouter au panier"}
         </Button>
       </CardFooter>
+
+      {enableVoiceHelp && (
+        <div className="p-2 text-center">
+          <VoiceHelp text={`${product.name}. ${product.description}. Prix: ${product.price} euros.`} />
+        </div>
+      )}
     </Card>
   );
 };

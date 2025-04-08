@@ -9,9 +9,16 @@ interface ProductListProps {
   loading: boolean;
   searchTerm: string;
   onAddToCart: (product: Product) => void;
+  enableVoiceHelp?: boolean;
 }
 
-const ProductList = ({ products, loading, searchTerm, onAddToCart }: ProductListProps) => {
+const ProductList = ({ 
+  products, 
+  loading, 
+  searchTerm, 
+  onAddToCart,
+  enableVoiceHelp = false
+}: ProductListProps) => {
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
 
   return (
@@ -26,7 +33,8 @@ const ProductList = ({ products, loading, searchTerm, onAddToCart }: ProductList
             <ProductCard 
               key={product.id} 
               product={product} 
-              onAddToCart={onAddToCart} 
+              onAddToCart={onAddToCart}
+              enableVoiceHelp={enableVoiceHelp}
             />
           ))}
         </div>
