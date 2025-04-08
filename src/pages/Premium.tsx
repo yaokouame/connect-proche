@@ -65,13 +65,13 @@ const Premium = () => {
               <div className="space-y-6">
                 <div className="bg-health-teal/10 p-4 rounded-lg">
                   <div className="font-semibold text-health-teal mb-1">Mensuel</div>
-                  <div className="text-2xl font-bold">19,99€<span className="text-sm font-normal text-gray-500">/mois</span></div>
+                  <div className="text-2xl font-bold">12 000 F CFA<span className="text-sm font-normal text-gray-500">/mois</span></div>
                   <div className="text-sm text-gray-500 mt-1">Sans engagement</div>
                 </div>
                 
                 <div className="bg-health-blue/10 p-4 rounded-lg border-2 border-health-blue">
                   <div className="font-semibold text-health-blue mb-1">Annuel <span className="bg-health-blue text-white text-xs px-2 py-0.5 rounded ml-2">-20%</span></div>
-                  <div className="text-2xl font-bold">15,99€<span className="text-sm font-normal text-gray-500">/mois</span></div>
+                  <div className="text-2xl font-bold">9 600 F CFA<span className="text-sm font-normal text-gray-500">/mois</span></div>
                   <div className="text-sm text-gray-500 mt-1">Facturé annuellement</div>
                 </div>
                 
