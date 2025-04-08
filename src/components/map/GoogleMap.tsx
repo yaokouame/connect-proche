@@ -3,6 +3,9 @@ import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } f
 import { Pharmacy, HealthCenter } from "@/types/user";
 import { Info } from "lucide-react";
 
+// Use Vite's import.meta.env instead of process.env
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY';
+
 interface GoogleMapProps {
   userLocation: { lat: number; lng: number } | null;
   places: (Pharmacy | HealthCenter)[];
@@ -29,7 +32,7 @@ const GoogleMap = forwardRef<GoogleMapRefHandle, GoogleMapProps>(
           setGoogleMapsLoaded(true);
         } else {
           const script = document.createElement('script');
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY'}&libraries=places&callback=initMap`;
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;
           script.async = true;
           script.defer = true;
           

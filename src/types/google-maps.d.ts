@@ -3,18 +3,18 @@ declare namespace google {
   namespace maps {
     class Map {
       constructor(mapDiv: HTMLElement, options: MapOptions);
-      setCenter(latLng: LatLng): void;
+      setCenter(latLng: LatLng | LatLngLiteral): void;
       setZoom(zoom: number): void;
-      panTo(latLng: LatLng): void;
+      panTo(latLng: LatLng | LatLngLiteral): void;
       setOptions(options: MapOptions): void;
     }
 
     class Marker {
       constructor(options: MarkerOptions);
-      setPosition(latLng: LatLng): void;
+      setPosition(latLng: LatLng | LatLngLiteral): void;
       setMap(map: Map | null): void;
       setAnimation(animation: any): void;
-      addListener(event: string, handler: Function): void;
+      addListener(event: string, handler: Function): MapsEventListener;
     }
 
     class InfoWindow {
@@ -30,8 +30,17 @@ declare namespace google {
       lng(): number;
     }
 
+    interface LatLngLiteral {
+      lat: number;
+      lng: number;
+    }
+
+    interface MapsEventListener {
+      remove(): void;
+    }
+
     interface MapOptions {
-      center: LatLng;
+      center: LatLng | LatLngLiteral;
       zoom: number;
       disableDefaultUI?: boolean;
       zoomControl?: boolean;
@@ -43,7 +52,7 @@ declare namespace google {
     }
 
     interface MarkerOptions {
-      position: LatLng;
+      position: LatLng | LatLngLiteral;
       map?: Map;
       title?: string;
       icon?: string | Icon;
@@ -80,7 +89,7 @@ declare namespace google {
       }
 
       interface NearbySearchRequest {
-        location: LatLng;
+        location: LatLng | LatLngLiteral;
         radius: number;
         type?: string;
         keyword?: string;
