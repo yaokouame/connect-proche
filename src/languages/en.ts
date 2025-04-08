@@ -31,7 +31,7 @@ const en = {
   "nav.logout": "Logout",
   "nav.findProfessional": "Find a professional",
   "nav.onlinePharmacy": "Online pharmacy",
-  "footer.links": "Quick Links",
+  "footer.quickLinks": "Quick Links",
   "footer.contactUs": "Contact Us",
   "footer.rights": "All rights reserved",
   "footer.description": "Your connected health platform for taking care of you and your loved ones.",

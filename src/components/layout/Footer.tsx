@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
             </p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4">{t("footer.links")}</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("footer.quickLinks")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-300 hover:text-white">
