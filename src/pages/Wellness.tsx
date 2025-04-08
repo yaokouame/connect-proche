@@ -7,7 +7,7 @@ import {
   getUserSleep, 
   getUserNutrition, 
   getUserHydration, 
-  getUserWellnessGoals, 
+  getWellnessGoals, 
   getWellnessRecommendations 
 } from "@/services/wellnessService";
 import { WellnessGoal, PhysicalActivity, SleepEntry, NutritionEntry, HydrationEntry } from "@/types/health";
@@ -34,7 +34,7 @@ const WellnessPage = () => {
     isLoading: isLoadingGoals
   } = useQuery({
     queryKey: ['wellnessGoals', userId],
-    queryFn: () => getUserWellnessGoals(userId)
+    queryFn: () => getWellnessGoals(userId)
   });
   
   // Fetch wellness recommendations
@@ -43,7 +43,7 @@ const WellnessPage = () => {
     isLoading: isLoadingRecommendations
   } = useQuery({
     queryKey: ['wellnessRecommendations'],
-    queryFn: getWellnessRecommendations
+    queryFn: () => getWellnessRecommendations()
   });
   
   // Fetch activities

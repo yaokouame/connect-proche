@@ -1,297 +1,392 @@
 
-import { WellnessGoal, WellnessRecommendation, ActivityData, SleepData, HydrationData, NutritionData } from '@/types/health';
+import { WellnessGoal, WellnessRecommendation, PhysicalActivity, SleepEntry, HydrationEntry, NutritionEntry, ExerciseVideo } from '@/types/health';
 
-// Get wellness goals for a specific user
+// Function to get user's wellness goals
 export const getWellnessGoals = async (userId: string): Promise<WellnessGoal[]> => {
-  // In a real app, this would be an API call to get data from a database
-  await new Promise(resolve => setTimeout(resolve, 500));
+  // Wait a moment to simulate API call
+  await new Promise((resolve) => setTimeout(resolve, 800));
   
+  // Return mock data
   return [
     {
-      id: "goal1",
+      id: 'goal-1',
       userId: userId,
-      type: "steps",
+      type: 'steps',
       target: 10000,
-      unit: "pas",
+      unit: 'pas',
       progress: 7500,
-      startDate: "2023-09-01",
-      endDate: "2023-09-30",
+      startDate: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 23)).toISOString(),
       completed: false
     },
     {
-      id: "goal2",
+      id: 'goal-2',
       userId: userId,
-      type: "water",
+      type: 'water',
       target: 2000,
-      unit: "ml",
+      unit: 'ml',
       progress: 1500,
-      startDate: "2023-09-01",
-      endDate: "2023-09-30",
+      startDate: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 23)).toISOString(),
       completed: false
     },
     {
-      id: "goal3",
+      id: 'goal-3',
       userId: userId,
-      type: "sleep",
+      type: 'sleep',
       target: 8,
-      unit: "heures",
+      unit: 'heures',
       progress: 7,
-      startDate: "2023-09-01",
-      endDate: "2023-09-30",
+      startDate: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 23)).toISOString(),
       completed: false
-    },
-    {
-      id: "goal4",
-      userId: userId,
-      type: "nutrition",
-      target: 2000,
-      unit: "calories",
-      progress: 1800,
-      startDate: "2023-09-01",
-      endDate: "2023-09-30",
-      completed: false
-    },
-    {
-      id: "goal5",
-      userId: userId,
-      type: "activity",
-      target: 150,
-      unit: "minutes",
-      progress: 120,
-      startDate: "2023-09-01",
-      endDate: "2023-09-07",
-      completed: true
     }
   ];
 };
 
-// Get wellness recommendations based on user profile and goals
-export const getWellnessRecommendations = async (userId: string): Promise<WellnessRecommendation[]> => {
-  // In a real app, this would be an API call to get personalized recommendations
-  await new Promise(resolve => setTimeout(resolve, 500));
+// Function to get wellness recommendations
+export const getWellnessRecommendations = async (): Promise<WellnessRecommendation[]> => {
+  // Wait a moment to simulate API call
+  await new Promise((resolve) => setTimeout(resolve, 600));
   
+  // Return mock data
   return [
     {
-      id: "rec1",
-      userId: userId,
-      type: "activity",
-      title: "Marche matinale",
-      description: "Commencez votre journée avec 20 minutes de marche pour stimuler votre métabolisme.",
-      imageUrl: "/placeholder.svg",
-      category: "Activité physique",
-      benefits: ["Améliore la circulation", "Réduit le stress", "Augmente l'énergie"]
+      id: 'rec-1',
+      category: 'physical',
+      title: 'Marchez 30 minutes par jour',
+      description: 'La marche quotidienne améliore la santé cardiovasculaire et réduit le stress.',
+      imageUrl: 'https://placehold.co/100x100/4aade9/white?text=Marche'
     },
     {
-      id: "rec2",
-      userId: userId,
-      type: "nutrition",
-      title: "Petit-déjeuner équilibré",
-      description: "Incluez des protéines et des fibres dans votre petit-déjeuner pour rester rassasié plus longtemps.",
-      imageUrl: "/placeholder.svg",
-      category: "Nutrition",
-      benefits: ["Contrôle de l'appétit", "Stabilise la glycémie", "Fournit de l'énergie durable"]
+      id: 'rec-2',
+      category: 'nutrition',
+      title: 'Augmentez votre consommation de fruits',
+      description: 'Visez 5 portions de fruits et légumes par jour pour un apport optimal en vitamines.',
+      imageUrl: 'https://placehold.co/100x100/4aade9/white?text=Fruits'
     },
     {
-      id: "rec3",
-      userId: userId,
-      type: "hydration",
-      title: "Hydratation régulière",
-      description: "Buvez un verre d'eau toutes les heures pour maintenir une hydratation optimale.",
-      imageUrl: "/placeholder.svg",
-      category: "Hydratation",
-      benefits: ["Améliore la concentration", "Soutient la digestion", "Maintient l'énergie"]
+      id: 'rec-3',
+      category: 'mental',
+      title: 'Pratiquer la méditation',
+      description: '10 minutes de méditation par jour peuvent réduire significativement l\'anxiété.',
+      imageUrl: 'https://placehold.co/100x100/4aade9/white?text=Méditation'
     },
     {
-      id: "rec4",
-      userId: userId,
-      type: "sleep",
-      title: "Routine de sommeil",
-      description: "Établissez une routine de coucher régulière en vous déconnectant des écrans 1 heure avant.",
-      imageUrl: "/placeholder.svg",
-      category: "Sommeil",
-      benefits: ["Améliore la qualité du sommeil", "Réduit l'insomnie", "Favorise la récupération"]
+      id: 'rec-4',
+      category: 'physical',
+      title: 'Faites des étirements',
+      description: 'Des étirements réguliers améliorent la flexibilité et préviennent les blessures.',
+      imageUrl: 'https://placehold.co/100x100/4aade9/white?text=Étirements'
     },
     {
-      id: "rec5",
-      userId: userId,
-      type: "mental",
-      title: "Méditation guidée",
-      description: "Pratiquez 10 minutes de méditation guidée pour réduire le stress et l'anxiété.",
-      imageUrl: "/placeholder.svg",
-      category: "Santé mentale",
-      benefits: ["Réduit l'anxiété", "Améliore la concentration", "Favorise le calme intérieur"]
+      id: 'rec-5',
+      category: 'nutrition',
+      title: 'Réduisez votre consommation de sucre',
+      description: 'Limitez les boissons sucrées et les desserts pour une meilleure santé.',
+      imageUrl: 'https://placehold.co/100x100/4aade9/white?text=Sucre'
     }
   ];
 };
 
-// Get user activity data
-export const getUserActivities = async (userId: string): Promise<ActivityData[]> => {
-  // In a real app, this would be an API call
-  await new Promise(resolve => setTimeout(resolve, 500));
+// Get user physical activities
+export const getUserActivities = async (userId: string): Promise<PhysicalActivity[]> => {
+  await new Promise(resolve => setTimeout(resolve, 700));
   
-  // Mock data for the last 7 days
   const today = new Date();
-  const data: ActivityData[] = [];
+  const activities: PhysicalActivity[] = [];
   
-  for (let i = 6; i >= 0; i--) {
+  // Generate 30 days of data
+  for (let i = 29; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     
-    data.push({
+    // Random activity data
+    const randomWalk = {
+      id: `activity-walk-${i}`,
+      userId,
+      type: 'Marche',
+      duration: Math.floor(Math.random() * 60) + 20,
+      caloriesBurned: Math.floor(Math.random() * 200) + 100,
       date: date.toISOString().split('T')[0],
-      steps: Math.floor(Math.random() * 5000) + 5000,
-      activeMinutes: Math.floor(Math.random() * 60) + 30,
-      caloriesBurned: Math.floor(Math.random() * 300) + 200,
-      distance: parseFloat((Math.random() * 3 + 2).toFixed(1))
-    });
+      source: Math.random() > 0.7 ? 'manual' : (Math.random() > 0.5 ? 'google_fit' : 'apple_health')
+    } as PhysicalActivity;
+    
+    activities.push(randomWalk);
+    
+    // Add another activity on some days
+    if (Math.random() > 0.6) {
+      const randomRun = {
+        id: `activity-run-${i}`,
+        userId,
+        type: 'Course',
+        duration: Math.floor(Math.random() * 40) + 15,
+        caloriesBurned: Math.floor(Math.random() * 300) + 150,
+        date: date.toISOString().split('T')[0],
+        source: Math.random() > 0.7 ? 'manual' : (Math.random() > 0.5 ? 'google_fit' : 'apple_health')
+      } as PhysicalActivity;
+      
+      activities.push(randomRun);
+    }
   }
   
-  return data;
+  return activities;
 };
 
 // Get user sleep data
-export const getUserSleep = async (userId: string): Promise<SleepData[]> => {
-  // In a real app, this would be an API call
-  await new Promise(resolve => setTimeout(resolve, 500));
+export const getUserSleep = async (userId: string): Promise<SleepEntry[]> => {
+  await new Promise(resolve => setTimeout(resolve, 600));
   
-  // Mock data for the last 7 days
   const today = new Date();
-  const data: SleepData[] = [];
+  const sleepEntries: SleepEntry[] = [];
   
-  for (let i = 6; i >= 0; i--) {
+  // Generate 30 days of sleep data
+  for (let i = 29; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     
-    const deepSleep = parseFloat((Math.random() * 2 + 1).toFixed(1));
-    const lightSleep = parseFloat((Math.random() * 3 + 3).toFixed(1));
-    const remSleep = parseFloat((Math.random() * 1.5 + 1).toFixed(1));
+    // Random sleep duration between 5-9 hours
+    const durationInMinutes = (Math.floor(Math.random() * 4) + 5) * 60 + Math.floor(Math.random() * 60);
     
-    data.push({
-      date: date.toISOString().split('T')[0],
-      duration: deepSleep + lightSleep + remSleep,
-      quality: Math.floor(Math.random() * 30) + 70,
-      deepSleep,
-      lightSleep,
-      remSleep,
-      awakeTime: parseFloat((Math.random() * 0.5).toFixed(1))
+    // Sleep quality
+    const qualities = ['poor', 'fair', 'good', 'excellent'];
+    const qualityIndex = Math.floor(Math.random() * qualities.length);
+    
+    // Calculate sleep times
+    const endTime = new Date(date);
+    endTime.setHours(7, Math.floor(Math.random() * 60), 0);
+    
+    const startTime = new Date(endTime);
+    startTime.setMinutes(startTime.getMinutes() - durationInMinutes);
+    
+    sleepEntries.push({
+      id: `sleep-${i}`,
+      userId,
+      duration: durationInMinutes,
+      quality: qualities[qualityIndex] as 'poor' | 'fair' | 'good' | 'excellent',
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      date: date.toISOString().split('T')[0]
     });
   }
   
-  return data;
+  return sleepEntries;
 };
 
 // Get user nutrition data
-export const getUserNutrition = async (userId: string): Promise<NutritionData[]> => {
-  // In a real app, this would be an API call
-  await new Promise(resolve => setTimeout(resolve, 500));
+export const getUserNutrition = async (userId: string): Promise<NutritionEntry[]> => {
+  await new Promise(resolve => setTimeout(resolve, 700));
   
-  // Mock data for the last 7 days
   const today = new Date();
-  const data: NutritionData[] = [];
+  const nutritionEntries: NutritionEntry[] = [];
   
+  // Common foods
+  const breakfastFoods = [
+    { name: 'Œufs brouillés', calories: 140, protein: 12, carbs: 1, fat: 10 },
+    { name: 'Pain grillé', calories: 80, protein: 3, carbs: 15, fat: 1 },
+    { name: 'Yaourt', calories: 120, protein: 10, carbs: 15, fat: 3 },
+    { name: 'Banane', calories: 105, protein: 1, carbs: 27, fat: 0 },
+    { name: 'Céréales', calories: 200, protein: 5, carbs: 40, fat: 3 }
+  ];
+  
+  const lunchFoods = [
+    { name: 'Poulet grillé', calories: 200, protein: 30, carbs: 0, fat: 8 },
+    { name: 'Riz', calories: 150, protein: 3, carbs: 30, fat: 1 },
+    { name: 'Salade verte', calories: 30, protein: 1, carbs: 5, fat: 0 },
+    { name: 'Poisson', calories: 180, protein: 25, carbs: 0, fat: 10 },
+    { name: 'Pâtes', calories: 200, protein: 7, carbs: 40, fat: 1 }
+  ];
+  
+  const dinnerFoods = [
+    { name: 'Steak', calories: 250, protein: 25, carbs: 0, fat: 15 },
+    { name: 'Légumes sautés', calories: 100, protein: 3, carbs: 15, fat: 3 },
+    { name: 'Soupe', calories: 120, protein: 5, carbs: 15, fat: 5 },
+    { name: 'Pommes de terre', calories: 150, protein: 4, carbs: 35, fat: 0 },
+    { name: 'Tofu', calories: 120, protein: 12, carbs: 3, fat: 6 }
+  ];
+  
+  const snackFoods = [
+    { name: 'Noix', calories: 180, protein: 5, carbs: 5, fat: 15 },
+    { name: 'Yaourt', calories: 120, protein: 10, carbs: 15, fat: 3 },
+    { name: 'Pomme', calories: 95, protein: 0, carbs: 25, fat: 0 },
+    { name: 'Barre protéinée', calories: 200, protein: 15, carbs: 20, fat: 8 },
+    { name: 'Chips', calories: 250, protein: 3, carbs: 25, fat: 15 }
+  ];
+  
+  // Generate 7 days of nutrition data
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
     
-    data.push({
-      date: date.toISOString().split('T')[0],
-      calories: Math.floor(Math.random() * 500) + 1500,
-      protein: Math.floor(Math.random() * 30) + 60,
-      carbs: Math.floor(Math.random() * 50) + 150,
-      fat: Math.floor(Math.random() * 20) + 50,
-      fiber: Math.floor(Math.random() * 10) + 15
-    });
+    // Breakfast
+    const breakfastItems = [];
+    for (let j = 0; j < (Math.floor(Math.random() * 3) + 1); j++) {
+      breakfastItems.push(breakfastFoods[Math.floor(Math.random() * breakfastFoods.length)]);
+    }
+    
+    const breakfast: NutritionEntry = {
+      id: `nutrition-breakfast-${i}`,
+      userId,
+      mealType: 'breakfast',
+      foods: breakfastItems,
+      date: dateStr,
+      totalCalories: breakfastItems.reduce((sum, item) => sum + item.calories, 0)
+    };
+    
+    nutritionEntries.push(breakfast);
+    
+    // Lunch
+    const lunchItems = [];
+    for (let j = 0; j < (Math.floor(Math.random() * 3) + 1); j++) {
+      lunchItems.push(lunchFoods[Math.floor(Math.random() * lunchFoods.length)]);
+    }
+    
+    const lunch: NutritionEntry = {
+      id: `nutrition-lunch-${i}`,
+      userId,
+      mealType: 'lunch',
+      foods: lunchItems,
+      date: dateStr,
+      totalCalories: lunchItems.reduce((sum, item) => sum + item.calories, 0)
+    };
+    
+    nutritionEntries.push(lunch);
+    
+    // Dinner
+    const dinnerItems = [];
+    for (let j = 0; j < (Math.floor(Math.random() * 3) + 1); j++) {
+      dinnerItems.push(dinnerFoods[Math.floor(Math.random() * dinnerFoods.length)]);
+    }
+    
+    const dinner: NutritionEntry = {
+      id: `nutrition-dinner-${i}`,
+      userId,
+      mealType: 'dinner',
+      foods: dinnerItems,
+      date: dateStr,
+      totalCalories: dinnerItems.reduce((sum, item) => sum + item.calories, 0)
+    };
+    
+    nutritionEntries.push(dinner);
+    
+    // Maybe add a snack
+    if (Math.random() > 0.3) {
+      const snackItems = [];
+      for (let j = 0; j < (Math.floor(Math.random() * 2) + 1); j++) {
+        snackItems.push(snackFoods[Math.floor(Math.random() * snackFoods.length)]);
+      }
+      
+      const snack: NutritionEntry = {
+        id: `nutrition-snack-${i}`,
+        userId,
+        mealType: 'snack',
+        foods: snackItems,
+        date: dateStr,
+        totalCalories: snackItems.reduce((sum, item) => sum + item.calories, 0)
+      };
+      
+      nutritionEntries.push(snack);
+    }
   }
   
-  return data;
+  return nutritionEntries;
 };
 
 // Get user hydration data
-export const getUserHydration = async (userId: string): Promise<HydrationData[]> => {
-  // In a real app, this would be an API call
+export const getUserHydration = async (userId: string): Promise<HydrationEntry[]> => {
   await new Promise(resolve => setTimeout(resolve, 500));
   
-  // Mock data for the last 7 days
   const today = new Date();
-  const data: HydrationData[] = [];
+  const hydrationEntries: HydrationEntry[] = [];
   
+  // Generate 7 days of hydration data
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
     
-    data.push({
-      date: date.toISOString().split('T')[0],
-      intake: Math.floor(Math.random() * 1000) + 1000,
-      target: 2000,
-      intakeByHour: Array.from({ length: 12 }, () => Math.floor(Math.random() * 200))
-    });
+    // 4-8 hydration entries per day
+    const entriesCount = Math.floor(Math.random() * 5) + 4;
+    
+    for (let j = 0; j < entriesCount; j++) {
+      // Random time
+      const hours = Math.floor(Math.random() * 14) + 7; // 7am to 9pm
+      const minutes = Math.floor(Math.random() * 60);
+      
+      // Random amount between 150ml and 350ml
+      const amount = Math.floor(Math.random() * 200) + 150;
+      
+      hydrationEntries.push({
+        id: `hydration-${i}-${j}`,
+        userId,
+        amount,
+        date: dateStr,
+        time: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+      });
+    }
   }
   
-  return data;
+  return hydrationEntries;
 };
 
-// Connect to fitness app
-export const connectFitnessApp = async (appName: string, userId: string): Promise<{ success: boolean, message: string }> => {
-  // In a real app, this would initiate an OAuth flow or similar
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Mock successful connection for demo purposes
-  return {
-    success: true,
-    message: `Connecté avec succès à ${appName}`
-  };
-};
-
-// Get exercise videos
-export const getExerciseVideos = async (category?: string): Promise<any[]> => {
-  // In a real app, this would be an API call to fetch videos
-  await new Promise(resolve => setTimeout(resolve, 500));
+// Function to get exercise videos
+export const getExerciseVideos = async (): Promise<ExerciseVideo[]> => {
+  await new Promise(resolve => setTimeout(resolve, 600));
   
   return [
     {
-      id: "vid1",
-      title: "Yoga matinal - 15 minutes",
-      description: "Routine de yoga douce pour commencer la journée",
-      thumbnailUrl: "/placeholder.svg",
-      duration: "15:00",
-      category: "Yoga",
-      difficulty: "Débutant"
+      id: 'video-1',
+      title: 'Yoga matinal pour débutants',
+      category: 'yoga',
+      duration: 15,
+      difficulty: 'beginner',
+      thumbnailUrl: 'https://placehold.co/300x200/4aade9/white?text=Yoga',
+      videoUrl: 'https://example.com/videos/yoga-morning.mp4',
+      description: 'Une séance de yoga douce pour bien commencer la journée et améliorer votre flexibilité.'
     },
     {
-      id: "vid2",
-      title: "Renforcement musculaire sans équipement",
-      description: "Entraînement complet du corps utilisant seulement votre poids corporel",
-      thumbnailUrl: "/placeholder.svg",
-      duration: "25:00",
-      category: "Force",
-      difficulty: "Intermédiaire"
+      id: 'video-2',
+      title: 'Cardio intense 20 minutes',
+      category: 'cardio',
+      duration: 20,
+      difficulty: 'intermediate',
+      thumbnailUrl: 'https://placehold.co/300x200/4aade9/white?text=Cardio',
+      videoUrl: 'https://example.com/videos/cardio-20min.mp4',
+      description: 'Séance de cardio à haute intensité pour brûler des calories et améliorer votre endurance.'
     },
     {
-      id: "vid3",
-      title: "Cardio à faible impact",
-      description: "Séance de cardio douce pour tous les niveaux de forme physique",
-      thumbnailUrl: "/placeholder.svg",
-      duration: "20:00",
-      category: "Cardio",
-      difficulty: "Débutant"
+      id: 'video-3',
+      title: 'Méditation guidée anti-stress',
+      category: 'meditation',
+      duration: 10,
+      difficulty: 'beginner',
+      thumbnailUrl: 'https://placehold.co/300x200/4aade9/white?text=Méditation',
+      videoUrl: 'https://example.com/videos/meditation.mp4',
+      description: 'Une méditation guidée pour réduire le stress et l\'anxiété en 10 minutes seulement.'
     },
     {
-      id: "vid4",
-      title: "Étirements pour la flexibilité",
-      description: "Routine d'étirements pour améliorer la flexibilité et réduire les tensions",
-      thumbnailUrl: "/placeholder.svg",
-      duration: "18:00",
-      category: "Étirements",
-      difficulty: "Tous niveaux"
-    },
-    {
-      id: "vid5",
-      title: "Méditation guidée pour débutants",
-      description: "Introduction à la méditation pour la gestion du stress",
-      thumbnailUrl: "/placeholder.svg",
-      duration: "10:00",
-      category: "Méditation",
-      difficulty: "Débutant"
+      id: 'video-4',
+      title: 'Renforcement musculaire complet',
+      category: 'strength',
+      duration: 30,
+      difficulty: 'advanced',
+      thumbnailUrl: 'https://placehold.co/300x200/4aade9/white?text=Musculation',
+      videoUrl: 'https://example.com/videos/strength.mp4',
+      description: 'Séance complète de renforcement musculaire ciblant tous les groupes musculaires principaux.'
     }
   ];
 };
+
+// Function to connect fitness app
+export const connectFitnessApp = async (appName: string): Promise<{ success: boolean; message: string }> => {
+  await new Promise(resolve => setTimeout(resolve, 1200));
+  
+  return {
+    success: true,
+    message: `Application ${appName} connectée avec succès. Vos données seront synchronisées automatiquement.`
+  };
+};
+
+// Alias function for backward compatibility
+export const getUserWellnessGoals = getWellnessGoals;

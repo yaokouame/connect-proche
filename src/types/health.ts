@@ -1,4 +1,3 @@
-
 export interface VitalSign {
   id: string;
   userId: string;
@@ -124,6 +123,7 @@ export interface InsuranceVoucher {
   forPharmacy?: string;
   forHealthCenter?: string;
   qrCode?: string;
+  uploadDate?: string;
 }
 
 // New interfaces for voice recognition
