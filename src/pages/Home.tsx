@@ -42,7 +42,7 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
             <Link to="/register">
-              <Button size={isSmallScreen ? "default" : "lg"} className="bg-white text-health-blue hover:bg-gray-100 w-full sm:w-auto">
+              <Button size={isSmallScreen ? "default" : "lg"} variant="white" className="w-full sm:w-auto">
                 S'inscrire
               </Button>
             </Link>

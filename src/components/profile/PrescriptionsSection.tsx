@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Prescription } from "@/types/user";
 import { Pill } from "lucide-react";
@@ -13,6 +13,14 @@ interface PrescriptionsSectionProps {
 const PrescriptionsSection = ({ prescriptions }: PrescriptionsSectionProps) => {
   // Check if there are any prescriptions
   const hasPrescriptions = prescriptions && prescriptions.length > 0;
+  
+  // Added state for selected prescription
+  const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
+  
+  // Handle prescription selection
+  const handlePrescriptionSelect = (prescription: Prescription) => {
+    setSelectedPrescription(prescription);
+  };
 
   return (
     <div className="space-y-2 border-b pb-4">
@@ -22,7 +30,11 @@ const PrescriptionsSection = ({ prescriptions }: PrescriptionsSectionProps) => {
       </div>
       
       {hasPrescriptions ? (
-        <PrescriptionList prescriptions={prescriptions} />
+        <PrescriptionList 
+          prescriptions={prescriptions} 
+          selectedPrescription={selectedPrescription}
+          onPrescriptionSelect={handlePrescriptionSelect}
+        />
       ) : (
         <Card>
           <CardContent className="py-4 text-center">

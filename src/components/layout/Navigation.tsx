@@ -132,7 +132,7 @@ const Navigation: React.FC = () => {
                 <Button variant="outline">{t("nav.login")}</Button>
               </Link>
               <Link to="/register">
-                <Button>{t("nav.register")}</Button>
+                <Button variant="default">{t("nav.register")}</Button>
               </Link>
             </div>
           )}
@@ -197,7 +197,7 @@ const Navigation: React.FC = () => {
                       </SheetClose>
                       <SheetClose asChild>
                         <Link to="/register">
-                          <Button className="w-full">{t("nav.register")}</Button>
+                          <Button variant="default" className="w-full">{t("nav.register")}</Button>
                         </Link>
                       </SheetClose>
                     </div>
