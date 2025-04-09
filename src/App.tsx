@@ -20,6 +20,7 @@ import Payment from "@/pages/Payment";
 import OrderConfirmation from "@/pages/OrderConfirmation";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import CheckoutCancel from "@/pages/CheckoutCancel";
+import Professionals from "@/pages/Professionals"; // Import the Professionals page
 
 // Import providers
 import { UserProvider } from "@/contexts/UserContext";
@@ -43,6 +44,7 @@ function App() {
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/map" element={<MapView />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/professionals" element={<Professionals />} /> {/* Add the route for Professionals */}
               <Route path="/tutorials" element={<Tutorials />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/chat" element={<Chat />} />
