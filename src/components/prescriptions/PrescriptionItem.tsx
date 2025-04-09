@@ -1,123 +1,159 @@
-import React from "react";
-import { Prescription } from "@/types/user";
-import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Calendar, User, ChevronRight } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Prescription } from '@/types/user';
+import { 
+  Calendar, 
+  Clock, 
+  FileText, 
+  ChevronDown, 
+  ChevronUp,
+  User,
+  Pill
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface PrescriptionItemProps {
   prescription: Prescription;
-  isSelected: boolean;
-  onSelect: (prescription: Prescription) => void;
 }
 
-const PrescriptionItem: React.FC<PrescriptionItemProps> = ({
-  prescription,
-  isSelected,
-  onSelect,
-}) => {
-  // Helper function to get medication images
-  const getMedicationImage = (medicationName: string): string => {
-    const medicationImages: Record<string, string> = {
-      "Amoxicilline": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-      "Doliprane": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-      "Ventoline": "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
-      "Advil": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-      "Augmentin": "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-      "Smecta": "https://images.unsplash.com/photo-1501286353178-1ec871214838",
-      "Imodium": "https://images.unsplash.com/photo-1501286353178-1ec871214838",
-      "Aspirine": "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9"
-    };
-    
-    // Try to find an exact match first
-    if (medicationImages[medicationName]) {
-      return medicationImages[medicationName];
+const PrescriptionItem: React.FC<PrescriptionItemProps> = ({ prescription }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const getBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'default';
+      case 'expired':
+        return 'outline';
+      case 'pending':
+        return 'secondary';
+      default:
+        return 'outline';
     }
-    
-    // Otherwise, try to find a partial match
-    for (const [key, url] of Object.entries(medicationImages)) {
-      if (medicationName.toLowerCase().includes(key.toLowerCase())) {
-        return url;
-      }
-    }
-    
-    // Default image if no match is found
-    return "https://images.unsplash.com/photo-1582562124811-c09040d0a901";
   };
 
   const formatDate = (dateString: string) => {
+    // Handle both DD/MM/YYYY and YYYY-MM-DD formats
+    if (!dateString) return "Date inconnue";
+    
+    // Check if date is in DD/MM/YYYY format
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/').map(Number);
+      return new Date(year, month - 1, day).toLocaleDateString('fr-FR');
+    }
+    
+    // Otherwise assume YYYY-MM-DD format
     try {
-      const date = new Date(dateString);
-      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+      return new Date(dateString).toLocaleDateString('fr-FR');
     } catch (error) {
-      return dateString;
+      console.error("Error formatting date:", error);
+      return dateString; // Return the original string if parsing fails
+    }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    try {
+      // Check if date is in DD/MM/YYYY format
+      if (dateString.includes('/')) {
+        const [day, month, year] = dateString.split('/').map(Number);
+        const date = new Date(year, month - 1, day);
+        return formatDistanceToNow(date, { addSuffix: true, locale: fr });
+      }
+      
+      // Otherwise assume YYYY-MM-DD format
+      return formatDistanceToNow(new Date(dateString), { 
+        addSuffix: true, 
+        locale: fr 
+      });
+    } catch (error) {
+      console.error("Error calculating time ago:", error);
+      return "Date inconnue";
     }
   };
 
   return (
-    <Card
-      className={`cursor-pointer transition-colors ${
-        isSelected ? "border-2 border-health-blue bg-blue-50" : "hover:bg-gray-50"
-      }`}
-      onClick={() => onSelect(prescription)}
-    >
-      <CardContent className="flex items-start p-4">
-        <div className="mr-4 flex-shrink-0">
-          <div className="bg-gray-100 p-2 rounded-md">
-            <FileText className="h-8 w-8 text-health-blue" />
+    <Card className="mb-4">
+      <CardContent className="pt-4">
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <User className="text-gray-500" size={16} />
+              <span className="font-medium">{prescription.professionalName}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Calendar size={14} />
+              <span>{formatDate(prescription.date)}</span>
+              <span className="text-xs text-gray-500">
+                ({getTimeAgo(prescription.date)})
+              </span>
+            </div>
           </div>
+          <Badge variant={getBadgeVariant(prescription.status)}>
+            {prescription.status === 'active' ? 'Active' : 
+             prescription.status === 'expired' ? 'Expirée' : 'En attente'}
+          </Badge>
         </div>
         
-        <div className="flex-grow">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-medium text-sm">Dr. {prescription.professionalName}</h4>
-              <div className="flex items-center text-gray-500 text-xs mt-1">
-                <Calendar className="h-3 w-3 mr-1" />
+        <div className="mt-3">
+          <Button 
+            variant="ghost" 
+            className="p-0 h-auto flex items-center text-health-blue hover:text-health-dark hover:bg-transparent"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <span className="font-medium">
+              {isExpanded ? 'Masquer les détails' : 'Voir les médicaments'}
+            </span>
+            {isExpanded ? 
+              <ChevronUp className="ml-1 h-4 w-4" /> : 
+              <ChevronDown className="ml-1 h-4 w-4" />
+            }
+          </Button>
+        </div>
+        
+        {isExpanded && (
+          <div className="mt-3 space-y-3">
+            <div className="border-t pt-2">
+              <h4 className="font-medium mb-2 flex items-center gap-1">
+                <Pill className="h-4 w-4" />
+                Médicaments prescrits
+              </h4>
+              <ul className="space-y-2">
+                {prescription.medications.map((med, index) => (
+                  <li key={index} className="bg-gray-50 p-2 rounded">
+                    <div className="font-medium">{med.name}</div>
+                    <div className="text-sm text-gray-600">
+                      {med.dosage && <span>{med.dosage} · </span>}
+                      {med.frequency && <span>{med.frequency} · </span>}
+                      {med.duration && <span>{med.duration}</span>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            {prescription.instructions && (
+              <div className="border-t pt-2">
+                <h4 className="font-medium mb-1 flex items-center gap-1">
+                  <FileText className="h-4 w-4" />
+                  Instructions
+                </h4>
+                <p className="text-sm text-gray-700">{prescription.instructions}</p>
+              </div>
+            )}
+            
+            {prescription.expiryDate && (
+              <div className="border-t pt-2 flex items-center gap-1 text-sm">
+                <Clock className="h-4 w-4 text-gray-500" />
                 <span>
-                  {formatDate(prescription.date)}
-                  {new Date(prescription.date) > new Date() ? 
-                    ` (dans ${formatDistanceToNow(new Date(prescription.date), { locale: fr })})` : 
-                    ` (il y a ${formatDistanceToNow(new Date(prescription.date), { locale: fr })})`}
+                  Expire le: <span className="font-medium">{formatDate(prescription.expiryDate)}</span>
                 </span>
               </div>
-            </div>
-            <ChevronRight className="h-4 w-4 text-gray-400" />
+            )}
           </div>
-          
-          {prescription.medications.length > 0 && (
-            <div className="mt-2">
-              <p className="text-xs text-gray-500 mb-1">Médicaments :</p>
-              <div className="flex flex-wrap gap-2">
-                {prescription.medications.map((med, index) => (
-                  <div key={index} className="flex items-center bg-gray-100 rounded-full px-2 py-1">
-                    <div className="h-4 w-4 rounded-full overflow-hidden mr-1">
-                      <img 
-                        src={getMedicationImage(med.name)} 
-                        alt={med.name}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <span className="text-xs">{med.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {prescription.prescriptionImage && (
-            <div className="mt-2 flex items-center text-xs text-gray-500">
-              <div className="h-4 w-4 rounded overflow-hidden mr-1">
-                <img 
-                  src={prescription.prescriptionImage.fileUrl} 
-                  alt="Ordonnance"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <span>{prescription.prescriptionImage.fileName}</span>
-            </div>
-          )}
-        </div>
+        )}
       </CardContent>
     </Card>
   );

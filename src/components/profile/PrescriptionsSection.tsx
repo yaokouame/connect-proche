@@ -1,31 +1,35 @@
 
-import React, { useState } from "react";
-import PrescriptionList from "@/components/prescriptions/PrescriptionList";
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Prescription } from "@/types/user";
-import { FileText } from "lucide-react";
+import { Pill } from "lucide-react";
+import PrescriptionList from "../prescriptions/PrescriptionList";
 
 interface PrescriptionsSectionProps {
   prescriptions: Prescription[];
+  patientId?: string;
 }
 
 const PrescriptionsSection = ({ prescriptions }: PrescriptionsSectionProps) => {
-  const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
-  
-  const handlePrescriptionSelect = (prescription: Prescription) => {
-    setSelectedPrescription(prescription);
-  };
+  // Check if there are any prescriptions
+  const hasPrescriptions = prescriptions && prescriptions.length > 0;
 
   return (
-    <div className="space-y-2 pt-4">
+    <div className="space-y-2 border-b pb-4">
       <div className="flex items-center gap-2">
-        <FileText className="h-5 w-5 text-health-blue" />
-        <h3 className="text-lg font-medium">Ordonnances</h3>
+        <Pill className="h-5 w-5 text-health-blue" />
+        <h3 className="text-lg font-medium">Prescriptions médicales</h3>
       </div>
-      <PrescriptionList 
-        prescriptions={prescriptions}
-        selectedPrescription={selectedPrescription}
-        onPrescriptionSelect={handlePrescriptionSelect}
-      />
+      
+      {hasPrescriptions ? (
+        <PrescriptionList prescriptions={prescriptions} />
+      ) : (
+        <Card>
+          <CardContent className="py-4 text-center">
+            <p className="text-gray-500">Aucune prescription disponible</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

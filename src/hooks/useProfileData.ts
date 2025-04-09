@@ -20,8 +20,8 @@ export const useProfileData = (currentUser: User | null) => {
       patientId: "patient-456",
       professionalId: "pro-123",
       professionalName: "Jean Michel",
-      date: "15/09/2023",
-      expiryDate: "15/12/2023",
+      date: "2023-09-15", // Changed format to YYYY-MM-DD for consistency
+      expiryDate: "2023-12-15",
       status: "active",
       medications: [
         {
@@ -44,8 +44,8 @@ export const useProfileData = (currentUser: User | null) => {
       patientId: "patient-456",
       professionalId: "pro-124",
       professionalName: "Sophie Martin",
-      date: "25/07/2023",
-      expiryDate: "25/10/2023",
+      date: "2023-07-25", // Changed format to YYYY-MM-DD for consistency
+      expiryDate: "2023-10-25",
       status: "expired",
       medications: [
         {

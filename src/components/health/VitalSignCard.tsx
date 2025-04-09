@@ -48,11 +48,14 @@ const VitalSignCard: React.FC<VitalSignCardProps> = ({
   // Format the timestamp
   const getTimeAgo = () => {
     try {
+      if (!latestReading.timestamp) return 'Date inconnue';
+      
       return formatDistanceToNow(new Date(latestReading.timestamp), { 
         addSuffix: true, 
         locale: fr 
       });
     } catch (error) {
+      console.error("Error formatting time:", error);
       return 'Date inconnue';
     }
   };
