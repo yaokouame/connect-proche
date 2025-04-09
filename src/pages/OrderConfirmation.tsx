@@ -85,7 +85,7 @@ const OrderConfirmation = () => {
     shippingCost = 0,
     discount = 0,
     lastFourDigits,
-    status = "confirmed",
+    status = "confirmed" as OrderStatusType,
     trackingNumber,
     trackingUrl,
     carrier
@@ -108,7 +108,7 @@ const OrderConfirmation = () => {
           trackingNumber={generatedTrackingNumber}
           trackingUrl={trackingUrl}
           carrier={carrier}
-          orderStatus={status as OrderStatusType}
+          orderStatus={status}
           notificationsEnabled={notificationsEnabled}
           setNotificationsEnabled={setNotificationsEnabled}
         />
