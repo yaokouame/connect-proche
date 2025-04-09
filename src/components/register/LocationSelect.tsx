@@ -3,6 +3,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ivoryCoastRegions, ivoryCoastCities } from "@/data/locationData";
 
 interface LocationSelectProps {
   formData: {
@@ -30,16 +31,6 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
   handleSelectChange,
   translations
 }) => {
-  // Mock data for regions and cities
-  const regions = ["Dakar", "Thiès", "Saint-Louis", "Ziguinchor", "Diourbel"];
-  const cities: Record<string, string[]> = {
-    "Dakar": ["Plateau", "Médina", "Yoff", "Ouakam", "Almadies"],
-    "Thiès": ["Thiès Ville", "Mbour", "Tivaouane"],
-    "Saint-Louis": ["Saint-Louis Ville", "Richard Toll", "Dagana"],
-    "Ziguinchor": ["Ziguinchor Ville", "Bignona", "Oussouye"],
-    "Diourbel": ["Diourbel Ville", "Bambey", "Mbacké"]
-  };
-
   return (
     <div className="space-y-4 mt-4">
       {translations.location && (
@@ -57,7 +48,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
               <SelectValue placeholder={translations.regionPlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              {regions.map((region) => (
+              {ivoryCoastRegions.map((region) => (
                 <SelectItem key={region} value={region}>
                   {region}
                 </SelectItem>
@@ -77,7 +68,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
               <SelectValue placeholder={translations.cityPlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              {formData.region && cities[formData.region]?.map((city) => (
+              {formData.region && ivoryCoastCities[formData.region]?.map((city) => (
                 <SelectItem key={city} value={city}>
                   {city}
                 </SelectItem>
