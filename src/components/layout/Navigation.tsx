@@ -35,7 +35,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 const Navigation = () => {
   const { currentUser, logout } = useUser();
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -45,37 +45,37 @@ const Navigation = () => {
   // Navigation items
   const navItems = [
     { 
-      name: t('navigation.home'), 
+      name: t('nav.home'), 
       path: '/', 
       icon: <Home className="w-5 h-5 mr-2" /> 
     },
     { 
-      name: t('navigation.appointments'), 
+      name: t('nav.appointments'), 
       path: '/appointments', 
       icon: <Calendar className="w-5 h-5 mr-2" /> 
     },
     { 
-      name: t('navigation.medications'), 
+      name: t('nav.medications'), 
       path: '/medications', 
       icon: <Pill className="w-5 h-5 mr-2" /> 
     },
     { 
-      name: t('navigation.map'), 
+      name: t('nav.map'), 
       path: '/map', 
       icon: <Map className="w-5 h-5 mr-2" /> 
     },
     { 
-      name: t('navigation.products'), 
+      name: t('nav.products'), 
       path: '/products', 
       icon: <Store className="w-5 h-5 mr-2" /> 
     },
     { 
-      name: t('navigation.professionals'), 
+      name: t('nav.findProfessional'), 
       path: '/professionals', 
       icon: <Users className="w-5 h-5 mr-2" /> 
     },
     { 
-      name: t('navigation.tutorials'), 
+      name: t('nav.tutorials'), 
       path: '/tutorials', 
       icon: <Info className="w-5 h-5 mr-2" /> 
     }
@@ -217,12 +217,12 @@ const Navigation = () => {
               <div className="flex items-center space-x-2">
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
-                    {t('auth.login')}
+                    {t('nav.login')}
                   </Button>
                 </Link>
                 <Link to="/register">
                   <Button size="sm" className="bg-health-blue hover:bg-health-blue/90">
-                    {t('auth.register')}
+                    {t('nav.register')}
                   </Button>
                 </Link>
               </div>
@@ -305,12 +305,12 @@ const Navigation = () => {
                       <div className="grid grid-cols-2 gap-3">
                         <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                           <Button variant="outline" className="w-full">
-                            {t('auth.login')}
+                            {t('nav.login')}
                           </Button>
                         </Link>
                         <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
                           <Button className="w-full bg-health-blue hover:bg-health-blue/90">
-                            {t('auth.register')}
+                            {t('nav.register')}
                           </Button>
                         </Link>
                       </div>

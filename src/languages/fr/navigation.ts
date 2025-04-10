@@ -18,4 +18,6 @@ export default {
   "nav.appointments": "Rendez-vous",
   "nav.messaging": "Messagerie",
   "nav.admin": "Administration",
+  "nav.medications": "Médicaments",
+  "nav.professionals": "Professionnels"
 }
