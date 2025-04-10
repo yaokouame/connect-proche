@@ -21,8 +21,8 @@ const PrescriptionItem: React.FC<PrescriptionItemProps> = ({
     }
   };
 
-  // Format the issue date for display
-  const formattedDate = prescription.issueDate ? formatDate(prescription.issueDate) : 'Date inconnue';
+  // Format the issue date for display using the date property instead of issueDate
+  const formattedDate = prescription.date ? formatDate(prescription.date) : 'Date inconnue';
 
   return (
     <Card 
@@ -32,7 +32,7 @@ const PrescriptionItem: React.FC<PrescriptionItemProps> = ({
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <h4 className="font-medium text-sm">{prescription.doctorName}</h4>
+            <h4 className="font-medium text-sm">{prescription.professionalName}</h4>
             <p className="text-xs text-gray-500">{formattedDate}</p>
           </div>
           <div className="bg-health-teal/10 text-health-teal text-xs px-2 py-1 rounded">
