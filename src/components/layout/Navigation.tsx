@@ -13,7 +13,8 @@ import {
   Menu,
   MessageCircle,
   BookOpen,
-  Settings
+  Settings,
+  ShoppingCart
 } from "lucide-react";
 import {
   Sheet,
@@ -24,11 +25,13 @@ import {
 import LanguageSelector from "../LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import GlobalVoiceSearch from "../voice/GlobalVoiceSearch";
+import { useShoppingCart } from "@/hooks/useShoppingCart";
 
 const Navigation: React.FC = () => {
   const { currentUser, logout } = useUser();
   const location = useLocation();
   const { t } = useLanguage();
+  const { cartItemCount } = useShoppingCart();
 
   const handleLogout = () => {
     logout();
@@ -117,6 +120,20 @@ const Navigation: React.FC = () => {
           <GlobalVoiceSearch className="mx-4" placeholder={t("common.search")} />
           
           <LanguageSelector className="w-32" />
+
+          {/* Shopping Cart Button */}
+          <Link to="/cart">
+            <Button variant="outline" className="flex items-center text-gray-600 hover:text-health-teal relative">
+              <ShoppingCart className="h-5 w-5 mr-2" />
+              {t("nav.cart")}
+              {cartItemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-health-blue text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartItemCount}
+                </span>
+              )}
+            </Button>
+          </Link>
+          
           {currentUser ? (
             <Button 
               variant="ghost" 
@@ -140,6 +157,18 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         <div className="flex items-center space-x-2 md:hidden">
+          {/* Shopping Cart Icon for Mobile */}
+          <Link to="/cart" className="relative">
+            <Button variant="outline" size="icon" className="relative">
+              <ShoppingCart className="h-5 w-5" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-health-blue text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartItemCount}
+                </span>
+              )}
+            </Button>
+          </Link>
+          
           <GlobalVoiceSearch className="w-full max-w-[180px]" placeholder={t("common.search")} />
           <Sheet>
             <SheetTrigger asChild>
@@ -175,6 +204,17 @@ const Navigation: React.FC = () => {
                       </SheetClose>
                     );
                   })}
+                  
+                  {/* Shopping Cart Link for Mobile Menu */}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/cart"
+                      className="flex items-center p-2 rounded-md text-gray-600 hover:bg-gray-100"
+                    >
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                      {t("nav.cart")} {cartItemCount > 0 && `(${cartItemCount})`}
+                    </Link>
+                  </SheetClose>
                 </nav>
                 <div className="mt-auto pb-6">
                   {currentUser ? (
