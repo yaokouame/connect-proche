@@ -15,95 +15,158 @@ import {
 // Professionals
 export const fetchProfessionals = async () => {
   try {
-    // Mock database call for demonstration
-    // In a real app with Supabase connected, this would use:
-    // const { data, error } = await supabase.from('professionals').select('*');
+    // Using Supabase to fetch data
+    const { data, error } = await supabase.from('professionals').select('*');
     
-    // For now, return mock data
-    return mockProfessionals;
+    if (error) {
+      console.error("Error fetching professionals from Supabase:", error);
+      // Fall back to mock data if there's an error
+      return mockProfessionals;
+    }
+    
+    return data.length ? data : mockProfessionals;
   } catch (error) {
     console.error("Error fetching professionals:", error);
-    throw error;
+    return mockProfessionals;
   }
 };
 
 export const updateProfessionalStatus = async (id: string, isOnline: boolean) => {
   try {
-    // Mock database call for demonstration
-    // In a real app with Supabase connected:
-    // const { data, error } = await supabase.from('professionals').update({ isOnline }).eq('id', id).select();
+    // Update in Supabase
+    const { data, error } = await supabase
+      .from('professionals')
+      .update({ isOnline })
+      .eq('id', id)
+      .select();
     
-    // Return mock data
+    if (error) {
+      console.error("Error updating professional status in Supabase:", error);
+      // Fall back to mock data
+      const updatedPro = mockProfessionals.find(p => p.id === id);
+      if (updatedPro) {
+        updatedPro.isOnline = isOnline;
+      }
+      return [updatedPro];
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error updating professional status:", error);
+    // Fall back to mock data
     const updatedPro = mockProfessionals.find(p => p.id === id);
     if (updatedPro) {
       updatedPro.isOnline = isOnline;
     }
     return [updatedPro];
-  } catch (error) {
-    console.error("Error updating professional status:", error);
-    throw error;
   }
 };
 
 // Pharmacies
 export const fetchPharmacies = async () => {
   try {
-    // Mock database call for demonstration
-    // In a real app with Supabase connected:
-    // const { data, error } = await supabase.from('pharmacies').select('*');
+    // Using Supabase to fetch data
+    const { data, error } = await supabase.from('pharmacies').select('*');
     
-    // Return mock data
-    return mockPharmacies;
+    if (error) {
+      console.error("Error fetching pharmacies from Supabase:", error);
+      // Fall back to mock data
+      return mockPharmacies;
+    }
+    
+    return data.length ? data : mockPharmacies;
   } catch (error) {
     console.error("Error fetching pharmacies:", error);
-    throw error;
+    return mockPharmacies;
   }
 };
 
 export const updatePharmacyDutyStatus = async (id: string, onDuty: boolean) => {
   try {
-    // Mock database call for demonstration
-    // In a real app with Supabase connected:
-    // const { data, error } = await supabase.from('pharmacies').update({ onDuty }).eq('id', id).select();
+    // Update in Supabase
+    const { data, error } = await supabase
+      .from('pharmacies')
+      .update({ onDuty })
+      .eq('id', id)
+      .select();
     
-    // Return mock data
+    if (error) {
+      console.error("Error updating pharmacy duty status in Supabase:", error);
+      // Fall back to mock data
+      const updatedPharmacy = mockPharmacies.find(p => p.id === id);
+      if (updatedPharmacy) {
+        updatedPharmacy.onDuty = onDuty;
+      }
+      return [updatedPharmacy];
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error updating pharmacy duty status:", error);
+    // Fall back to mock data
     const updatedPharmacy = mockPharmacies.find(p => p.id === id);
     if (updatedPharmacy) {
       updatedPharmacy.onDuty = onDuty;
     }
     return [updatedPharmacy];
-  } catch (error) {
-    console.error("Error updating pharmacy duty status:", error);
-    throw error;
   }
 };
 
 // Patients
 export const fetchPatients = async () => {
   try {
-    // Mock database call for demonstration
-    // In a real app with Supabase connected:
-    // const { data, error } = await supabase.from('patients').select('*');
+    // Using Supabase to fetch data
+    const { data, error } = await supabase.from('patients').select('*');
     
-    // Return mock data
-    return mockPatients;
+    if (error) {
+      console.error("Error fetching patients from Supabase:", error);
+      // Fall back to mock data
+      return mockPatients;
+    }
+    
+    return data.length ? data : mockPatients;
   } catch (error) {
     console.error("Error fetching patients:", error);
-    throw error;
+    return mockPatients;
   }
 };
 
 // Prescriptions
 export const fetchPrescriptions = async () => {
   try {
-    // Mock database call for demonstration
-    // In a real app with Supabase connected:
-    // const { data, error } = await supabase.from('prescriptions').select('*');
+    // Using Supabase to fetch data
+    const { data, error } = await supabase.from('prescriptions').select('*');
     
-    // Return mock data
-    return mockPrescriptions;
+    if (error) {
+      console.error("Error fetching prescriptions from Supabase:", error);
+      // Fall back to mock data
+      return mockPrescriptions;
+    }
+    
+    return data.length ? data : mockPrescriptions;
   } catch (error) {
     console.error("Error fetching prescriptions:", error);
+    return mockPrescriptions;
+  }
+};
+
+// Save prescription to database
+export const savePrescription = async (prescription: Prescription) => {
+  try {
+    // Save to Supabase
+    const { data, error } = await supabase
+      .from('prescriptions')
+      .upsert(prescription, { onConflict: 'id' })
+      .select();
+    
+    if (error) {
+      console.error("Error saving prescription to Supabase:", error);
+      throw error;
+    }
+    
+    return data[0];
+  } catch (error) {
+    console.error("Error saving prescription:", error);
     throw error;
   }
 };
@@ -112,9 +175,67 @@ export const fetchPrescriptions = async () => {
  * Function to insert mock data for testing
  */
 export const insertMockData = async () => {
-  // This function would be used to seed the database with initial data
-  // Implementation would depend on the specific needs
-  console.log("Inserting mock data...");
+  try {
+    console.log("Inserting mock data to Supabase...");
+    
+    // Check if data already exists
+    const { count: professionalCount } = await supabase
+      .from('professionals')
+      .select('*', { count: 'exact', head: true });
+      
+    if (!professionalCount) {
+      // Insert professionals
+      const { error: proError } = await supabase
+        .from('professionals')
+        .insert(mockProfessionals);
+        
+      if (proError) console.error("Error inserting professionals:", proError);
+    }
+    
+    const { count: pharmacyCount } = await supabase
+      .from('pharmacies')
+      .select('*', { count: 'exact', head: true });
+      
+    if (!pharmacyCount) {
+      // Insert pharmacies
+      const { error: pharmError } = await supabase
+        .from('pharmacies')
+        .insert(mockPharmacies);
+        
+      if (pharmError) console.error("Error inserting pharmacies:", pharmError);
+    }
+    
+    const { count: patientCount } = await supabase
+      .from('patients')
+      .select('*', { count: 'exact', head: true });
+      
+    if (!patientCount) {
+      // Insert patients
+      const { error: patientError } = await supabase
+        .from('patients')
+        .insert(mockPatients);
+        
+      if (patientError) console.error("Error inserting patients:", patientError);
+    }
+    
+    const { count: prescriptionCount } = await supabase
+      .from('prescriptions')
+      .select('*', { count: 'exact', head: true });
+      
+    if (!prescriptionCount) {
+      // Insert prescriptions
+      const { error: prescError } = await supabase
+        .from('prescriptions')
+        .insert(mockPrescriptions);
+        
+      if (prescError) console.error("Error inserting prescriptions:", prescError);
+    }
+    
+    console.log("Mock data insertion complete");
+    
+  } catch (error) {
+    console.error("Error during mock data insertion:", error);
+  }
 };
 
 // Mock data for demonstration

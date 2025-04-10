@@ -1,52 +1,47 @@
 
 /**
- * Utility functions for date formatting and manipulation
- */
-
-/**
  * Formats a date string to a localized format
- * @param dateString - Date string in any valid format (ISO, etc.)
- * @returns Formatted date string
  */
 export const formatDate = (dateString: string): string => {
   if (!dateString) return 'Date inconnue';
   
   try {
-    const date = new Date(dateString);
-    
-    // Check if the date is valid
-    if (isNaN(date.getTime())) {
-      // Try to handle different date formats (DD/MM/YYYY)
-      if (dateString.includes('/')) {
-        const [day, month, year] = dateString.split('/');
-        return `${day}/${month}/${year}`;
-      }
+    // Check if already formatted as DD/MM/YYYY
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
       return dateString;
     }
     
-    // Format the date using the browser's locale
+    const date = new Date(dateString);
+    
+    // Format to French locale date
     return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
     });
   } catch (error) {
     console.error('Error formatting date:', error);
-    return dateString;
+    return 'Date invalide';
   }
 };
 
 /**
- * Converts a date string to ISO format (YYYY-MM-DD)
- * @param dateString - Date string in any format
- * @returns ISO formatted date
+ * Checks if a date is in the past
  */
-export const toISODate = (dateString: string): string => {
+export const isDateExpired = (dateString: string): boolean => {
+  if (!dateString) return false;
+  
   try {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    const today = new Date();
+    
+    // Reset time portion for accurate date comparison
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    
+    return date < today;
   } catch (error) {
-    console.error('Error converting date to ISO:', error);
-    return dateString;
+    console.error('Error checking date expiration:', error);
+    return false;
   }
 };

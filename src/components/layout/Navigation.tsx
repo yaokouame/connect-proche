@@ -1,257 +1,331 @@
 
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
-import { 
-  Home, 
-  User, 
-  CalendarClock, 
-  Map, 
-  ShoppingBag, 
-  LogOut, 
-  Menu,
-  MessageCircle,
-  BookOpen,
-  Settings,
-  ShoppingCart
-} from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-import LanguageSelector from "../LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
-import GlobalVoiceSearch from "../voice/GlobalVoiceSearch";
-import { useShoppingCart } from "@/hooks/useShoppingCart";
+import { 
+  ShoppingCart, 
+  Bell, 
+  User, 
+  Menu, 
+  X, 
+  LogOut,
+  Home,
+  Calendar,
+  Map,
+  PrescriptionBottle,
+  Store,
+  Users,
+  Info,
+  ChevronDown
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import LanguageSelector from "@/components/LanguageSelector";
 
-const Navigation: React.FC = () => {
+const Navigation = () => {
   const { currentUser, logout } = useUser();
+  const { language, t } = useLanguage();
   const location = useLocation();
-  const { t } = useLanguage();
-  const { cartItemCount } = useShoppingCart();
+  const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(0);
 
-  const handleLogout = () => {
-    logout();
-  };
-
-  const isProfessional = currentUser?.role === "professional";
-
+  // Navigation items
   const navItems = [
-    {
-      label: t("nav.home"),
-      path: "/",
-      icon: <Home className="h-5 w-5 mr-2" />,
+    { 
+      name: t('navigation.home'), 
+      path: '/', 
+      icon: <Home className="w-5 h-5 mr-2" /> 
     },
-    {
-      label: t("nav.profile"),
-      path: "/profile",
-      icon: <User className="h-5 w-5 mr-2" />,
-      requiresAuth: true,
+    { 
+      name: t('navigation.appointments'), 
+      path: '/appointments', 
+      icon: <Calendar className="w-5 h-5 mr-2" /> 
     },
-    {
-      label: t("nav.appointments"),
-      path: "/appointments",
-      icon: <CalendarClock className="h-5 w-5 mr-2" />,
-      requiresAuth: true,
+    { 
+      name: t('navigation.medications'), 
+      path: '/medications', 
+      icon: <PrescriptionBottle className="w-5 h-5 mr-2" /> 
     },
-    {
-      label: t("nav.messaging"),
-      path: "/chat",
-      icon: <MessageCircle className="h-5 w-5 mr-2" />,
-      requiresAuth: true,
+    { 
+      name: t('navigation.map'), 
+      path: '/map', 
+      icon: <Map className="w-5 h-5 mr-2" /> 
     },
-    {
-      label: t("nav.map"),
-      path: "/map",
-      icon: <Map className="h-5 w-5 mr-2" />,
+    { 
+      name: t('navigation.products'), 
+      path: '/products', 
+      icon: <Store className="w-5 h-5 mr-2" /> 
     },
-    {
-      label: t("nav.products"),
-      path: "/products",
-      icon: <ShoppingBag className="h-5 w-5 mr-2" />,
+    { 
+      name: t('navigation.professionals'), 
+      path: '/professionals', 
+      icon: <Users className="w-5 h-5 mr-2" /> 
     },
-    {
-      label: t("nav.tutorials"),
-      path: "/tutorials",
-      icon: <BookOpen className="h-5 w-5 mr-2" />,
-    },
-    {
-      label: t("nav.admin"),
-      path: "/admin",
-      icon: <Settings className="h-5 w-5 mr-2" />,
-      requiresAuth: true,
-      requiresProfessional: true,
-    },
+    { 
+      name: t('navigation.tutorials'), 
+      path: '/tutorials', 
+      icon: <Info className="w-5 h-5 mr-2" /> 
+    }
   ];
 
-  return (
-    <header className="sticky top-0 z-40 bg-white border-b shadow-sm">
-      <div className="container mx-auto px-4 flex justify-between items-center h-16">
-        {/* Logo & Title */}
-        <Link to="/" className="flex items-center space-x-2">
-          <span className="font-bold text-xl md:text-2xl text-health-blue">ConnectProche</span>
-        </Link>
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-          {navItems.map((item) => {
-            if (item.requiresAuth && !currentUser) return null;
-            if (item.requiresProfessional && !isProfessional) return null;
-            return (
+  // Get cart item count from localStorage
+  useEffect(() => {
+    const getCartItems = () => {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        setCartItemCount(cart.length || 0);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        setCartItemCount(0);
+      }
+    };
+
+    getCartItems();
+    
+    // Listen for storage events to update cart count when changed from other tabs
+    window.addEventListener('storage', getCartItems);
+    
+    // Custom event for cart updates within the same tab
+    window.addEventListener('cartUpdated', getCartItems);
+    
+    return () => {
+      window.removeEventListener('storage', getCartItems);
+      window.removeEventListener('cartUpdated', getCartItems);
+    };
+  }, []);
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMobileMenuOpen(false);
+  };
+
+  // Mobile menu toggle
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Classes for the navbar
+  const navbarClasses = `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-3'
+  }`;
+
+  return (
+    <>
+      <nav className={navbarClasses}>
+        <div className="container mx-auto px-4 flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <span className="text-2xl font-semibold text-health-blue">
+              ConnectProche
+            </span>
+          </Link>
+
+          {/* Desktop navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center text-sm font-medium transition-colors hover:text-health-teal ${
+                className={`px-3 py-2 rounded-md text-sm font-medium flex items-center ${
                   location.pathname === item.path
-                    ? "text-health-blue"
-                    : "text-gray-600"
+                    ? 'text-health-blue bg-blue-50'
+                    : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                {item.icon}
-                {item.label}
+                {item.name}
               </Link>
-            );
-          })}
-        </nav>
+            ))}
+          </div>
 
-        {/* Right Side Actions */}
-        <div className="hidden md:flex items-center space-x-4">
-          {/* Voice Search */}
-          <GlobalVoiceSearch className="w-48" placeholder={t("common.search")} />
-          
-          <LanguageSelector className="w-32" />
-
-          {/* Shopping Cart Button */}
-          <Link to="/cart">
-            <Button variant="outline" className="flex items-center text-gray-600 hover:text-health-teal relative">
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              {t("nav.cart")}
+          {/* Right side items (notifications, profile, cart) */}
+          <div className="flex items-center space-x-2">
+            {/* Language selector */}
+            <LanguageSelector />
+            
+            {/* Cart button with badge */}
+            <Link to="/cart" className="relative p-2">
+              <ShoppingCart className={`w-5 h-5 ${location.pathname === '/cart' ? 'text-health-blue' : 'text-gray-700'}`} />
               {cartItemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-health-blue text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                <Badge className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-health-teal text-[10px]">
                   {cartItemCount}
-                </span>
+                </Badge>
               )}
+            </Link>
+            
+            {/* Notifications */}
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="w-5 h-5 text-gray-700" />
+              <Badge className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-health-teal text-[10px]">
+                3
+              </Badge>
             </Button>
-          </Link>
-          
-          {currentUser ? (
-            <Button 
-              variant="ghost" 
-              className="flex items-center text-gray-600 hover:text-health-teal"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-5 w-5 mr-2" />
-              {t("nav.logout")}
-            </Button>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <Link to="/login">
-                <Button variant="outline">{t("nav.login")}</Button>
-              </Link>
-              <Link to="/register">
-                <Button variant="default">{t("nav.register")}</Button>
-              </Link>
-            </div>
-          )}
-        </div>
 
-        {/* Mobile Navigation */}
-        <div className="flex items-center space-x-2 md:hidden">
-          {/* Shopping Cart Icon for Mobile */}
-          <Link to="/cart" className="relative">
-            <Button variant="outline" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-health-blue text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartItemCount}
-                </span>
-              )}
-            </Button>
-          </Link>
-          
-          <GlobalVoiceSearch className="w-full max-w-[180px]" placeholder={t("common.search")} />
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px]">
-              <div className="flex flex-col h-full">
-                <div className="py-4 border-b">
-                  <h2 className="text-xl font-semibold text-health-blue">ConnectProche</h2>
-                  <div className="mt-4">
-                    <LanguageSelector className="w-full" />
+            {/* User menu or login */}
+            {currentUser ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2 p-1">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={currentUser.profileImageUrl || ''} alt={currentUser.name} />
+                      <AvatarFallback className="bg-health-blue text-white">
+                        {currentUser.name?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden md:inline text-sm font-medium">{currentUser.name}</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>{t('profile.greeting', { name: currentUser.name })}</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="w-4 h-4 mr-2" />
+                    {t('profile.myProfile')}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    {t('auth.logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    {t('auth.login')}
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="bg-health-blue hover:bg-health-blue/90">
+                    {t('auth.register')}
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile menu button */}
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="p-0">
+                <div className="flex flex-col h-full">
+                  <div className="p-4 border-b">
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-semibold">ConnectProche</span>
+                      <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
+                        <X className="w-5 h-5" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <nav className="flex flex-col space-y-1 mt-4 overflow-y-auto">
-                  {navItems.map((item) => {
-                    if (item.requiresAuth && !currentUser) return null;
-                    if (item.requiresProfessional && !isProfessional) return null;
-                    return (
-                      <SheetClose asChild key={item.path}>
+                  
+                  <div className="flex-1 overflow-auto py-4">
+                    <div className="space-y-1 px-2">
+                      {navItems.map((item) => (
                         <Link
+                          key={item.path}
                           to={item.path}
-                          className={`flex items-center p-3 rounded-md ${
+                          className={`flex items-center px-4 py-3 text-base rounded-md ${
                             location.pathname === item.path
-                              ? "bg-health-blue/10 text-health-blue font-medium"
-                              : "text-gray-600 hover:bg-gray-100"
+                              ? 'bg-blue-50 text-health-blue'
+                              : 'text-gray-900 hover:bg-gray-100'
                           }`}
+                          onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {item.icon}
-                          {item.label}
+                          {item.name}
                         </Link>
-                      </SheetClose>
-                    );
-                  })}
-                  
-                  {/* Shopping Cart Link for Mobile Menu */}
-                  <SheetClose asChild>
-                    <Link 
-                      to="/cart"
-                      className="flex items-center p-3 rounded-md text-gray-600 hover:bg-gray-100"
-                    >
-                      <ShoppingCart className="h-5 w-5 mr-2" />
-                      {t("nav.cart")} {cartItemCount > 0 && `(${cartItemCount})`}
-                    </Link>
-                  </SheetClose>
-                </nav>
-                <div className="mt-auto pb-6 pt-4 border-t">
-                  {currentUser ? (
-                    <SheetClose asChild>
-                      <Button 
-                        variant="outline" 
-                        className="w-full flex items-center justify-center"
-                        onClick={handleLogout}
-                      >
-                        <LogOut className="h-5 w-5 mr-2" />
-                        {t("nav.logout")}
-                      </Button>
-                    </SheetClose>
-                  ) : (
-                    <div className="space-y-2">
-                      <SheetClose asChild>
-                        <Link to="/login" className="w-full">
-                          <Button variant="outline" className="w-full">{t("nav.login")}</Button>
-                        </Link>
-                      </SheetClose>
-                      <SheetClose asChild>
-                        <Link to="/register" className="w-full">
-                          <Button variant="default" className="w-full">{t("nav.register")}</Button>
-                        </Link>
-                      </SheetClose>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                  
+                  <div className="p-4 border-t mt-auto">
+                    {currentUser ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3 p-2">
+                          <Avatar>
+                            <AvatarImage src={currentUser.profileImageUrl || ''} alt={currentUser.name} />
+                            <AvatarFallback className="bg-health-blue text-white">
+                              {currentUser.name?.charAt(0) || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{currentUser.name}</p>
+                            <p className="text-sm text-gray-500">{currentUser.email}</p>
+                          </div>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start"
+                          onClick={() => {
+                            navigate('/profile');
+                            setIsMobileMenuOpen(false);
+                          }}
+                        >
+                          <User className="w-4 h-4 mr-2" />
+                          {t('profile.myProfile')}
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          {t('auth.logout')}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Button variant="outline" className="w-full">
+                            {t('auth.login')}
+                          </Button>
+                        </Link>
+                        <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Button className="w-full bg-health-blue hover:bg-health-blue/90">
+                            {t('auth.register')}
+                          </Button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
-      </div>
-    </header>
+      </nav>
+      
+      {/* Spacer to prevent content from hiding behind the fixed navbar */}
+      <div className="h-16"></div>
+    </>
   );
 };
 
