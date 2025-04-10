@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Professional, 
@@ -156,7 +155,7 @@ export const savePrescription = async (prescription: Prescription) => {
     // Save to Supabase
     const { data, error } = await supabase
       .from('prescriptions')
-      .upsert(prescription, { onConflict: 'id' })
+      .upsert(prescription)
       .select();
     
     if (error) {

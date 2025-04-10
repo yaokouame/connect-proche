@@ -13,7 +13,7 @@ import {
   Home,
   Calendar,
   Map,
-  PrescriptionBottle,
+  Pill,
   Store,
   Users,
   Info,
@@ -57,7 +57,7 @@ const Navigation = () => {
     { 
       name: t('navigation.medications'), 
       path: '/medications', 
-      icon: <PrescriptionBottle className="w-5 h-5 mr-2" /> 
+      icon: <Pill className="w-5 h-5 mr-2" /> 
     },
     { 
       name: t('navigation.map'), 
