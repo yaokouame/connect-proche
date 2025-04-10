@@ -92,11 +92,11 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto px-4 flex justify-between items-center h-16">
         {/* Logo & Title */}
         <Link to="/" className="flex items-center space-x-2">
-          <span className="font-bold text-2xl text-health-blue">ConnectProche</span>
+          <span className="font-bold text-xl md:text-2xl text-health-blue">ConnectProche</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
           {navItems.map((item) => {
             if (item.requiresAuth && !currentUser) return null;
             if (item.requiresProfessional && !isProfessional) return null;
@@ -115,9 +115,12 @@ const Navigation: React.FC = () => {
               </Link>
             );
           })}
-          
+        </nav>
+
+        {/* Right Side Actions */}
+        <div className="hidden md:flex items-center space-x-4">
           {/* Voice Search */}
-          <GlobalVoiceSearch className="mx-4" placeholder={t("common.search")} />
+          <GlobalVoiceSearch className="w-48" placeholder={t("common.search")} />
           
           <LanguageSelector className="w-32" />
 
@@ -153,7 +156,7 @@ const Navigation: React.FC = () => {
               </Link>
             </div>
           )}
-        </nav>
+        </div>
 
         {/* Mobile Navigation */}
         <div className="flex items-center space-x-2 md:hidden">
@@ -176,15 +179,15 @@ const Navigation: React.FC = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[250px]">
+            <SheetContent side="right" className="w-[280px]">
               <div className="flex flex-col h-full">
                 <div className="py-4 border-b">
-                  <h2 className="text-lg font-semibold text-health-blue">ConnectProche</h2>
-                  <div className="mt-2">
+                  <h2 className="text-xl font-semibold text-health-blue">ConnectProche</h2>
+                  <div className="mt-4">
                     <LanguageSelector className="w-full" />
                   </div>
                 </div>
-                <nav className="flex flex-col space-y-4 mt-4">
+                <nav className="flex flex-col space-y-1 mt-4 overflow-y-auto">
                   {navItems.map((item) => {
                     if (item.requiresAuth && !currentUser) return null;
                     if (item.requiresProfessional && !isProfessional) return null;
@@ -192,9 +195,9 @@ const Navigation: React.FC = () => {
                       <SheetClose asChild key={item.path}>
                         <Link
                           to={item.path}
-                          className={`flex items-center p-2 rounded-md ${
+                          className={`flex items-center p-3 rounded-md ${
                             location.pathname === item.path
-                              ? "bg-health-teal/10 text-health-blue"
+                              ? "bg-health-blue/10 text-health-blue font-medium"
                               : "text-gray-600 hover:bg-gray-100"
                           }`}
                         >
@@ -209,14 +212,14 @@ const Navigation: React.FC = () => {
                   <SheetClose asChild>
                     <Link 
                       to="/cart"
-                      className="flex items-center p-2 rounded-md text-gray-600 hover:bg-gray-100"
+                      className="flex items-center p-3 rounded-md text-gray-600 hover:bg-gray-100"
                     >
                       <ShoppingCart className="h-5 w-5 mr-2" />
                       {t("nav.cart")} {cartItemCount > 0 && `(${cartItemCount})`}
                     </Link>
                   </SheetClose>
                 </nav>
-                <div className="mt-auto pb-6">
+                <div className="mt-auto pb-6 pt-4 border-t">
                   {currentUser ? (
                     <SheetClose asChild>
                       <Button 
@@ -231,12 +234,12 @@ const Navigation: React.FC = () => {
                   ) : (
                     <div className="space-y-2">
                       <SheetClose asChild>
-                        <Link to="/login">
+                        <Link to="/login" className="w-full">
                           <Button variant="outline" className="w-full">{t("nav.login")}</Button>
                         </Link>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Link to="/register">
+                        <Link to="/register" className="w-full">
                           <Button variant="default" className="w-full">{t("nav.register")}</Button>
                         </Link>
                       </SheetClose>
