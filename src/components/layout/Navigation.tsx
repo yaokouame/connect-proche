@@ -209,7 +209,7 @@ const Navigation = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
-                    {t('auth.logout')}
+                    {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -298,7 +298,7 @@ const Navigation = () => {
                           onClick={handleLogout}
                         >
                           <LogOut className="w-4 h-4 mr-2" />
-                          {t('auth.logout')}
+                          {t('nav.logout')}
                         </Button>
                       </div>
                     ) : (
