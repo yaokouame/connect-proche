@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
@@ -42,7 +41,6 @@ const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
 
-  // Navigation items
   const navItems = [
     { 
       name: t('nav.home'), 
@@ -81,7 +79,6 @@ const Navigation = () => {
     }
   ];
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -91,7 +88,6 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Get cart item count from localStorage
   useEffect(() => {
     const getCartItems = () => {
       try {
@@ -105,10 +101,7 @@ const Navigation = () => {
 
     getCartItems();
     
-    // Listen for storage events to update cart count when changed from other tabs
     window.addEventListener('storage', getCartItems);
-    
-    // Custom event for cart updates within the same tab
     window.addEventListener('cartUpdated', getCartItems);
     
     return () => {
@@ -117,19 +110,16 @@ const Navigation = () => {
     };
   }, []);
 
-  // Handle logout
   const handleLogout = () => {
     logout();
     navigate('/');
     setIsMobileMenuOpen(false);
   };
 
-  // Mobile menu toggle
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Classes for the navbar
   const navbarClasses = `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
     isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-3'
   }`;
@@ -138,14 +128,12 @@ const Navigation = () => {
     <>
       <nav className={navbarClasses}>
         <div className="container mx-auto px-4 flex justify-between items-center">
-          {/* Logo */}
           <Link to="/" className="flex items-center">
             <span className="text-2xl font-semibold text-health-blue">
               ConnectProche
             </span>
           </Link>
 
-          {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <Link
@@ -162,12 +150,9 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Right side items (notifications, profile, cart) */}
           <div className="flex items-center space-x-2">
-            {/* Language selector */}
             <LanguageSelector />
             
-            {/* Cart button with badge */}
             <Link to="/cart" className="relative p-2">
               <ShoppingCart className={`w-5 h-5 ${location.pathname === '/cart' ? 'text-health-blue' : 'text-gray-700'}`} />
               {cartItemCount > 0 && (
@@ -177,7 +162,6 @@ const Navigation = () => {
               )}
             </Link>
             
-            {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5 text-gray-700" />
               <Badge className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-health-teal text-[10px]">
@@ -185,7 +169,6 @@ const Navigation = () => {
               </Badge>
             </Button>
 
-            {/* User menu or login */}
             {currentUser ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -228,7 +211,6 @@ const Navigation = () => {
               </div>
             )}
 
-            {/* Mobile menu button */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
@@ -323,7 +305,6 @@ const Navigation = () => {
         </div>
       </nav>
       
-      {/* Spacer to prevent content from hiding behind the fixed navbar */}
       <div className="h-16"></div>
     </>
   );

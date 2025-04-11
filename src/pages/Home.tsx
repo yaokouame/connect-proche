@@ -12,12 +12,13 @@ import {
 import Layout from "@/components/Layout";
 import AdBanner from "@/components/ads/AdBanner";
 import AwarenessBanner from "@/components/ads/AwarenessBanner";
-import VisitorCounter from "@/components/analytics/VisitorCounter";
 import { Heart, Calendar, Map as MapIcon, ShoppingCart, ArrowRight, UserRound, Activity } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
 
   const handleFindProfessional = () => {
@@ -54,11 +55,6 @@ const Home = () => {
             >
               Rechercher un professionnel
             </Button>
-          </div>
-          
-          {/* Visitor Counter - positioned at the bottom of hero section */}
-          <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4">
-            <VisitorCounter variant="home" />
           </div>
         </div>
       </section>
@@ -131,7 +127,7 @@ const Home = () => {
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                 <Activity className="w-6 h-6 text-blue-500" />
               </div>
-              <CardTitle className="text-lg">Bien-être & Prévention</CardTitle>
+              <CardTitle className="text-lg">{t('nav.wellness')}</CardTitle>
               <CardDescription>
                 Suivez votre activité physique, nutrition et sommeil pour une meilleure santé.
               </CardDescription>

@@ -19,5 +19,6 @@ export default {
   "nav.messaging": "Messagerie",
   "nav.admin": "Administration",
   "nav.medications": "Médicaments",
-  "nav.professionals": "Professionnels"
+  "nav.professionals": "Professionnels",
+  "nav.wellness": "Bien-être & Prévention"
 }

@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import VisitorCounter from "@/components/analytics/VisitorCounter";
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
@@ -15,6 +16,11 @@ const Footer: React.FC = () => {
             <p className="text-gray-300">
               {t("footer.description")}
             </p>
+            
+            {/* Visitor Counter */}
+            <div className="mt-4">
+              <VisitorCounter variant="home" className="inline-flex bg-health-dark/80 border-health-blue/30" />
+            </div>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">{t("footer.quickLinks")}</h3>
@@ -32,6 +38,11 @@ const Footer: React.FC = () => {
               <li>
                 <Link to="/products" className="text-gray-300 hover:text-white">
                   {t("nav.onlinePharmacy")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/wellness" className="text-gray-300 hover:text-white">
+                  {t("nav.wellness")}
                 </Link>
               </li>
             </ul>
