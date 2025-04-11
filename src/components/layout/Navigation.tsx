@@ -212,11 +212,6 @@ const Navigation = () => {
             )}
 
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="w-6 h-6" />
-                </Button>
-              </SheetTrigger>
               <SheetContent side="right" className="p-0">
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b">

@@ -12,6 +12,7 @@ import {
 } from "@/services/wellnessService";
 import { WellnessGoal, PhysicalActivity, SleepEntry, NutritionEntry, HydrationEntry } from "@/types/health";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Wellness Components
 import ActivityTracker from "@/components/wellness/ActivityTracker";
@@ -27,6 +28,7 @@ import VoiceRecognition from "@/components/voice/VoiceRecognition";
 const WellnessPage = () => {
   const [activeTab, setActiveTab] = useState("activity");
   const userId = "user-123"; // Mock user ID for demo purposes
+  const { t } = useLanguage();
   
   // Fetch wellness goals
   const { 
@@ -90,7 +92,7 @@ const WellnessPage = () => {
   return (
     <Layout>
       <div className="max-w-screen-xl mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold mb-2">Bien-être et activité physique</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('wellness.title')}</h1>
         <p className="text-gray-600 mb-6">
           Suivez votre activité physique, votre sommeil et vos habitudes alimentaires pour améliorer votre bien-être.
         </p>
@@ -99,9 +101,9 @@ const WellnessPage = () => {
           <div className="md:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-6">
-                <TabsTrigger value="activity">Activité</TabsTrigger>
-                <TabsTrigger value="sleep">Sommeil</TabsTrigger>
-                <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
+                <TabsTrigger value="activity">{t('wellness.activity')}</TabsTrigger>
+                <TabsTrigger value="sleep">{t('wellness.sleep')}</TabsTrigger>
+                <TabsTrigger value="nutrition">{t('wellness.nutrition')}</TabsTrigger>
                 <TabsTrigger value="hydration">Hydratation</TabsTrigger>
               </TabsList>
               

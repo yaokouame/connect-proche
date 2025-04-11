@@ -26,7 +26,7 @@ export default {
   "premium.benefits": "Avantages",
   "premium.pricing": "Tarification",
   
-  "wellness.title": "Bien-être",
+  "wellness.title": "Bien-être & Prévention",
   "wellness.activity": "Activité Physique",
   "wellness.nutrition": "Nutrition",
   "wellness.sleep": "Sommeil",
