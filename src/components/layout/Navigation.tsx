@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
@@ -210,6 +211,12 @@ const Navigation = () => {
                 </Link>
               </div>
             )}
+
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="w-6 h-6" />
+              </Button>
+            </SheetTrigger>
 
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetContent side="right" className="p-0">
