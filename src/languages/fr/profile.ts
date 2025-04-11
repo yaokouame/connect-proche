@@ -8,4 +8,6 @@ export default {
   "profile.address": "Adresse",
   "profile.editProfile": "Modifier le Profil",
   "profile.updatePassword": "Mettre à jour le Mot de Passe",
+  "profile.greeting": "Bonjour, {name}",
+  "profile.myProfile": "Mon profil"
 }
