@@ -24,6 +24,10 @@ import WellnessRecommendations from "@/components/wellness/WellnessRecommendatio
 import ExerciseVideos from "@/components/wellness/ExerciseVideos";
 import FitnessAppConnect from "@/components/wellness/FitnessAppConnect";
 import VoiceRecognition from "@/components/voice/VoiceRecognition";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import CallToAction from "@/components/tutorials/CallToAction";
 
 const WellnessPage = () => {
   const [activeTab, setActiveTab] = useState("activity");
@@ -173,6 +177,11 @@ const WellnessPage = () => {
             Utilisez votre voix pour naviguer et enregistrer des données de bien-être.
           </p>
           <VoiceRecognition onResult={handleVoiceResult} />
+        </div>
+        
+        {/* Call to Action */}
+        <div className="mt-8 bg-white rounded-xl shadow-sm p-6">
+          <CallToAction />
         </div>
       </div>
     </Layout>
