@@ -15,6 +15,7 @@ import Products from "@/pages/Products";
 import Tutorials from "@/pages/Tutorials";
 import Admin from "@/pages/Admin";
 import Chat from "@/pages/Chat";
+import HealthcareChat from "@/pages/HealthcareChat";
 import Cart from "@/pages/Cart";
 import Payment from "@/pages/Payment";
 import OrderConfirmation from "@/pages/OrderConfirmation";
@@ -57,6 +58,7 @@ function AppContent() {
         <Route path="/tutorials" element={<Tutorials />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/chat/:professionalId" element={<HealthcareChat />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />

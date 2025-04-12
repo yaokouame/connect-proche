@@ -3,6 +3,8 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { ProfessionalProfile } from "@/types/user";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface OnlineProfessionalsProps {
   professionals: ProfessionalProfile[];
@@ -24,8 +26,7 @@ const OnlineProfessionals = ({ professionals, onSelectProfessional }: OnlineProf
           {onlineProfessionals.map(professional => (
             <div 
               key={professional.id}
-              onClick={() => onSelectProfessional(professional)}
-              className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+              className="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition-colors"
             >
               <div className="relative">
                 <div className="w-10 h-10 rounded-full bg-health-blue/20 flex items-center justify-center text-health-blue font-semibold">
@@ -44,6 +45,14 @@ const OnlineProfessionals = ({ professionals, onSelectProfessional }: OnlineProf
                   )}
                 </div>
               </div>
+              <Button 
+                size="sm" 
+                className="bg-health-blue hover:bg-health-blue/90"
+                onClick={() => onSelectProfessional(professional)}
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Chat
+              </Button>
             </div>
           ))}
         </div>

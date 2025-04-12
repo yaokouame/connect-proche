@@ -10,9 +10,13 @@ import { useUser } from "@/contexts/UserContext";
 import LoginPrompt from "@/components/profile/LoginPrompt";
 import { Contact } from "@/types/chat";
 import { ProfessionalProfile } from "@/types/user";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ChatPage = () => {
   const { currentUser } = useUser();
+  const { t } = useLanguage();
+  const navigate = useNavigate();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isCallModalOpen, setIsCallModalOpen] = useState(false);
   const [callType, setCallType] = useState<"audio" | "video" | null>(null);
@@ -116,27 +120,13 @@ const ChatPage = () => {
   };
 
   const handleSelectProfessional = (professional: ProfessionalProfile) => {
-    // Find if there's already a contact for this professional or create one
-    const existingContact = mockContacts.find(c => c.id === professional.id);
-    
-    if (existingContact) {
-      setSelectedContact(existingContact);
-    } else {
-      // Create a new contact based on the professional
-      const newContact: Contact = {
-        id: professional.id,
-        name: professional.name,
-        role: "professional",
-        avatar: "",
-        lastMessage: "Commencez une nouvelle conversation...",
-        lastMessageTime: "Maintenant",
-        unreadCount: 0,
-        isOnline: true,
-        specialty: professional.specialty
-      };
-      
-      setSelectedContact(newContact);
-    }
+    // Navigate to the dedicated chat page with this professional
+    navigate(`/chat/${professional.id}`);
+  };
+
+  const handleSelectContact = (contact: Contact) => {
+    // Navigate to the dedicated chat page with this contact
+    navigate(`/chat/${contact.id}`);
   };
 
   if (!currentUser) {
@@ -150,7 +140,7 @@ const ChatPage = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-health-dark">Messagerie</h1>
+        <h1 className="text-3xl font-bold mb-6 text-health-dark">{t('chat.title') || "Messagerie"}</h1>
         
         {/* Online Professionals Section */}
         <OnlineProfessionals 
@@ -164,84 +154,24 @@ const ChatPage = () => {
             <ChatSidebar 
               contacts={mockContacts} 
               selectedContact={selectedContact} 
-              onSelectContact={setSelectedContact}
+              onSelectContact={handleSelectContact}
             />
           </div>
           
           {/* Chat area */}
           <div className="md:col-span-2 flex flex-col h-full">
-            {selectedContact ? (
-              <>
-                {/* Chat header */}
-                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-health-blue/20 flex items-center justify-center text-health-blue font-semibold">
-                        {selectedContact.name.charAt(0)}
-                      </div>
-                      {selectedContact.isOnline && (
-                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
-                      )}
-                    </div>
-                    <div className="ml-3">
-                      <h3 className="font-medium">{selectedContact.name}</h3>
-                      <p className="text-sm text-gray-500">{selectedContact.specialty}</p>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button 
-                      onClick={() => handleStartCall("audio")}
-                      className="p-2 rounded-full hover:bg-gray-100 transition"
-                      title="Appel audio"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-health-blue">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                      </svg>
-                    </button>
-                    <button 
-                      onClick={() => handleStartCall("video")}
-                      className="p-2 rounded-full hover:bg-gray-100 transition"
-                      title="Appel vidéo"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-health-blue">
-                        <path d="m22 8-6 4 6 4V8Z"></path>
-                        <rect width="14" height="12" x="2" y="6" rx="2" ry="2"></rect>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Chat messages */}
-                <ChatMessages contactId={selectedContact.id} />
-                
-                {/* Chat input */}
-                <div className="border-t border-gray-200 p-4">
-                  <ChatInput contactId={selectedContact.id} />
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mb-4">
-                  <path d="M17 7.82v6.36c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h8.18"></path>
-                  <path d="m19 3-5.5 5.5"></path>
-                  <path d="M16 3h3v3"></path>
-                  <path d="M5.42 12.61a2.1 2.1 0 1 1 2.97 2.97L5 18 3 16l2.42-3.39z"></path>
-                </svg>
-                <p className="text-lg font-medium">Sélectionnez un contact pour commencer</p>
-                <p className="text-sm">Connectez-vous avec vos professionnels de santé</p>
-              </div>
-            )}
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 mb-4">
+                <path d="M17 7.82v6.36c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h8.18"></path>
+                <path d="m19 3-5.5 5.5"></path>
+                <path d="M16 3h3v3"></path>
+                <path d="M5.42 12.61a2.1 2.1 0 1 1 2.97 2.97L5 18 3 16l2.42-3.39z"></path>
+              </svg>
+              <p className="text-lg font-medium">Sélectionnez un contact pour commencer</p>
+              <p className="text-sm">Connectez-vous avec vos professionnels de santé</p>
+            </div>
           </div>
         </div>
-        
-        {/* Call Modal */}
-        {isCallModalOpen && selectedContact && callType && (
-          <CallModal 
-            contact={selectedContact} 
-            callType={callType} 
-            onClose={handleCloseCallModal} 
-          />
-        )}
       </div>
     </Layout>
   );

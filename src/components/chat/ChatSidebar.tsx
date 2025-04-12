@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Contact } from "@/types/chat";
+import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
 
 interface ChatSidebarProps {
   contacts: Contact[];
@@ -32,7 +34,6 @@ const ChatSidebar = ({ contacts, selectedContact, onSelectContact }: ChatSidebar
           filteredContacts.map((contact) => (
             <div
               key={contact.id}
-              onClick={() => onSelectContact(contact)}
               className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${
                 selectedContact?.id === contact.id ? "bg-health-blue/5" : ""
               }`}
@@ -61,6 +62,13 @@ const ChatSidebar = ({ contacts, selectedContact, onSelectContact }: ChatSidebar
                   </div>
                   <p className="text-xs text-gray-400">{contact.specialty}</p>
                 </div>
+                <Button 
+                  size="sm" 
+                  className="bg-health-blue hover:bg-health-blue/90 ml-2"
+                  onClick={() => onSelectContact(contact)}
+                >
+                  <MessageSquare className="w-4 h-4" />
+                </Button>
               </div>
             </div>
           ))

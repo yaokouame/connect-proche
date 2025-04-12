@@ -20,6 +20,10 @@ export default {
   "chat.typing": "est en train d'écrire...",
   "chat.messageInput": "Écrivez votre message...",
   "chat.voiceRecording": "Enregistrement vocal en cours...",
+  "chat.title": "Chat Médical",
+  "chat.startChat": "Démarrer une conversation",
+  "chat.selectContact": "Sélectionnez un contact pour commencer",
+  "chat.connectWithProfessionals": "Connectez-vous avec vos professionnels de santé",
   
   // Database related translations
   "database.title": "Base de données",

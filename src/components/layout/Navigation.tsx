@@ -17,7 +17,8 @@ import {
   Store,
   Users,
   Info,
-  ChevronDown
+  ChevronDown,
+  MessageSquare
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -72,6 +73,16 @@ const Navigation = () => {
       name: t('nav.findProfessional'), 
       path: '/professionals', 
       icon: <Users className="w-5 h-5 mr-2" /> 
+    },
+    { 
+      name: t('nav.chat'), 
+      path: '/chat', 
+      icon: <MessageSquare className="w-5 h-5 mr-2" /> 
+    },
+    { 
+      name: t('nav.wellness'), 
+      path: '/wellness', 
+      icon: <Info className="w-5 h-5 mr-2" /> 
     },
     { 
       name: t('nav.tutorials'), 
