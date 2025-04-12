@@ -76,28 +76,38 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply overflow-x-hidden;
+  }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-medium tracking-tight;
   }
   h1 {
-    @apply text-3xl sm:text-4xl;
+    @apply text-2xl sm:text-3xl md:text-4xl;
   }
   h2 {
-    @apply text-2xl sm:text-3xl;
+    @apply text-xl sm:text-2xl md:text-3xl;
   }
   h3 {
-    @apply text-xl sm:text-2xl;
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+  img {
+    @apply max-w-full h-auto;
+  }
+  input, textarea, select, button {
+    @apply text-sm md:text-base;
   }
 }
 
 /* Custom scrollbar styling */
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
+    @apply sm:w-6px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -120,6 +130,39 @@
   
   .glass-effect {
     @apply bg-white/80 backdrop-blur-sm border border-white/20;
+  }
+  
+  /* Responsive utilities */
+  .responsive-p {
+    @apply p-2 sm:p-4 md:p-6;
+  }
+  
+  .responsive-px {
+    @apply px-2 sm:px-4 md:px-6;
+  }
+  
+  .responsive-py {
+    @apply py-2 sm:py-4 md:py-6;
+  }
+  
+  .responsive-m {
+    @apply m-2 sm:m-4 md:m-6;
+  }
+  
+  .responsive-mx {
+    @apply mx-2 sm:mx-4 md:mx-6;
+  }
+  
+  .responsive-my {
+    @apply my-2 sm:my-4 md:my-6;
+  }
+  
+  .responsive-gap {
+    @apply gap-2 sm:gap-4 md:gap-6;
+  }
+  
+  .responsive-text {
+    @apply text-sm sm:text-base md:text-lg;
   }
 }
 

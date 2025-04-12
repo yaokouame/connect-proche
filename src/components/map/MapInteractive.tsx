@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import GoogleMap, { GoogleMapRefHandle } from "./GoogleMap";
 import MapFilters from "./MapFilters";
 import PlaceList from "./PlaceList";
@@ -20,6 +20,7 @@ const MapInteractive = () => {
   const [selectedPlace, setSelectedPlace] = useState<Pharmacy | HealthCenter | null>(null);
   const isMobile = useIsMobile();
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
+  const isSmallScreen = useMediaQuery("(max-width: 639px)");
   const { t } = useLanguage();
   
   const {
@@ -54,18 +55,37 @@ const MapInteractive = () => {
       mapRef.current.centerMapOnLocation(place.location);
     }
   };
+
+  // Ajustement dynamique de la hauteur de la carte pour les petits écrans
+  const [mapHeight, setMapHeight] = useState("h-[calc(100vh-300px)]");
+  
+  useEffect(() => {
+    const updateMapHeight = () => {
+      if (isSmallScreen) {
+        setMapHeight("h-[350px]");
+      } else if (isTablet) {
+        setMapHeight("h-[450px]");
+      } else {
+        setMapHeight("h-[calc(100vh-300px)]");
+      }
+    };
+    
+    updateMapHeight();
+    window.addEventListener('resize', updateMapHeight);
+    return () => window.removeEventListener('resize', updateMapHeight);
+  }, [isSmallScreen, isTablet]);
   
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-2 sm:px-4">
       {/* Awareness and Ad Banners */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <AwarenessBanner className="h-full" />
-        <AdBanner className="h-full" />
+        <AwarenessBanner className="h-full w-full" />
+        <AdBanner className="h-full w-full" />
       </div>
       
-      <div className={`grid grid-cols-1 ${isTablet ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-4 md:gap-6 h-[calc(100vh-300px)] min-h-[500px]`}>
+      <div className={`grid grid-cols-1 ${isTablet ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-4 md:gap-6 ${mapHeight} min-h-[350px]`}>
         {/* Map Container */}
-        <div className={`${isTablet ? '' : 'lg:col-span-2'} h-full flex flex-col order-2 lg:order-1`}>
+        <div className={`${isTablet ? '' : 'lg:col-span-2'} h-full flex flex-col order-2 ${isMobile ? 'order-1' : 'lg:order-1'}`}>
           <Card className="h-full border-none shadow-md overflow-hidden">
             <CardContent className="p-0 h-full">
               <GoogleMap
@@ -79,7 +99,7 @@ const MapInteractive = () => {
               
               {/* Visitor Counter - positioned on the map */}
               <div className="relative">
-                <div className="absolute bottom-4 right-4 z-10">
+                <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 z-10 scale-75 sm:scale-100 origin-bottom-right">
                   <VisitorCounter />
                 </div>
               </div>
@@ -88,7 +108,7 @@ const MapInteractive = () => {
         </div>
         
         {/* Sidebar with Filters and Results */}
-        <div className="flex flex-col h-full order-1 lg:order-2">
+        <div className={`flex flex-col h-full order-1 ${isMobile ? 'order-2' : 'lg:order-2'}`}>
           <Card className="h-full overflow-hidden">
             <CardContent className="p-2 sm:p-4 flex flex-col h-full">
               <div className="mb-2 sm:mb-4">
@@ -104,13 +124,13 @@ const MapInteractive = () => {
               </div>
               
               <Tabs defaultValue="results" className="w-full">
-                <TabsList className="w-full mb-4">
-                  <TabsTrigger value="results" className="flex-1">{t('map.pharmaciesTab')}</TabsTrigger>
-                  <TabsTrigger value="selected" className="flex-1">{t('map.centersTab')}</TabsTrigger>
+                <TabsList className="w-full mb-2 sm:mb-4">
+                  <TabsTrigger value="results" className="flex-1 text-xs sm:text-sm">{t('map.pharmaciesTab')}</TabsTrigger>
+                  <TabsTrigger value="selected" className="flex-1 text-xs sm:text-sm">{t('map.centersTab')}</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="results" className="m-0">
-                  <div className="flex-1 overflow-auto pr-1 custom-scrollbar max-h-[calc(100vh-450px)]">
+                  <div className="flex-1 overflow-auto pr-1 custom-scrollbar max-h-[250px] sm:max-h-[300px] lg:max-h-[calc(100vh-450px)]">
                     <PlaceList 
                       places={places} 
                       loading={loading}
@@ -125,8 +145,8 @@ const MapInteractive = () => {
                 
                 <TabsContent value="selected" className="m-0">
                   {selectedPlace ? (
-                    <div className="flex-1 overflow-auto pr-1 custom-scrollbar max-h-[calc(100vh-450px)]">
-                      <h3 className="text-base sm:text-lg font-medium mb-2">Selected Location</h3>
+                    <div className="flex-1 overflow-auto pr-1 custom-scrollbar max-h-[250px] sm:max-h-[300px] lg:max-h-[calc(100vh-450px)]">
+                      <h3 className="text-sm sm:text-base lg:text-lg font-medium mb-2">Selected Location</h3>
                       <PlaceCard 
                         place={selectedPlace} 
                         userLocation={userLocation}
@@ -135,7 +155,7 @@ const MapInteractive = () => {
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center h-40 text-gray-500">
+                    <div className="flex items-center justify-center h-40 text-gray-500 text-sm sm:text-base">
                       Select a location on the map
                     </div>
                   )}
