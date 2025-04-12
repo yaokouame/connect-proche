@@ -24,6 +24,7 @@ import CheckoutCancel from "@/pages/CheckoutCancel";
 import Professionals from "@/pages/Professionals";
 import Medications from "@/pages/Medications";
 import Wellness from "@/pages/Wellness";
+import Premium from "@/pages/Premium";
 
 // Import providers
 import { UserProvider } from "@/contexts/UserContext";
@@ -66,6 +67,7 @@ function AppContent() {
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
         <Route path="/medications" element={<Medications />} />
         <Route path="/wellness" element={<Wellness />} />
+        <Route path="/premium" element={<Premium />} />
       </Routes>
       <VoiceGuidance />
       <Toaster />

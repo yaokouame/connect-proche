@@ -201,6 +201,10 @@ const Navigation = () => {
                     <User className="w-4 h-4 mr-2" />
                     {t('profile.myProfile')}
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/premium')}>
+                    <Badge variant="outline" className="mr-2 bg-health-teal/10 text-health-teal border-health-teal/30">PRO</Badge>
+                    Premium
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
@@ -286,6 +290,17 @@ const Navigation = () => {
                         >
                           <User className="w-4 h-4 mr-2" />
                           {t('profile.myProfile')}
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start"
+                          onClick={() => {
+                            navigate('/premium');
+                            setIsMobileMenuOpen(false);
+                          }}
+                        >
+                          <Badge variant="outline" className="mr-2 bg-health-teal/10 text-health-teal border-health-teal/30">PRO</Badge>
+                          Premium
                         </Button>
                         <Button 
                           variant="ghost" 
