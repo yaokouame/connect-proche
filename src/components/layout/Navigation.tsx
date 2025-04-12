@@ -2,21 +2,20 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SheetTrigger } from "@/components/ui/sheet";
 import NavigationLogo from "./navigation/NavigationLogo";
-import NavigationLinks from "./navigation/NavigationLinks";
 import CartButton from "./navigation/CartButton";
 import NotificationButton from "./navigation/NotificationButton";
 import UserMenu from "./navigation/UserMenu";
 import AuthButtons from "./navigation/AuthButtons";
 import MobileMenu from "./navigation/MobileMenu";
 import LanguageSelector from "@/components/LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navigation = () => {
   const { currentUser, logout } = useUser();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -51,7 +50,9 @@ const Navigation = () => {
         <div className="container mx-auto px-4 flex justify-between items-center">
           <NavigationLogo />
 
-          <NavigationLinks className="hidden lg:flex items-center space-x-1" />
+          <div className="hidden lg:flex items-center space-x-1">
+            {/* Desktop menu will be shown automatically by NavigationLinks */}
+          </div>
 
           <div className="flex items-center space-x-1 sm:space-x-2">
             <LanguageSelector />

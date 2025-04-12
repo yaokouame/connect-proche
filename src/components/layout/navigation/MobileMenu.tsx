@@ -58,12 +58,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </div>
           </div>
           
-          <div className="flex-1 overflow-auto py-2 sm:py-4">
-            <div className="space-y-1 px-2">
-              <NavigationLinks 
-                onItemClick={onClose} 
-              />
-            </div>
+          <div className="flex-1 overflow-auto py-2 sm:py-4 px-2">
+            <NavigationLinks 
+              onItemClick={onClose}
+              isMobile={true}
+            />
           </div>
           
           <div className="p-4 border-t mt-auto">
