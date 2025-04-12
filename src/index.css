@@ -107,7 +107,7 @@
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
-    @apply sm:w-6px;
+    @apply sm:w-[6px];
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
