@@ -19,17 +19,28 @@ export const useSupabaseInit = () => {
         
         setIsInitializing(true);
         
-        // Check tables exist by querying them first
-        const { error: tableCheckError } = await supabase.rpc('check_tables_exist');
+        // Check if tables exist using the SQL function we've created
+        const { data: tablesExist, error: tableCheckError } = await supabase.rpc('check_tables_exist');
         
-        // If there's an error with the RPC call (possibly the function doesn't exist),
-        // we'll check each table individually
         if (tableCheckError) {
-          console.log("Using fallback method to check tables");
-          await createTablesIfNeeded();
+          console.error("Error checking tables existence:", tableCheckError);
+          throw tableCheckError;
         }
         
-        // Insert sample data
+        console.log("Tables exist check result:", tablesExist);
+        
+        if (!tablesExist) {
+          console.error("Tables don't exist or aren't properly set up");
+          toast({
+            variant: "destructive",
+            title: "Erreur de base de données",
+            description: "Les tables nécessaires n'existent pas dans la base de données.",
+          });
+          setIsInitializing(false);
+          return;
+        }
+        
+        // Insert sample data if tables are properly set up
         await insertMockData();
         
         setIsInitialized(true);
@@ -56,28 +67,3 @@ export const useSupabaseInit = () => {
 
   return { isInitialized, isInitializing };
 };
-
-/**
- * Helper function to create tables if they don't exist
- */
-async function createTablesIfNeeded() {
-  try {
-    // We'll check each table and create it if it doesn't exist
-    const tables = ['professionals', 'pharmacies', 'patients', 'prescriptions'];
-    
-    for (const table of tables) {
-      const { count, error } = await supabase
-        .from(table)
-        .select('*', { count: 'exact', head: true });
-      
-      if (error && error.code === '42P01') { // Table doesn't exist error
-        console.log(`Table ${table} does not exist. It should be created via SQL migrations.`);
-      } else {
-        console.log(`Table ${table} exists with ${count} records.`);
-      }
-    }
-  } catch (error) {
-    console.error("Error checking/creating tables:", error);
-    throw error;
-  }
-}

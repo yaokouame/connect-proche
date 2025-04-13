@@ -9,13 +9,153 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      patients: {
+        Row: {
+          email: string
+          id: string
+          location: Json | null
+          name: string
+          role: string | null
+        }
+        Insert: {
+          email: string
+          id: string
+          location?: Json | null
+          name: string
+          role?: string | null
+        }
+        Update: {
+          email?: string
+          id?: string
+          location?: Json | null
+          name?: string
+          role?: string | null
+        }
+        Relationships: []
+      }
+      pharmacies: {
+        Row: {
+          address: string
+          hours: string | null
+          id: string
+          location: Json
+          name: string
+          onDuty: boolean | null
+          phone: string | null
+        }
+        Insert: {
+          address: string
+          hours?: string | null
+          id: string
+          location: Json
+          name: string
+          onDuty?: boolean | null
+          phone?: string | null
+        }
+        Update: {
+          address?: string
+          hours?: string | null
+          id?: string
+          location?: Json
+          name?: string
+          onDuty?: boolean | null
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      prescriptions: {
+        Row: {
+          date: string
+          expiryDate: string | null
+          id: string
+          instructions: string | null
+          medications: Json
+          patientId: string
+          professionalId: string
+          professionalName: string
+          status: string | null
+        }
+        Insert: {
+          date: string
+          expiryDate?: string | null
+          id: string
+          instructions?: string | null
+          medications: Json
+          patientId: string
+          professionalId: string
+          professionalName: string
+          status?: string | null
+        }
+        Update: {
+          date?: string
+          expiryDate?: string | null
+          id?: string
+          instructions?: string | null
+          medications?: Json
+          patientId?: string
+          professionalId?: string
+          professionalName?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescriptions_patientId_fkey"
+            columns: ["patientId"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prescriptions_professionalId_fkey"
+            columns: ["professionalId"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professionals: {
+        Row: {
+          email: string
+          id: string
+          isOnline: boolean | null
+          license: string | null
+          location: Json | null
+          name: string
+          role: string | null
+          specialty: string | null
+        }
+        Insert: {
+          email: string
+          id: string
+          isOnline?: boolean | null
+          license?: string | null
+          location?: Json | null
+          name: string
+          role?: string | null
+          specialty?: string | null
+        }
+        Update: {
+          email?: string
+          id?: string
+          isOnline?: boolean | null
+          license?: string | null
+          location?: Json | null
+          name?: string
+          role?: string | null
+          specialty?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_tables_exist: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

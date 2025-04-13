@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Professional, 
@@ -14,6 +15,7 @@ import {
 // Professionals
 export const fetchProfessionals = async () => {
   try {
+    console.log("Fetching professionals from Supabase...");
     // Using Supabase to fetch data
     const { data, error } = await supabase.from('professionals').select('*');
     
@@ -23,6 +25,7 @@ export const fetchProfessionals = async () => {
       return mockProfessionals;
     }
     
+    console.log("Fetched professionals:", data);
     return data.length ? data : mockProfessionals;
   } catch (error) {
     console.error("Error fetching professionals:", error);
@@ -32,6 +35,7 @@ export const fetchProfessionals = async () => {
 
 export const updateProfessionalStatus = async (id: string, isOnline: boolean) => {
   try {
+    console.log(`Updating professional status for ${id} to ${isOnline}`);
     // Update in Supabase
     const { data, error } = await supabase
       .from('professionals')
@@ -49,6 +53,7 @@ export const updateProfessionalStatus = async (id: string, isOnline: boolean) =>
       return [updatedPro];
     }
     
+    console.log("Updated professional:", data);
     return data;
   } catch (error) {
     console.error("Error updating professional status:", error);
@@ -64,6 +69,7 @@ export const updateProfessionalStatus = async (id: string, isOnline: boolean) =>
 // Pharmacies
 export const fetchPharmacies = async () => {
   try {
+    console.log("Fetching pharmacies from Supabase...");
     // Using Supabase to fetch data
     const { data, error } = await supabase.from('pharmacies').select('*');
     
@@ -73,6 +79,7 @@ export const fetchPharmacies = async () => {
       return mockPharmacies;
     }
     
+    console.log("Fetched pharmacies:", data);
     return data.length ? data : mockPharmacies;
   } catch (error) {
     console.error("Error fetching pharmacies:", error);
@@ -82,6 +89,7 @@ export const fetchPharmacies = async () => {
 
 export const updatePharmacyDutyStatus = async (id: string, onDuty: boolean) => {
   try {
+    console.log(`Updating pharmacy duty status for ${id} to ${onDuty}`);
     // Update in Supabase
     const { data, error } = await supabase
       .from('pharmacies')
@@ -99,6 +107,7 @@ export const updatePharmacyDutyStatus = async (id: string, onDuty: boolean) => {
       return [updatedPharmacy];
     }
     
+    console.log("Updated pharmacy:", data);
     return data;
   } catch (error) {
     console.error("Error updating pharmacy duty status:", error);
@@ -114,6 +123,7 @@ export const updatePharmacyDutyStatus = async (id: string, onDuty: boolean) => {
 // Patients
 export const fetchPatients = async () => {
   try {
+    console.log("Fetching patients from Supabase...");
     // Using Supabase to fetch data
     const { data, error } = await supabase.from('patients').select('*');
     
@@ -123,6 +133,7 @@ export const fetchPatients = async () => {
       return mockPatients;
     }
     
+    console.log("Fetched patients:", data);
     return data.length ? data : mockPatients;
   } catch (error) {
     console.error("Error fetching patients:", error);
@@ -133,6 +144,7 @@ export const fetchPatients = async () => {
 // Prescriptions
 export const fetchPrescriptions = async () => {
   try {
+    console.log("Fetching prescriptions from Supabase...");
     // Using Supabase to fetch data
     const { data, error } = await supabase.from('prescriptions').select('*');
     
@@ -142,6 +154,7 @@ export const fetchPrescriptions = async () => {
       return mockPrescriptions;
     }
     
+    console.log("Fetched prescriptions:", data);
     return data.length ? data : mockPrescriptions;
   } catch (error) {
     console.error("Error fetching prescriptions:", error);
@@ -152,6 +165,7 @@ export const fetchPrescriptions = async () => {
 // Save prescription to database
 export const savePrescription = async (prescription: Prescription) => {
   try {
+    console.log("Saving prescription to Supabase:", prescription);
     // Save to Supabase
     const { data, error } = await supabase
       .from('prescriptions')
@@ -163,6 +177,7 @@ export const savePrescription = async (prescription: Prescription) => {
       throw error;
     }
     
+    console.log("Saved prescription:", data);
     return data[0];
   } catch (error) {
     console.error("Error saving prescription:", error);
@@ -175,59 +190,112 @@ export const savePrescription = async (prescription: Prescription) => {
  */
 export const insertMockData = async () => {
   try {
-    console.log("Inserting mock data to Supabase...");
+    console.log("Checking existing data in Supabase...");
     
-    // Check if data already exists
-    const { count: professionalCount } = await supabase
+    // Check if data already exists for professionals
+    const { count: professionalCount, error: proCountError } = await supabase
       .from('professionals')
       .select('*', { count: 'exact', head: true });
       
+    if (proCountError) {
+      console.error("Error checking professionals count:", proCountError);
+    }
+    
+    console.log("Professional count:", professionalCount);
+    
     if (!professionalCount) {
+      console.log("Inserting mock professionals...");
       // Insert professionals
       const { error: proError } = await supabase
         .from('professionals')
         .insert(mockProfessionals);
         
-      if (proError) console.error("Error inserting professionals:", proError);
+      if (proError) {
+        console.error("Error inserting professionals:", proError);
+      } else {
+        console.log("Mock professionals inserted successfully");
+      }
     }
     
-    const { count: pharmacyCount } = await supabase
+    // Check if data already exists for pharmacies
+    const { count: pharmacyCount, error: pharmCountError } = await supabase
       .from('pharmacies')
       .select('*', { count: 'exact', head: true });
       
+    if (pharmCountError) {
+      console.error("Error checking pharmacies count:", pharmCountError);
+    }
+    
+    console.log("Pharmacy count:", pharmacyCount);
+    
     if (!pharmacyCount) {
+      console.log("Inserting mock pharmacies...");
       // Insert pharmacies
       const { error: pharmError } = await supabase
         .from('pharmacies')
         .insert(mockPharmacies);
         
-      if (pharmError) console.error("Error inserting pharmacies:", pharmError);
+      if (pharmError) {
+        console.error("Error inserting pharmacies:", pharmError);
+      } else {
+        console.log("Mock pharmacies inserted successfully");
+      }
     }
     
-    const { count: patientCount } = await supabase
+    // Check if data already exists for patients
+    const { count: patientCount, error: patientCountError } = await supabase
       .from('patients')
       .select('*', { count: 'exact', head: true });
       
+    if (patientCountError) {
+      console.error("Error checking patients count:", patientCountError);
+    }
+    
+    console.log("Patient count:", patientCount);
+    
     if (!patientCount) {
+      console.log("Inserting mock patients...");
       // Insert patients
       const { error: patientError } = await supabase
         .from('patients')
         .insert(mockPatients);
         
-      if (patientError) console.error("Error inserting patients:", patientError);
+      if (patientError) {
+        console.error("Error inserting patients:", patientError);
+      } else {
+        console.log("Mock patients inserted successfully");
+      }
     }
     
-    const { count: prescriptionCount } = await supabase
-      .from('prescriptions')
-      .select('*', { count: 'exact', head: true });
-      
-    if (!prescriptionCount) {
-      // Insert prescriptions
-      const { error: prescError } = await supabase
+    // We need to make sure patients and professionals exist before inserting prescriptions
+    // that have foreign key references to them
+    if (professionalCount && patientCount) {
+      // Check if data already exists for prescriptions
+      const { count: prescriptionCount, error: prescCountError } = await supabase
         .from('prescriptions')
-        .insert(mockPrescriptions);
+        .select('*', { count: 'exact', head: true });
         
-      if (prescError) console.error("Error inserting prescriptions:", prescError);
+      if (prescCountError) {
+        console.error("Error checking prescriptions count:", prescCountError);
+      }
+      
+      console.log("Prescription count:", prescriptionCount);
+      
+      if (!prescriptionCount) {
+        console.log("Inserting mock prescriptions...");
+        // Insert prescriptions
+        const { error: prescError } = await supabase
+          .from('prescriptions')
+          .insert(mockPrescriptions);
+          
+        if (prescError) {
+          console.error("Error inserting prescriptions:", prescError);
+        } else {
+          console.log("Mock prescriptions inserted successfully");
+        }
+      }
+    } else {
+      console.log("Skipping prescription insertion as professionals and/or patients data is missing");
     }
     
     console.log("Mock data insertion complete");
