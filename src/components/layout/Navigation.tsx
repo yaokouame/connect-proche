@@ -10,8 +10,6 @@ import NotificationButton from "./navigation/NotificationButton";
 import UserMenu from "./navigation/UserMenu";
 import AuthButtons from "./navigation/AuthButtons";
 import MobileMenu from "./navigation/MobileMenu";
-import NavigationLinks from "./navigation/NavigationLinks";
-import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navigation = () => {
@@ -45,6 +43,16 @@ const Navigation = () => {
     isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-3'
   }`;
 
+  // Main navigation items for horizontal display
+  const mainNavItems = [
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.appointments'), path: '/appointments' },
+    { name: t('nav.medications'), path: '/medications' },
+    { name: t('nav.products'), path: '/products' },
+    { name: t('nav.map'), path: '/map' },
+    { name: t('nav.findProfessional'), path: '/professionals' },
+  ];
+
   return (
     <>
       <nav className={navbarClasses}>
@@ -53,7 +61,23 @@ const Navigation = () => {
             <NavigationLogo />
             
             <div className="hidden lg:flex items-center ml-6">
-              <NavigationLinks />
+              <ul className="flex space-x-1">
+                {mainNavItems.map((item) => (
+                  <li key={item.path}>
+                    <Button
+                      variant="ghost"
+                      className={`px-3 py-2 text-sm font-medium ${
+                        location.pathname === item.path
+                          ? 'text-health-blue bg-blue-50'
+                          : 'text-gray-700 hover:text-health-blue hover:bg-blue-50/50'
+                      }`}
+                      onClick={() => navigate(item.path)}
+                    >
+                      {item.name}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
@@ -90,9 +114,10 @@ const Navigation = () => {
         onClose={() => setIsMobileMenuOpen(false)}
         currentUser={currentUser}
         onLogout={handleLogout}
+        navItems={mainNavItems}
       />
       
-      <div className="h-12 sm:h-16"></div>
+      <div className="h-16 sm:h-16"></div>
     </>
   );
 };

@@ -7,12 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import NavigationLinks from "./NavigationLinks";
 import AuthButtons from "./AuthButtons";
+
+interface NavItem {
+  name: string;
+  path: string;
+}
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  navItems: NavItem[];
   currentUser?: {
     name: string;
     email?: string;
@@ -24,11 +29,17 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ 
   isOpen, 
   onClose, 
+  navItems,
   currentUser, 
   onLogout 
 }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    onClose();
+  };
 
   const handleProfileClick = () => {
     navigate('/profile');
@@ -59,10 +70,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           </div>
           
           <div className="flex-1 overflow-auto py-2 sm:py-4 px-2">
-            <NavigationLinks 
-              onItemClick={onClose}
-              isMobile={true}
-            />
+            <div className="space-y-1">
+              {navItems.map((item) => (
+                <Button
+                  key={item.path}
+                  variant="ghost"
+                  className="w-full justify-start text-sm"
+                  onClick={() => handleNavigation(item.path)}
+                >
+                  {item.name}
+                </Button>
+              ))}
+            </div>
           </div>
           
           <div className="p-4 border-t mt-auto">
