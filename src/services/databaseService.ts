@@ -205,15 +205,18 @@ export const insertMockData = async () => {
     
     if (!professionalCount) {
       console.log("Inserting mock professionals...");
-      // Insert professionals
-      const { error: proError } = await supabase
-        .from('professionals')
-        .insert(mockProfessionals);
-        
-      if (proError) {
-        console.error("Error inserting professionals:", proError);
-      } else {
-        console.log("Mock professionals inserted successfully");
+      
+      // Insert professionals one by one to better handle errors
+      for (const professional of mockProfessionals) {
+        const { error } = await supabase
+          .from('professionals')
+          .upsert(professional, { onConflict: 'id' });
+          
+        if (error) {
+          console.error(`Error inserting professional ${professional.id}:`, error);
+        } else {
+          console.log(`Successfully inserted professional: ${professional.name}`);
+        }
       }
     }
     
@@ -230,15 +233,18 @@ export const insertMockData = async () => {
     
     if (!pharmacyCount) {
       console.log("Inserting mock pharmacies...");
-      // Insert pharmacies
-      const { error: pharmError } = await supabase
-        .from('pharmacies')
-        .insert(mockPharmacies);
-        
-      if (pharmError) {
-        console.error("Error inserting pharmacies:", pharmError);
-      } else {
-        console.log("Mock pharmacies inserted successfully");
+      
+      // Insert pharmacies one by one
+      for (const pharmacy of mockPharmacies) {
+        const { error } = await supabase
+          .from('pharmacies')
+          .upsert(pharmacy, { onConflict: 'id' });
+          
+        if (error) {
+          console.error(`Error inserting pharmacy ${pharmacy.id}:`, error);
+        } else {
+          console.log(`Successfully inserted pharmacy: ${pharmacy.name}`);
+        }
       }
     }
     
@@ -255,15 +261,18 @@ export const insertMockData = async () => {
     
     if (!patientCount) {
       console.log("Inserting mock patients...");
-      // Insert patients
-      const { error: patientError } = await supabase
-        .from('patients')
-        .insert(mockPatients);
-        
-      if (patientError) {
-        console.error("Error inserting patients:", patientError);
-      } else {
-        console.log("Mock patients inserted successfully");
+      
+      // Insert patients one by one
+      for (const patient of mockPatients) {
+        const { error } = await supabase
+          .from('patients')
+          .upsert(patient, { onConflict: 'id' });
+          
+        if (error) {
+          console.error(`Error inserting patient ${patient.id}:`, error);
+        } else {
+          console.log(`Successfully inserted patient: ${patient.name}`);
+        }
       }
     }
     
@@ -283,15 +292,18 @@ export const insertMockData = async () => {
       
       if (!prescriptionCount) {
         console.log("Inserting mock prescriptions...");
-        // Insert prescriptions
-        const { error: prescError } = await supabase
-          .from('prescriptions')
-          .insert(mockPrescriptions);
-          
-        if (prescError) {
-          console.error("Error inserting prescriptions:", prescError);
-        } else {
-          console.log("Mock prescriptions inserted successfully");
+        
+        // Insert prescriptions one by one
+        for (const prescription of mockPrescriptions) {
+          const { error } = await supabase
+            .from('prescriptions')
+            .upsert(prescription, { onConflict: 'id' });
+            
+          if (error) {
+            console.error(`Error inserting prescription ${prescription.id}:`, error);
+          } else {
+            console.log(`Successfully inserted prescription for patient: ${prescription.patientId}`);
+          }
         }
       }
     } else {

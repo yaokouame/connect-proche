@@ -18,8 +18,9 @@ export const useSupabaseInit = () => {
         if (isInitialized || isInitializing) return;
         
         setIsInitializing(true);
+        console.log("Starting Supabase initialization...");
         
-        // Check if tables exist using the SQL function we've created
+        // Check if tables exist in the database
         const { data: tablesExist, error: tableCheckError } = await supabase.rpc('check_tables_exist');
         
         if (tableCheckError) {
