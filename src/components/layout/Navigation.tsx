@@ -10,6 +10,7 @@ import NotificationButton from "./navigation/NotificationButton";
 import UserMenu from "./navigation/UserMenu";
 import AuthButtons from "./navigation/AuthButtons";
 import MobileMenu from "./navigation/MobileMenu";
+import NavigationLinks from "./navigation/NavigationLinks";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -48,10 +49,12 @@ const Navigation = () => {
     <>
       <nav className={navbarClasses}>
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <NavigationLogo />
-
-          <div className="hidden lg:flex items-center space-x-1">
-            {/* Desktop menu will be shown automatically by NavigationLinks */}
+          <div className="flex items-center">
+            <NavigationLogo />
+            
+            <div className="hidden lg:flex items-center ml-6">
+              <NavigationLinks />
+            </div>
           </div>
 
           <div className="flex items-center space-x-1 sm:space-x-2">
