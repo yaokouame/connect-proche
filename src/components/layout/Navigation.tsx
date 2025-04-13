@@ -10,6 +10,7 @@ import NotificationButton from "./navigation/NotificationButton";
 import UserMenu from "./navigation/UserMenu";
 import AuthButtons from "./navigation/AuthButtons";
 import MobileMenu from "./navigation/MobileMenu";
+import LanguageSelector from "./navigation/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navigation = () => {
