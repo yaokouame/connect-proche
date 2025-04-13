@@ -9,5 +9,8 @@ export default {
   "profile.editProfile": "Modifier le Profil",
   "profile.updatePassword": "Mettre à jour le Mot de Passe",
   "profile.greeting": "Bonjour, {name}",
-  "profile.myProfile": "Mon profil"
+  "profile.myProfile": "Mon profil",
+  "profile.appointments": "Mes rendez-vous",
+  "profile.medicalRecords": "Dossier médical",
+  "profile.settings": "Paramètres"
 }

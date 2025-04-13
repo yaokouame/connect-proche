@@ -1,21 +1,29 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Clock, FileText, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Clock, FileText, Settings } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { User as UserType } from "@/types/user";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProfileSidebarProps {
   currentUser: UserType;
 }
 
 const ProfileSidebar = ({ currentUser }: ProfileSidebarProps) => {
+  const { t } = useLanguage();
+  const location = useLocation();
+  
   const getInitials = (name: string) => {
     return name
       .split(" ")
       .map(n => n[0])
       .join("")
       .toUpperCase();
+  };
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -35,24 +43,43 @@ const ProfileSidebar = ({ currentUser }: ProfileSidebarProps) => {
       </div>
       
       <nav className="space-y-1">
-        <Link to="/profile" className="flex items-center px-4 py-2 bg-health-blue/10 text-health-blue rounded-md">
-          <User className="mr-2 h-5 w-5" />
-          <span>Informations personnelles</span>
+        <Link 
+          to="/profile" 
+          className={`flex items-center px-4 py-2.5 rounded-md ${
+            isActive('/profile') 
+              ? "bg-health-blue/10 text-health-blue" 
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+        >
+          <Settings className="mr-3 h-5 w-5" />
+          <span>{t('profile.myProfile')}</span>
         </Link>
-        <Link to="/appointments" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
-          <Clock className="mr-2 h-5 w-5" />
+        
+        <Link 
+          to="/appointments" 
+          className={`flex items-center px-4 py-2.5 rounded-md ${
+            isActive('/appointments') 
+              ? "bg-health-blue/10 text-health-blue" 
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+        >
+          <Clock className="mr-3 h-5 w-5" />
           <span>Mes rendez-vous</span>
         </Link>
+        
         {currentUser?.role === "patient" && (
-          <Link to="/medical-records" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
-            <FileText className="mr-2 h-5 w-5" />
+          <Link 
+            to="/medical-records" 
+            className={`flex items-center px-4 py-2.5 rounded-md ${
+              isActive('/medical-records') 
+                ? "bg-health-blue/10 text-health-blue" 
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <FileText className="mr-3 h-5 w-5" />
             <span>Dossier médical</span>
           </Link>
         )}
-        <Link to="/settings" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
-          <Settings className="mr-2 h-5 w-5" />
-          <span>Paramètres</span>
-        </Link>
       </nav>
     </div>
   );
