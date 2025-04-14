@@ -35,6 +35,7 @@ supabase.from('professionals').select('count', { count: 'exact', head: true })
       console.log('Successfully connected to Supabase. Found', count, 'professionals');
     }
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Unexpected error testing Supabase connection:', err);
   });
+

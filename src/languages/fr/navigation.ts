@@ -22,5 +22,11 @@ export default {
   "nav.professionals": "Professionnels",
   "nav.wellness": "Bien-être & Prévention",
   "nav.chat": "Chat Médical",
-  "nav.premium": "Premium"
+  "nav.premium": "Premium",
+  "nav.main": "Principal",
+  "nav.healthcare": "Soins de santé",
+  "nav.services": "Services",
+  "nav.resources": "Ressources",
+  "nav.tutorial": "Tutoriel"
 }
+
