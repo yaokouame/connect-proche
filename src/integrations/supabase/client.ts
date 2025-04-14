@@ -26,16 +26,20 @@ export const supabase = createClient<Database>(
 // Log initialization to help with debugging
 console.log('Supabase client initialized with URL:', supabaseUrl);
 
-// Test connection
-supabase.from('professionals').select('count', { count: 'exact', head: true })
-  .then(({ count, error }) => {
+// Test connection - fixed the Promise chain to properly handle errors
+const testConnection = async () => {
+  try {
+    const { count, error } = await supabase.from('professionals').select('count', { count: 'exact', head: true });
+    
     if (error) {
       console.error('Error connecting to Supabase:', error);
     } else {
       console.log('Successfully connected to Supabase. Found', count, 'professionals');
     }
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('Unexpected error testing Supabase connection:', err);
-  });
+  }
+};
 
+// Execute the test connection function
+testConnection();

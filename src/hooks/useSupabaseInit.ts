@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 export const useSupabaseInit = () => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export const useSupabaseInit = () => {
         if (isInitialized || isInitializing) return;
         
         setIsInitializing(true);
+        setError(null);
         console.log("Starting Supabase initialization...");
         
         // Check if tables exist in the database
@@ -25,13 +27,16 @@ export const useSupabaseInit = () => {
         
         if (tableCheckError) {
           console.error("Error checking tables existence:", tableCheckError);
+          setError(`Erreur lors de la vérification des tables: ${tableCheckError.message}`);
           throw tableCheckError;
         }
         
         console.log("Tables exist check result:", tablesExist);
         
         if (!tablesExist) {
-          console.error("Tables don't exist or aren't properly set up");
+          const errorMsg = "Tables don't exist or aren't properly set up";
+          console.error(errorMsg);
+          setError(errorMsg);
           toast({
             variant: "destructive",
             title: "Erreur de base de données",
@@ -51,12 +56,14 @@ export const useSupabaseInit = () => {
           title: "Base de données initialisée",
           description: "La connexion à la base de données est établie",
         });
-      } catch (error) {
+      } catch (error: any) {
+        const errorMessage = error?.message || "Erreur inconnue";
         console.error("Error initializing Supabase:", error);
+        setError(errorMessage);
         toast({
           variant: "destructive",
           title: "Erreur d'initialisation",
-          description: "Un problème est survenu lors de l'initialisation de la base de données",
+          description: `Un problème est survenu lors de l'initialisation de la base de données: ${errorMessage}`,
         });
       } finally {
         setIsInitializing(false);
@@ -66,5 +73,5 @@ export const useSupabaseInit = () => {
     initializeSupabase();
   }, [toast, isInitialized, isInitializing]);
 
-  return { isInitialized, isInitializing };
+  return { isInitialized, isInitializing, error };
 };

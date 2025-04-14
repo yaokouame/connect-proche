@@ -37,13 +37,16 @@ import VoiceGuidance from "./components/voice/VoiceGuidance";
 
 function AppContent() {
   // Initialize Supabase data
-  const { isInitialized } = useSupabaseInit();
+  const { isInitialized, isInitializing, error } = useSupabaseInit();
   
   useEffect(() => {
     if (isInitialized) {
       console.log("Supabase initialized successfully");
     }
-  }, [isInitialized]);
+    if (error) {
+      console.error("Supabase initialization error:", error);
+    }
+  }, [isInitialized, error]);
   
   return (
     <BrowserRouter>
@@ -90,4 +93,3 @@ function App() {
 }
 
 export default App;
-
