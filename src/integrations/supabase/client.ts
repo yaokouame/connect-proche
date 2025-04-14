@@ -19,27 +19,77 @@ export const supabase = createClient<Database>(
       headers: {
         'x-application-name': 'health-app'
       }
+    },
+    // Add debug option to get more detailed logs
+    db: {
+      schema: 'public'
     }
   }
 );
 
-// Log initialization to help with debugging
-console.log('Supabase client initialized with URL:', supabaseUrl);
+// Export connection status for app-wide use
+export const connectionStatus = {
+  connected: false,
+  error: null as string | null,
+  lastChecked: null as Date | null
+};
 
-// Test connection - fixed the Promise chain to properly handle errors
-const testConnection = async () => {
+// Test connection with more detailed error handling
+export const testConnection = async (): Promise<boolean> => {
   try {
-    const { count, error } = await supabase.from('professionals').select('count', { count: 'exact', head: true });
+    console.log('Testing Supabase connection...');
     
-    if (error) {
-      console.error('Error connecting to Supabase:', error);
-    } else {
-      console.log('Successfully connected to Supabase. Found', count, 'professionals');
+    // Clear previous status
+    connectionStatus.error = null;
+    
+    // First, check if the service is reachable
+    const { data: tablesExist, error: rpcError } = await supabase.rpc('check_tables_exist');
+    
+    if (rpcError) {
+      console.error('Error checking tables existence via RPC:', rpcError);
+      connectionStatus.error = `RPC Error: ${rpcError.message}`;
+      connectionStatus.connected = false;
+      connectionStatus.lastChecked = new Date();
+      return false;
     }
-  } catch (err) {
+    
+    console.log('Tables existence check result:', tablesExist);
+    
+    if (!tablesExist) {
+      const message = "Tables don't exist or aren't properly set up in the database";
+      console.error(message);
+      connectionStatus.error = message;
+      connectionStatus.connected = false;
+      connectionStatus.lastChecked = new Date();
+      return false;
+    }
+    
+    // If we get here, RPC check was successful, now do a simple query test
+    const { count, error: queryError } = await supabase
+      .from('professionals')
+      .select('*', { count: 'exact', head: true });
+    
+    if (queryError) {
+      console.error('Error querying professionals table:', queryError);
+      connectionStatus.error = `Query Error: ${queryError.message}`;
+      connectionStatus.connected = false;
+      connectionStatus.lastChecked = new Date();
+      return false;
+    }
+    
+    console.log('Successfully connected to Supabase. Found', count, 'professionals');
+    connectionStatus.connected = true;
+    connectionStatus.lastChecked = new Date();
+    return true;
+  } catch (err: any) {
+    const errorMessage = err?.message || 'Unknown error testing Supabase connection';
     console.error('Unexpected error testing Supabase connection:', err);
+    connectionStatus.error = errorMessage;
+    connectionStatus.connected = false;
+    connectionStatus.lastChecked = new Date();
+    return false;
   }
 };
 
-// Execute the test connection function
+// Execute the test connection function at client initialization
 testConnection();

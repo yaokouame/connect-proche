@@ -1,6 +1,6 @@
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState, useCallback } from 'react';
+import { supabase, testConnection, connectionStatus } from '@/integrations/supabase/client';
 import { insertMockData } from '@/services/databaseService';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -13,65 +13,79 @@ export const useSupabaseInit = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const initializeSupabase = async () => {
-      try {
-        if (isInitialized || isInitializing) return;
-        
-        setIsInitializing(true);
-        setError(null);
-        console.log("Starting Supabase initialization...");
-        
-        // Check if tables exist in the database
-        const { data: tablesExist, error: tableCheckError } = await supabase.rpc('check_tables_exist');
-        
-        if (tableCheckError) {
-          console.error("Error checking tables existence:", tableCheckError);
-          setError(`Erreur lors de la vérification des tables: ${tableCheckError.message}`);
-          throw tableCheckError;
-        }
-        
-        console.log("Tables exist check result:", tablesExist);
-        
-        if (!tablesExist) {
-          const errorMsg = "Tables don't exist or aren't properly set up";
-          console.error(errorMsg);
-          setError(errorMsg);
-          toast({
-            variant: "destructive",
-            title: "Erreur de base de données",
-            description: "Les tables nécessaires n'existent pas dans la base de données.",
-          });
-          setIsInitializing(false);
-          return;
-        }
-        
-        // Insert sample data if tables are properly set up
-        await insertMockData();
-        
-        setIsInitialized(true);
-        console.log("Supabase initialization complete");
-        
-        toast({
-          title: "Base de données initialisée",
-          description: "La connexion à la base de données est établie",
-        });
-      } catch (error: any) {
-        const errorMessage = error?.message || "Erreur inconnue";
-        console.error("Error initializing Supabase:", error);
-        setError(errorMessage);
+  const initializeSupabase = useCallback(async () => {
+    try {
+      if (isInitialized || isInitializing) return;
+      
+      setIsInitializing(true);
+      setError(null);
+      console.log("Starting Supabase initialization...");
+      
+      // Test the connection
+      const isConnected = await testConnection();
+      
+      if (!isConnected) {
+        // Use the error from connection status
+        setError(connectionStatus.error || "Échec de connexion à la base de données");
         toast({
           variant: "destructive",
-          title: "Erreur d'initialisation",
-          description: `Un problème est survenu lors de l'initialisation de la base de données: ${errorMessage}`,
+          title: "Erreur de connexion",
+          description: connectionStatus.error || "Impossible de se connecter à la base de données",
         });
-      } finally {
         setIsInitializing(false);
+        return;
       }
-    };
-
-    initializeSupabase();
+      
+      // If connected, check if tables are properly set up
+      if (!connectionStatus.connected) {
+        setError("Les tables n'existent pas ou ne sont pas correctement configurées");
+        toast({
+          variant: "destructive",
+          title: "Erreur de base de données",
+          description: "Les tables nécessaires n'existent pas dans la base de données.",
+        });
+        setIsInitializing(false);
+        return;
+      }
+      
+      // Insert sample data if tables are properly set up
+      try {
+        await insertMockData();
+      } catch (dataError: any) {
+        console.warn("Non-critical error during data insertion:", dataError);
+        // Don't fail initialization for data insertion errors
+        // Just log them and continue
+      }
+      
+      setIsInitialized(true);
+      console.log("Supabase initialization complete");
+      
+      toast({
+        title: "Base de données initialisée",
+        description: "La connexion à la base de données est établie",
+      });
+    } catch (error: any) {
+      const errorMessage = error?.message || "Erreur inconnue";
+      console.error("Error initializing Supabase:", error);
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Erreur d'initialisation",
+        description: `Un problème est survenu lors de l'initialisation de la base de données: ${errorMessage}`,
+      });
+    } finally {
+      setIsInitializing(false);
+    }
   }, [toast, isInitialized, isInitializing]);
 
-  return { isInitialized, isInitializing, error };
+  useEffect(() => {
+    initializeSupabase();
+  }, [initializeSupabase]);
+
+  return { 
+    isInitialized, 
+    isInitializing, 
+    error,
+    retryInitialization: initializeSupabase 
+  };
 };

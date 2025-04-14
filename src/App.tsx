@@ -34,10 +34,11 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useSupabaseInit } from "@/hooks/useSupabaseInit";
 
 import VoiceGuidance from "./components/voice/VoiceGuidance";
+import { DatabaseConnectionAlert } from "./components/database/DatabaseConnectionAlert";
 
 function AppContent() {
   // Initialize Supabase data
-  const { isInitialized, isInitializing, error } = useSupabaseInit();
+  const { isInitialized, isInitializing, error, retryInitialization } = useSupabaseInit();
   
   useEffect(() => {
     if (isInitialized) {
@@ -50,6 +51,11 @@ function AppContent() {
   
   return (
     <BrowserRouter>
+      {/* Show database connection alert if there's an error */}
+      <div className="container mx-auto px-4 py-2">
+        <DatabaseConnectionAlert onRetry={retryInitialization} />
+      </div>
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
