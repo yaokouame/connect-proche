@@ -25,13 +25,14 @@ export const useSupabaseInit = () => {
       const isConnected = await testConnection();
       
       if (!isConnected) {
-        // Use the error from connection status
+        // Set the error but don't show toast
         setError(connectionStatus.error || "Échec de connexion à la base de données");
-        toast({
-          variant: "destructive",
-          title: "Erreur de connexion",
-          description: connectionStatus.error || "Impossible de se connecter à la base de données",
-        });
+        // Nous supprimons le toast d'erreur
+        // toast({
+        //   variant: "destructive",
+        //   title: "Erreur de connexion",
+        //   description: connectionStatus.error || "Impossible de se connecter à la base de données",
+        // });
         setIsInitializing(false);
         return;
       }
@@ -39,11 +40,12 @@ export const useSupabaseInit = () => {
       // If connected, check if tables are properly set up
       if (!connectionStatus.connected) {
         setError("Les tables n'existent pas ou ne sont pas correctement configurées");
-        toast({
-          variant: "destructive",
-          title: "Erreur de base de données",
-          description: "Les tables nécessaires n'existent pas dans la base de données.",
-        });
+        // Nous supprimons le toast d'erreur
+        // toast({
+        //   variant: "destructive",
+        //   title: "Erreur de base de données",
+        //   description: "Les tables nécessaires n'existent pas dans la base de données.",
+        // });
         setIsInitializing(false);
         return;
       }
@@ -60,6 +62,7 @@ export const useSupabaseInit = () => {
       setIsInitialized(true);
       console.log("Supabase initialization complete");
       
+      // Nous gardons le toast de succès pour indiquer que l'initialisation est réussie
       toast({
         title: "Base de données initialisée",
         description: "La connexion à la base de données est établie",
@@ -68,11 +71,12 @@ export const useSupabaseInit = () => {
       const errorMessage = error?.message || "Erreur inconnue";
       console.error("Error initializing Supabase:", error);
       setError(errorMessage);
-      toast({
-        variant: "destructive",
-        title: "Erreur d'initialisation",
-        description: `Un problème est survenu lors de l'initialisation de la base de données: ${errorMessage}`,
-      });
+      // Nous supprimons le toast d'erreur
+      // toast({
+      //   variant: "destructive",
+      //   title: "Erreur d'initialisation",
+      //   description: `Un problème est survenu lors de l'initialisation de la base de données: ${errorMessage}`,
+      // });
     } finally {
       setIsInitializing(false);
     }

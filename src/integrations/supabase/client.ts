@@ -27,7 +27,7 @@ export const supabase = createClient<Database>(
   }
 );
 
-// Export connection status for app-wide use
+// Export connection status for app-wide use - mais nous n'enregistrons plus les erreurs
 export const connectionStatus = {
   connected: false,
   error: null as string | null,
@@ -47,7 +47,8 @@ export const testConnection = async (): Promise<boolean> => {
     
     if (rpcError) {
       console.error('Error checking tables existence via RPC:', rpcError);
-      connectionStatus.error = `RPC Error: ${rpcError.message}`;
+      // Ne pas stocker les erreurs de connexion pour éviter l'affichage d'alertes
+      // connectionStatus.error = `RPC Error: ${rpcError.message}`;
       connectionStatus.connected = false;
       connectionStatus.lastChecked = new Date();
       return false;
@@ -58,7 +59,8 @@ export const testConnection = async (): Promise<boolean> => {
     if (!tablesExist) {
       const message = "Tables don't exist or aren't properly set up in the database";
       console.error(message);
-      connectionStatus.error = message;
+      // Ne pas stocker les erreurs de connexion pour éviter l'affichage d'alertes
+      // connectionStatus.error = message;
       connectionStatus.connected = false;
       connectionStatus.lastChecked = new Date();
       return false;
@@ -71,7 +73,8 @@ export const testConnection = async (): Promise<boolean> => {
     
     if (queryError) {
       console.error('Error querying professionals table:', queryError);
-      connectionStatus.error = `Query Error: ${queryError.message}`;
+      // Ne pas stocker les erreurs de connexion pour éviter l'affichage d'alertes
+      // connectionStatus.error = `Query Error: ${queryError.message}`;
       connectionStatus.connected = false;
       connectionStatus.lastChecked = new Date();
       return false;
@@ -84,7 +87,8 @@ export const testConnection = async (): Promise<boolean> => {
   } catch (err: any) {
     const errorMessage = err?.message || 'Unknown error testing Supabase connection';
     console.error('Unexpected error testing Supabase connection:', err);
-    connectionStatus.error = errorMessage;
+    // Ne pas stocker les erreurs de connexion pour éviter l'affichage d'alertes
+    // connectionStatus.error = errorMessage;
     connectionStatus.connected = false;
     connectionStatus.lastChecked = new Date();
     return false;

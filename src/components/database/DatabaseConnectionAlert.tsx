@@ -16,7 +16,11 @@ export const DatabaseConnectionAlert: React.FC<DatabaseConnectionAlertProps> = (
   const { toast } = useToast();
   const [isRetrying, setIsRetrying] = React.useState(false);
 
-  // Don't show anything if there's no error
+  // Désactivation complète des alertes - toujours retourner null
+  return null;
+  
+  // Code commenté en dessous - il était utilisé pour afficher les alertes
+  /*
   if (!connectionStatus.error) {
     return null;
   }
@@ -32,7 +36,6 @@ export const DatabaseConnectionAlert: React.FC<DatabaseConnectionAlertProps> = (
           description: "La connexion à la base de données est rétablie",
         });
         
-        // Call the optional parent retry handler
         if (onRetry) {
           onRetry();
         }
@@ -80,4 +83,5 @@ export const DatabaseConnectionAlert: React.FC<DatabaseConnectionAlertProps> = (
       </AlertDescription>
     </Alert>
   );
+  */
 };
