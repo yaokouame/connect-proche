@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { ExclamationTriangleIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { AlertTriangle, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { connectionStatus, testConnection } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -56,7 +56,7 @@ export const DatabaseConnectionAlert: React.FC<DatabaseConnectionAlertProps> = (
 
   return (
     <Alert variant="destructive" className="mb-4">
-      <ExclamationTriangleIcon className="h-4 w-4" />
+      <AlertTriangle className="h-4 w-4" />
       <AlertTitle>Problème de connexion à la base de données</AlertTitle>
       <AlertDescription>
         <p className="mb-2">
@@ -70,7 +70,7 @@ export const DatabaseConnectionAlert: React.FC<DatabaseConnectionAlertProps> = (
         >
           {isRetrying ? (
             <>
-              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              <RotateCw className="mr-2 h-4 w-4 animate-spin" />
               Tentative de reconnexion...
             </>
           ) : (
