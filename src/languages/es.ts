@@ -16,7 +16,13 @@ const esTranslations = {
   "preferences.shareData": "Compartir datos anónimos para mejorar la plataforma",
   "preferences.saveButton": "Guardar Preferencias",
   "preferences.updatedSuccess": "Preferencias Actualizadas",
-  "preferences.updatedDescription": "Sus preferencias se han guardado correctamente."
+  "preferences.updatedDescription": "Sus preferencias se han guardado correctamente.",
+  
+  // Notification related translations
+  "notifications.title": "Notificaciones",
+  "notifications.markAllRead": "Marcar todo como leído",
+  "notifications.empty": "No hay notificaciones",
+  "notifications.viewAll": "Ver todas las notificaciones"
 };
 
 export default esTranslations;

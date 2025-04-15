@@ -16,7 +16,13 @@ const enTranslations = {
   "preferences.shareData": "Share anonymized data to improve the platform",
   "preferences.saveButton": "Save Preferences",
   "preferences.updatedSuccess": "Preferences Updated",
-  "preferences.updatedDescription": "Your preferences have been successfully saved."
+  "preferences.updatedDescription": "Your preferences have been successfully saved.",
+  
+  // Notification related translations
+  "notifications.title": "Notifications",
+  "notifications.markAllRead": "Mark all as read",
+  "notifications.empty": "No notifications",
+  "notifications.viewAll": "View all notifications"
 };
 
 export default enTranslations;
