@@ -87,7 +87,7 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
       },
       { 
         name: t('nav.tutorials'), 
-        path: '/tutorials', 
+        path: '/medical-tutorials', 
         icon: <BookOpen className="w-5 h-5" /> 
       }
     ]
@@ -124,4 +124,3 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({
 };
 
 export default NavigationLinks;
-

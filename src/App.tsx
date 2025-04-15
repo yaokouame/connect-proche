@@ -13,6 +13,7 @@ import Appointments from "@/pages/Appointments";
 import MapView from "@/pages/Map";
 import Products from "@/pages/Products";
 import Tutorials from "@/pages/Tutorials";
+import MedicalTutorials from "@/pages/MedicalTutorials"; // Add this import
 import Admin from "@/pages/Admin";
 import Chat from "@/pages/Chat";
 import HealthcareChat from "@/pages/HealthcareChat";
@@ -66,6 +67,7 @@ function AppContent() {
         <Route path="/products" element={<Products />} />
         <Route path="/professionals" element={<Professionals />} />
         <Route path="/tutorials" element={<Tutorials />} />
+        <Route path="/medical-tutorials" element={<MedicalTutorials />} /> {/* Add this route */}
         <Route path="/admin" element={<Admin />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/chat/:professionalId" element={<HealthcareChat />} />
