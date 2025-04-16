@@ -49,7 +49,7 @@ const Home = () => {
             <Button 
               size={isSmallScreen ? "default" : "lg"} 
               variant="outline" 
-              className="border-white text-white hover:bg-health-blue/80 w-full sm:w-auto shadow-lg"
+              className="border-white text-white hover:bg-health-blue/90 w-full sm:w-auto shadow-lg"
               onClick={handleFindProfessional}
             >
               Rechercher un professionnel
@@ -77,7 +77,7 @@ const Home = () => {
               </div>
               <CardTitle className="text-lg">Suivi médical</CardTitle>
               <CardDescription>
-                Accédez à votre historique médical et partagez-le avec vos professionnels de santé.
+                Accédez à votre historique m��dical et partagez-le avec vos professionnels de santé.
               </CardDescription>
             </CardHeader>
             <CardContent>
