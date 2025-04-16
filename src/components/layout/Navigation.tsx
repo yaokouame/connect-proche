@@ -53,6 +53,7 @@ const Navigation = () => {
     { name: t('nav.map'), path: '/map' },
     { name: t('nav.findProfessional'), path: '/professionals' },
     { name: t('nav.tutorials'), path: '/medical-tutorials' },
+    { name: t('nav.chat'), path: '/chat' }, // Ajout du chat dans la navigation principale
   ];
 
   return (
