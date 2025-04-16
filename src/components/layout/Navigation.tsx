@@ -52,6 +52,7 @@ const Navigation = () => {
     { name: t('nav.products'), path: '/products' },
     { name: t('nav.map'), path: '/map' },
     { name: t('nav.findProfessional'), path: '/professionals' },
+    { name: t('nav.tutorials'), path: '/medical-tutorials' },
   ];
 
   return (

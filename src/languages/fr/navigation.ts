@@ -29,4 +29,3 @@ export default {
   "nav.resources": "Ressources",
   "nav.tutorial": "Tutoriel"
 }
-
