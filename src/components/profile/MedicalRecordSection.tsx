@@ -10,7 +10,7 @@ import PrescriptionsSection from "./PrescriptionsSection";
 import EmergencyContactSection from "./EmergencyContactSection";
 import MedicalShareSection from "./MedicalShareSection";
 import PatientQrCodeSection from "./PatientQrCodeSection";
-import { MedicalInfoBanner } from "./MedicalInfoBanner";
+import MedicalInfoBanner from "./MedicalInfoBanner";
 import UnauthorizedMedicalRecord from "./UnauthorizedMedicalRecord";
 import { PatientProfile, Prescription, Vaccination, EmergencyContact } from "@/types/user";
 
@@ -110,8 +110,8 @@ const MedicalRecordSection = ({
         <div className="space-y-6">
           <MedicalHistorySection
             medicalHistory={medicalHistory}
-            addMedicalHistoryItem={addMedicalHistoryItem}
-            removeMedicalHistoryItem={removeMedicalHistoryItem}
+            addMedicalHistory={addMedicalHistoryItem}
+            removeMedicalHistory={removeMedicalHistoryItem}
           />
           
           <MedicationsSection
