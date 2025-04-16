@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -50,7 +49,7 @@ const Home = () => {
             <Button 
               size={isSmallScreen ? "default" : "lg"} 
               variant="outline" 
-              className="border-white text-white hover:bg-white/20 w-full sm:w-auto shadow-lg"
+              className="border-white text-white hover:bg-health-blue/80 w-full sm:w-auto shadow-lg"
               onClick={handleFindProfessional}
             >
               Rechercher un professionnel
