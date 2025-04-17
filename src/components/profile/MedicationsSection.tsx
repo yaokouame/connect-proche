@@ -4,25 +4,13 @@ import MedicalRecordList from "./MedicalRecordList";
 import { Button } from "@/components/ui/button";
 import { Paperclip, Plus, Pill } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import MedicationForm, { MedicationFormValues } from "../medications/MedicationForm";
 
 interface MedicationsSectionProps {
   medications: string[];
   addMedication: (item: string) => void;
   removeMedication: (index: number) => void;
 }
-
-// Create schema for medication form validation
-const medicationFormSchema = z.object({
-  medicationName: z.string().min(2, { message: "Le nom du médicament est requis" }),
-});
-
-type MedicationFormValues = z.infer<typeof medicationFormSchema>;
 
 const MedicationsSection = ({
   medications,
@@ -33,14 +21,6 @@ const MedicationsSection = ({
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-
-  // Setup form with validation
-  const form = useForm<MedicationFormValues>({
-    resolver: zodResolver(medicationFormSchema),
-    defaultValues: {
-      medicationName: "",
-    },
-  });
 
   const triggerFileInput = () => {
     if (fileInputRef.current) {
@@ -94,19 +74,15 @@ const MedicationsSection = ({
     setIsAddDialogOpen(true);
   };
 
-  const onSubmit = (data: MedicationFormValues) => {
+  const handleSubmit = (data: MedicationFormValues) => {
     // Add the medication
-    addMedication(data.medicationName);
+    addMedication(data.name);
     
     // Show success message
     toast({
       title: "Médicament ajouté",
-      description: `${data.medicationName} a été ajouté à votre liste de médicaments.`,
+      description: `${data.name} a été ajouté à votre liste de médicaments.`,
     });
-
-    // Reset form and close dialog
-    form.reset();
-    setIsAddDialogOpen(false);
   };
 
   return (
@@ -160,45 +136,11 @@ const MedicationsSection = ({
       </div>
       
       {/* Add Medication Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Ajouter un médicament</DialogTitle>
-          </DialogHeader>
-          
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
-              <FormField
-                control={form.control}
-                name="medicationName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nom du médicament</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: Doliprane 1000mg" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <DialogFooter className="pt-4">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    form.reset();
-                    setIsAddDialogOpen(false);
-                  }}
-                >
-                  Annuler
-                </Button>
-                <Button type="submit">Ajouter</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      <MedicationForm 
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };
