@@ -13,16 +13,31 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useUser } from "@/contexts/UserContext";
 import { Prescription, PrescribedMedication } from "@/types/user";
 import { useToast } from "@/hooks/use-toast";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 interface Medication extends PrescribedMedication {
   id: string;
   prescriptionId: string;
   isActive: boolean;
 }
+
+// Create schema for medication form validation
+const medicationFormSchema = z.object({
+  name: z.string().min(2, { message: "Le nom du médicament est requis" }),
+  dosage: z.string().optional(),
+  frequency: z.string().optional(),
+  duration: z.string().optional(),
+  instructions: z.string().optional(),
+});
+
+type MedicationFormValues = z.infer<typeof medicationFormSchema>;
 
 const MedicationList = () => {
   const { currentUser } = useUser();
@@ -32,6 +47,7 @@ const MedicationList = () => {
   const [sortField, setSortField] = useState<string>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedMedication, setSelectedMedication] = useState<Medication | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const mockPrescriptions: Prescription[] = [
     {
@@ -96,6 +112,18 @@ const MedicationList = () => {
     setMedications(allMedications);
   }, []);
 
+  // Setup form with validation
+  const form = useForm<MedicationFormValues>({
+    resolver: zodResolver(medicationFormSchema),
+    defaultValues: {
+      name: "",
+      dosage: "",
+      frequency: "",
+      duration: "",
+      instructions: "",
+    },
+  });
+
   const handleSort = (field: string) => {
     if (field === sortField) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -118,11 +146,35 @@ const MedicationList = () => {
     return 0;
   });
 
-  const addCustomMedication = () => {
+  const onSubmit = (data: MedicationFormValues) => {
+    // Create a new medication
+    const newMedication: Medication = {
+      id: `med-manual-${Date.now()}`,
+      prescriptionId: "manual-entry",
+      name: data.name,
+      dosage: data.dosage || "",
+      frequency: data.frequency || "",
+      duration: data.duration || "",
+      instructions: data.instructions || "",
+      isActive: true
+    };
+
+    // Add to the medications list
+    setMedications([...medications, newMedication]);
+    
+    // Show success message
     toast({
-      title: "Fonctionnalité en développement",
-      description: "L'ajout manuel de médicaments sera bientôt disponible.",
+      title: "Médicament ajouté",
+      description: `${data.name} a été ajouté à votre liste de médicaments.`,
     });
+
+    // Reset form and close dialog
+    form.reset();
+    setIsAddDialogOpen(false);
+  };
+
+  const addCustomMedication = () => {
+    setIsAddDialogOpen(true);
   };
 
   if (!currentUser) {
@@ -251,6 +303,13 @@ const MedicationList = () => {
                                   </Badge>
                                 </div>
                                 
+                                {selectedMedication.instructions && (
+                                  <div>
+                                    <p className="text-sm text-gray-500">Instructions</p>
+                                    <p>{selectedMedication.instructions}</p>
+                                  </div>
+                                )}
+                                
                                 <div className="pt-2">
                                   <p className="text-sm text-gray-500">Actions</p>
                                   <div className="flex gap-2 mt-2">
@@ -281,6 +340,105 @@ const MedicationList = () => {
           )}
         </CardContent>
       </Card>
+      
+      {/* Add Medication Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajouter un médicament</DialogTitle>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom du médicament</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Doliprane" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="dosage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dosage</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: 1000mg" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="frequency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fréquence</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: 3 fois par jour" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Durée</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: 7 jours" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="instructions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Instructions</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Prendre avec de la nourriture" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter className="pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    form.reset();
+                    setIsAddDialogOpen(false);
+                  }}
+                >
+                  Annuler
+                </Button>
+                <Button type="submit">Ajouter</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
