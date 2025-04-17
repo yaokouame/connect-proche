@@ -137,6 +137,42 @@ const MedicationList = () => {
     setSelectedMedication(medication);
   };
 
+  const handleMarkTaken = (medication: Medication) => {
+    const now = new Date().toISOString();
+    const updatedMedications = medications.map(med => {
+      if (med.id === medication.id) {
+        return {
+          ...med,
+          lastTaken: now,
+          status: 'taken'
+        };
+      }
+      return med;
+    });
+    setMedications(updatedMedications);
+    
+    // In a real application, this would call an API to update the database
+    console.log(`Medication ${medication.name} marked as taken at ${now}`);
+  };
+
+  const handleMarkSkipped = (medication: Medication) => {
+    const now = new Date().toISOString();
+    const updatedMedications = medications.map(med => {
+      if (med.id === medication.id) {
+        return {
+          ...med,
+          lastSkipped: now,
+          status: 'skipped'
+        };
+      }
+      return med;
+    });
+    setMedications(updatedMedications);
+    
+    // In a real application, this would call an API to update the database
+    console.log(`Medication ${medication.name} marked as skipped at ${now}`);
+  };
+
   if (!currentUser) {
     return (
       <Card>
@@ -189,6 +225,8 @@ const MedicationList = () => {
               sortField={sortField}
               sortDirection={sortDirection}
               onSelectMedication={handleMedicationSelect}
+              onMarkTaken={handleMarkTaken}
+              onMarkSkipped={handleMarkSkipped}
             />
           ) : (
             <div className="text-center py-10 border rounded-md">
